@@ -1,30 +1,37 @@
 package org.example;
 
 import java.time.LocalDate;
-import java.util.SplittableRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Empresa {
-    //ATRIBUTOS
+
+    // ATRIBUTOS
     private String rut;
     private String nombre;
     private String mail;
     private String password;
-    private LocalDate fechRegistro;
+    private LocalDate fechaRegistro;
     private int telefono;
     private String descripcion;
     private String logo;
     private String sitioWeb;
 
-    //CONSTRUCTORES
-    public Empresa(){
+    // RELACIONES
+    private List<OfertaLaboral> ofertasLaborales;
 
+    // CONSTRUCTOR VACÍO
+    public Empresa() {
+        this.ofertasLaborales = new ArrayList<>();
     }
 
-    public Empresa(String descripcion, LocalDate fechRegistro, String logo,
+    // CONSTRUCTOR COMPLETO
+    public Empresa(String descripcion, LocalDate fechaRegistro, String logo,
                    String mail, String nombre, String password,
                    String rut, String sitioWeb, int telefono) {
+
         this.descripcion = descripcion;
-        this.fechRegistro = fechRegistro;
+        this.fechaRegistro = fechaRegistro;
         this.logo = logo;
         this.mail = mail;
         this.nombre = nombre;
@@ -32,16 +39,17 @@ public class Empresa {
         this.rut = rut;
         this.sitioWeb = sitioWeb;
         this.telefono = telefono;
+        this.ofertasLaborales = new ArrayList<>();
     }
 
-    //GETTERS
+    // GETTERS
 
     public String getDescripcion() {
         return descripcion;
     }
 
-    public LocalDate getFechRegistro() {
-        return fechRegistro;
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
     }
 
     public String getLogo() {
@@ -72,14 +80,18 @@ public class Empresa {
         return telefono;
     }
 
-    //SETTERS
+    public List<OfertaLaboral> getOfertasLaborales() {
+        return ofertasLaborales;
+    }
+
+    // SETTERS
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
 
-    public void setFechRegistro(LocalDate fechRegistro) {
-        this.fechRegistro = fechRegistro;
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
     public void setLogo(String logo) {
@@ -108,5 +120,9 @@ public class Empresa {
 
     public void setTelefono(int telefono) {
         this.telefono = telefono;
+    }
+
+    public void setOfertasLaborales(List<OfertaLaboral> ofertasLaborales) {
+        this.ofertasLaborales = ofertasLaborales;
     }
 }

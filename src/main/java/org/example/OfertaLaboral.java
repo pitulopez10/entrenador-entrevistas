@@ -1,9 +1,12 @@
 package org.example;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OfertaLaboral {
-    //ATRIBUTOS
+
+    // ATRIBUTOS
     private int id;
     private String titulo;
     private String descripcion;
@@ -12,14 +15,27 @@ public class OfertaLaboral {
     private LocalDate fechaCierre;
     private EstadoEntrevista estado;
 
-    //CONSTRUCTORES
-    public OfertaLaboral(){
+    // RELACIONES
+    private Empresa empresa;
+    private List<Postulacion> postulaciones;
+    private Entrevista entrevista;
 
+    // CONSTRUCTOR VACÍO
+    public OfertaLaboral() {
+        this.postulaciones = new ArrayList<>();
     }
 
-    public OfertaLaboral(String descripcion, EstadoEntrevista estado, LocalDate fechaCierre,
-                         LocalDate fechaPublicacion, int id,
-                         String requisitos, String titulo) {
+    // CONSTRUCTOR COMPLETO
+    public OfertaLaboral(String descripcion,
+                         EstadoEntrevista estado,
+                         LocalDate fechaCierre,
+                         LocalDate fechaPublicacion,
+                         int id,
+                         String requisitos,
+                         String titulo,
+                         Empresa empresa,
+                         Entrevista entrevista) {
+
         this.descripcion = descripcion;
         this.estado = estado;
         this.fechaCierre = fechaCierre;
@@ -27,9 +43,13 @@ public class OfertaLaboral {
         this.id = id;
         this.requisitos = requisitos;
         this.titulo = titulo;
+
+        this.empresa = empresa;
+        this.entrevista = entrevista;
+        this.postulaciones = new ArrayList<>();
     }
 
-    //GETTERS
+    // GETTERS
 
     public String getDescripcion() {
         return descripcion;
@@ -59,7 +79,19 @@ public class OfertaLaboral {
         return titulo;
     }
 
-    //SETTERS
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public List<Postulacion> getPostulaciones() {
+        return postulaciones;
+    }
+
+    public Entrevista getEntrevista() {
+        return entrevista;
+    }
+
+    // SETTERS
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
@@ -87,5 +119,17 @@ public class OfertaLaboral {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+    public void setPostulaciones(List<Postulacion> postulaciones) {
+        this.postulaciones = postulaciones;
+    }
+
+    public void setEntrevista(Entrevista entrevista) {
+        this.entrevista = entrevista;
     }
 }

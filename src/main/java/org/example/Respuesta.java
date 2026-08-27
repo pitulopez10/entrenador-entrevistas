@@ -1,41 +1,65 @@
 package org.example;
 
 public class Respuesta {
+
+    // ATRIBUTOS
     private int id;
     private String texto;
     private float puntajeRespuesta;
 
-    public Respuesta(){
+    // RELACIÓN
+    private Pregunta pregunta;
+
+    // CONSTRUCTOR VACÍO
+    public Respuesta() {
 
     }
 
-    public Respuesta(int id, float puntajeRespuesta, String texto) {
+    // CONSTRUCTOR COMPLETO
+    public Respuesta(int id,
+                     float puntajeRespuesta,
+                     String texto,
+                     Pregunta pregunta) {
+
         this.id = id;
         this.puntajeRespuesta = puntajeRespuesta;
         this.texto = texto;
+        this.pregunta = pregunta;
     }
+
+    // GETTERS
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public float getPuntajeRespuesta() {
         return puntajeRespuesta;
     }
 
-    public void setPuntajeRespuesta(float puntajeRespuesta) {
-        this.puntajeRespuesta = puntajeRespuesta;
-    }
-
     public String getTexto() {
         return texto;
     }
 
+    public Pregunta getPregunta() {
+        return pregunta;
+    }
+
+    // SETTERS
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPuntajeRespuesta(float puntajeRespuesta) {
+        this.puntajeRespuesta = puntajeRespuesta;
+    }
+
     public void setTexto(String texto) {
         this.texto = texto;
+    }
+
+    public void setPregunta(Pregunta pregunta) {
+        this.pregunta = pregunta;
     }
 }

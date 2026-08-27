@@ -1,10 +1,12 @@
 package org.example;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Postulante {
 
-    //ATRIBUTOS
+    // ATRIBUTOS
     private int ci;
     private String nombre;
     private String mail;
@@ -20,15 +22,26 @@ public class Postulante {
     private String datosEstudio;
     private String datosExperiencia;
 
-    //CONSTRUCTORES
-    public Postulante(){
+    // RELACIONES
+    private List<Area> areas;
+    private List<Postulacion> postulaciones;
+    private List<Entrevista> entrevistas;
 
+    // CONSTRUCTOR VACÍO
+    public Postulante() {
+        this.areas = new ArrayList<>();
+        this.postulaciones = new ArrayList<>();
+        this.entrevistas = new ArrayList<>();
     }
 
-    public Postulante(int ci, String cv, String datosEstudio, String datosExperiencia,
-                      String descripcion, LocalDate fechaNacimiento, LocalDate fechaRegistro,
-                      String fotoPerfil, DTGenero genero, String localidad, String mail,
-                      String nombre, String password, int telefono) {
+    // CONSTRUCTOR COMPLETO
+    public Postulante(int ci, String cv, String datosEstudio,
+                      String datosExperiencia, String descripcion,
+                      LocalDate fechaNacimiento, LocalDate fechaRegistro,
+                      String fotoPerfil, DTGenero genero, String localidad,
+                      String mail, String nombre, String password,
+                      int telefono) {
+
         this.ci = ci;
         this.cv = cv;
         this.datosEstudio = datosEstudio;
@@ -43,9 +56,14 @@ public class Postulante {
         this.nombre = nombre;
         this.password = password;
         this.telefono = telefono;
+
+        this.areas = new ArrayList<>();
+        this.postulaciones = new ArrayList<>();
+        this.entrevistas = new ArrayList<>();
     }
 
-    //GETTERS
+    // GETTERS
+
     public int getCi() {
         return ci;
     }
@@ -102,7 +120,19 @@ public class Postulante {
         return telefono;
     }
 
-    //SETTERS
+    public List<Area> getAreas() {
+        return areas;
+    }
+
+    public List<Postulacion> getPostulaciones() {
+        return postulaciones;
+    }
+
+    public List<Entrevista> getEntrevistas() {
+        return entrevistas;
+    }
+
+    // SETTERS
 
     public void setCi(int ci) {
         this.ci = ci;
@@ -158,5 +188,17 @@ public class Postulante {
 
     public void setTelefono(int telefono) {
         this.telefono = telefono;
+    }
+
+    public void setAreas(List<Area> areas) {
+        this.areas = areas;
+    }
+
+    public void setPostulaciones(List<Postulacion> postulaciones) {
+        this.postulaciones = postulaciones;
+    }
+
+    public void setEntrevistas(List<Entrevista> entrevistas) {
+        this.entrevistas = entrevistas;
     }
 }
