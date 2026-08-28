@@ -1,6 +1,6 @@
 package org.example;
 
-public enum DTGenero  {
-    MASCULINO,
-    FEMENINO
+public enum DTGenero {
+    Masculino,
+    Femenino
 }
