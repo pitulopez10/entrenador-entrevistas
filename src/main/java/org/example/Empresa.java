@@ -16,6 +16,7 @@ public class Empresa {
     private String descripcion;
     private String logo;
     private String sitioWeb;
+    private boolean bloqueado;
 
     // RELACIONES
     private List<OfertaLaboral> ofertasLaborales;
@@ -23,12 +24,19 @@ public class Empresa {
     // CONSTRUCTOR VACÍO
     public Empresa() {
         this.ofertasLaborales = new ArrayList<>();
+        this.bloqueado = false;
     }
 
     // CONSTRUCTOR COMPLETO
-    public Empresa(String descripcion, LocalDate fechaRegistro, String logo,
-                   String mail, String nombre, String password,
-                   String rut, String sitioWeb, int telefono) {
+    public Empresa(String descripcion,
+                   LocalDate fechaRegistro,
+                   String logo,
+                   String mail,
+                   String nombre,
+                   String password,
+                   String rut,
+                   String sitioWeb,
+                   int telefono) {
 
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
@@ -39,45 +47,52 @@ public class Empresa {
         this.rut = rut;
         this.sitioWeb = sitioWeb;
         this.telefono = telefono;
+
+        this.bloqueado = false;
+
         this.ofertasLaborales = new ArrayList<>();
     }
 
     // GETTERS
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public String getMail() {
-        return mail;
+    public String getRut() {
+        return rut;
     }
 
     public String getNombre() {
         return nombre;
     }
 
+    public String getMail() {
+        return mail;
+    }
+
     public String getPassword() {
         return password;
     }
 
-    public String getRut() {
-        return rut;
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public int getTelefono() {
+        return telefono;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getLogo() {
+        return logo;
     }
 
     public String getSitioWeb() {
         return sitioWeb;
     }
 
-    public int getTelefono() {
-        return telefono;
+    public boolean isBloqueado() {
+        return bloqueado;
     }
 
     public List<OfertaLaboral> getOfertasLaborales() {
@@ -86,40 +101,44 @@ public class Empresa {
 
     // SETTERS
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public void setFechaRegistro(LocalDate fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setRut(String rut) {
+        this.rut = rut;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setRut(String rut) {
-        this.rut = rut;
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    public void setTelefono(int telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public void setSitioWeb(String sitioWeb) {
         this.sitioWeb = sitioWeb;
     }
 
-    public void setTelefono(int telefono) {
-        this.telefono = telefono;
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
     }
 
     public void setOfertasLaborales(List<OfertaLaboral> ofertasLaborales) {

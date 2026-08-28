@@ -21,6 +21,7 @@ public class Postulante {
     private String localidad;
     private String datosEstudio;
     private String datosExperiencia;
+    private boolean bloqueado;
 
     // RELACIONES
     private List<Area> areas;
@@ -32,14 +33,23 @@ public class Postulante {
         this.areas = new ArrayList<>();
         this.postulaciones = new ArrayList<>();
         this.entrevistas = new ArrayList<>();
+        this.bloqueado = false;
     }
 
     // CONSTRUCTOR COMPLETO
-    public Postulante(int ci, String cv, String datosEstudio,
-                      String datosExperiencia, String descripcion,
-                      LocalDate fechaNacimiento, LocalDate fechaRegistro,
-                      String fotoPerfil, DTGenero genero, String localidad,
-                      String mail, String nombre, String password,
+    public Postulante(int ci,
+                      String cv,
+                      String datosEstudio,
+                      String datosExperiencia,
+                      String descripcion,
+                      LocalDate fechaNacimiento,
+                      LocalDate fechaRegistro,
+                      String fotoPerfil,
+                      DTGenero genero,
+                      String localidad,
+                      String mail,
+                      String nombre,
+                      String password,
                       int telefono) {
 
         this.ci = ci;
@@ -56,6 +66,8 @@ public class Postulante {
         this.nombre = nombre;
         this.password = password;
         this.telefono = telefono;
+
+        this.bloqueado = false;
 
         this.areas = new ArrayList<>();
         this.postulaciones = new ArrayList<>();
@@ -118,6 +130,10 @@ public class Postulante {
 
     public int getTelefono() {
         return telefono;
+    }
+
+    public boolean isBloqueado() {
+        return bloqueado;
     }
 
     public List<Area> getAreas() {
@@ -188,6 +204,10 @@ public class Postulante {
 
     public void setTelefono(int telefono) {
         this.telefono = telefono;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
     }
 
     public void setAreas(List<Area> areas) {
