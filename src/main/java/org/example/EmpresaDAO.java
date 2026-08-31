@@ -37,7 +37,6 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         }
     }
 
-    @Override
     public Empresa buscarPorId(String rut) throws SQLException {
 
         String sql = """

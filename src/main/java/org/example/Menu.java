@@ -8,6 +8,7 @@ public class Menu {
     // Instanciamos los DAOs que utilizará la interfaz
     private final PostulanteDAO postulanteDAO = new PostulanteDAO();
     private final AdministradorDAO adminDAO = new AdministradorDAO();
+    private final EmpresaDAO empresaDAO = new EmpresaDAO();
 
     private boolean isAdminAutenticado = false;
 
@@ -56,14 +57,14 @@ public class Menu {
         }
     }
 
-    private void validarAdministrador(Scanner teclado) {
+    private void validarAdministrador(Scanner scanner) {
         System.out.println("\n--------------------------------------------------");
         System.out.println("[VALIDACION DE ADMINISTRADOR]");
         System.out.println("--------------------------------------------------");
         System.out.print("Usuario: ");
-        String usuario = teclado.nextLine();
+        String usuario = scanner.nextLine();
         System.out.print("Password: ");
-        String password = teclado.nextLine();
+        String password = scanner.nextLine();
 
         try {
             if (adminDAO.validarCredenciales(usuario, password)) {
@@ -77,7 +78,7 @@ public class Menu {
         }
     }
 
-    private void menuAdministrador(Scanner teclado, PostulanteDAO postulanteDAO) {
+    private void menuAdministrador(Scanner scanner, PostulanteDAO postulanteDAO) {
         boolean salirAdmin = false;
 
         while (!salirAdmin) {
@@ -99,100 +100,142 @@ public class Menu {
             System.out.println("0. Volver al Menú Principal");
             System.out.print("Seleccione un Caso de Uso: ");
 
-            int opcionAdmin = teclado.nextInt();
-            teclado.nextLine(); // Limpiar buffer
+            int opcionAdmin = scanner.nextInt();
+            scanner.nextLine(); // Limpiar buffer
 
             try {
                 switch (opcionAdmin) {
                     case 1:
-                        System.out.println("\n[CU] Registrar Administrador...");
+                        System.out.println("\n Registrar Administrador...");
                         break;
                     case 2:
-                        System.out.println("\n[CU] Cerrando sesión de Administrador...");
+                        System.out.println("\n Cerrando sesión de Administrador...");
                         isAdminAutenticado = false;
                         salirAdmin = true;
                         break;
                     case 3:
-                        System.out.println("\n[CU] Listar todos los postulantes...");
+                        System.out.println("\n Listar todos los postulantes...");
                         break;
                     case 4:
-                        System.out.println("\n[CU] Bloquear/Desbloquear postulante...");
+                        System.out.println("\n Bloquear/Desbloquear postulante...");
                         break;
                     case 5:
-                        System.out.println("\n[CU 06] MODIFICAR POSTULANTE");
-                        ejecutarModificarPostulante(teclado, postulanteDAO);
+                        System.out.println("\n MODIFICAR POSTULANTE");
+                        ejecutarModificarPostulante(scanner, postulanteDAO);
                         break;
                     case 6:
-                        System.out.println("\n[CU] Eliminar postulante...");
+                        System.out.println("\n Eliminar postulante...");
                         break;
                     case 7:
-                        System.out.println("\n[CU] Bloquear/Desbloquear empresa...");
+                        System.out.println("\n BLOQUEAR / DESBLOQUEAR EMPRESA");
+                        ejecutarBloquearDesbloquearEmpresa(scanner);
                         break;
                     case 8:
-                        System.out.println("\n[CU] Eliminar empresa por RUT...");
+                        System.out.println("\n Eliminar empresa por RUT...");
                         break;
                     case 9:
-                        System.out.println("\n[CU] Listar todas las empresas...");
+                        System.out.println("\n Listar todas las empresas...");
                         break;
                     case 10:
-                        System.out.println("\n[CU] Modificar datos de empresa...");
+                        System.out.println("\n Modificar datos de empresa...");
                         break;
                     case 11:
-                        System.out.println("\n[CU] Listar ofertas laborales...");
+                        System.out.println("\n Listar ofertas laborales...");
                         break;
                     case 12:
-                        System.out.println("\n[CU] Eliminar ofertas laborales...");
+                        System.out.println("\n Eliminar ofertas laborales...");
                         break;
                     case 13:
-                        System.out.println("\n[CU] Listar postulaciones hechas...");
+                        System.out.println("\n Listar postulaciones hechas...");
                         break;
                     case 14:
-                        System.out.println("\n[CU] Eliminar postulación...");
+                        System.out.println("\n Eliminar postulación...");
                         break;
                     case 0:
                         salirAdmin = true;
                         System.out.println("\nSaliendo del Panel de Administrador...");
                         break;
                     default:
-                        System.out.println("\n[Error] Opción administrativa no válida.");
+                        System.out.println("\nError: Opción administrativa no válida.");
                 }
             } catch (SQLException e) {
-                System.out.println("\n[Error de BD] Ocurrió un problema ejecutando la opción: " + e.getMessage());
+                System.out.println("\nError: Ocurrió un problema ejecutando la opción: " + e.getMessage());
             }
         }
     }
 
-    private void ejecutarModificarPostulante(Scanner teclado, PostulanteDAO postulanteDAO) throws SQLException {
+    private void ejecutarModificarPostulante(Scanner scanner, PostulanteDAO postulanteDAO) throws SQLException {
         System.out.print("Ingrese la CI del postulante que desea modificar: ");
-        int ciBuscada = teclado.nextInt();
-        teclado.nextLine(); // Limpiar buffer
+        int ciBuscada = scanner.nextInt();
+        scanner.nextLine(); // Limpiar buffer
 
         Postulante encontrado = postulanteDAO.buscarPorId(ciBuscada);
 
         if (encontrado != null) {
-            System.out.println("-> ¡Postulante encontrado!: " + encontrado.getNombre());
+            System.out.println("Postulante encontrado: " + encontrado.getNombre());
 
             System.out.print("Nueva Localidad (" + encontrado.getLocalidad() + "): ");
-            String nuevaLocalidad = teclado.nextLine();
+            String nuevaLocalidad = scanner.nextLine();
             encontrado.setLocalidad(nuevaLocalidad);
 
             System.out.print("Nuevos Datos de Estudio (" + encontrado.getDatosEstudio() + "): ");
-            String nuevosEstudios = teclado.nextLine();
+            String nuevosEstudios = scanner.nextLine();
             encontrado.setDatosEstudio(nuevosEstudios);
 
             System.out.print("Nuevos Datos de Experiencia (" + encontrado.getDatosExperiencia() + "): ");
-            String nuevaExperiencia = teclado.nextLine();
+            String nuevaExperiencia = scanner.nextLine();
             encontrado.setDatosExperiencia(nuevaExperiencia);
 
             System.out.print("Nuevo Teléfono (" + encontrado.getTelefono() + "): ");
-            int nuevoTelefono = teclado.nextInt();
+            int nuevoTelefono = scanner.nextInt();
+            scanner.nextLine(); //Limpia el buffer
             encontrado.setTelefono(nuevoTelefono);
 
-            System.out.println("\n-> Guardando cambios en MariaDB...");
+            System.out.println("\n Guardando cambios en MariaDB...");
             postulanteDAO.modificar(encontrado);
-            System.out.println("=== [ÉXITO] El registro ha sido modificado correctamente ===");
+            System.out.println("El registro ha sido modificado correctamente");
         } else {
-            System.out.println("-> [ERROR] No existe ningún postulante registrado con la CI " + ciBuscada);
+            System.out.println("Error: No existe ningún postulante registrado con la CI " + ciBuscada);
+        }
+    }
+    private void ejecutarBloquearDesbloquearEmpresa(Scanner scanner) throws SQLException {
+        System.out.print("Ingrese el RUT de la empresa que desea gestionar: ");
+        String RUTBuscado = scanner.nextLine();
+
+        // Buscamos si la empresa existe en la BD
+        Empresa empresa = empresaDAO.buscarPorId(RUTBuscado);
+
+        if (empresa != null) {
+            System.out.println("Empresa encontrada: " + empresa.getNombre());
+
+            // Si está bloqueada, le ofrecemos desbloquear
+            if (empresa.isBloqueado()) {
+                System.out.println("Estado actual:BLOQUEADA");
+                System.out.print("¿Desea DESBLOQUEAR a esta empresa? (S/N): ");
+                String respuesta = scanner.nextLine().trim().toUpperCase();
+
+                if (respuesta.equals("S")) {
+                    empresaDAO.desbloquear(empresa.getRut());
+                    System.out.println("La empresa ha sido desbloqueada correctamente.");
+                } else {
+                    System.out.println("Operación cancelada. La empresa sigue bloqueada.");
+                }
+            }
+            // Si está activa, le ofrecemos BLOQUEAR
+            else {
+                System.out.println("Estado actual: DESBLOQUEADA");
+                System.out.print("¿Desea bloquear a esta empresa? (S/N): ");
+                String respuesta = scanner.nextLine().trim().toUpperCase();
+
+                if (respuesta.equals("S")) {
+                    empresaDAO.bloquear(empresa.getRut());
+                    System.out.println("La empresa ha sido bloqueada correctamente.");
+                } else {
+                    System.out.println("Operación cancelada. La empresa sigue activa.");
+                }
+            }
+        } else {
+            System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + RUTBuscado);
         }
     }
 }
