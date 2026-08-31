@@ -124,7 +124,8 @@ public class Menu {
             try {
                 switch (opcionAdmin) {
                     case 1:
-                        System.out.println("\n Registrar Administrador...");
+                        System.out.println("\n Registrar nuevo administrador: ");
+                        ejecutarRegistrarAdmin(scanner);
                         break;
                     case 2:
                         System.out.println("\n Cerrando sesión de Administrador...");
@@ -138,24 +139,25 @@ public class Menu {
                         System.out.println("\n Bloquear/Desbloquear postulante...");
                         break;
                     case 5:
-                        System.out.println("\n MODIFICAR POSTULANTE");
+                        System.out.println("\n Modificar postulante");
                         ejecutarModificarPostulante(scanner, postulanteDAO);
                         break;
                     case 6:
                         System.out.println("\n Eliminar postulante...");
                         break;
                     case 7:
-                        System.out.println("\n BLOQUEAR / DESBLOQUEAR EMPRESA");
+                        System.out.println("\n Bloquear / desbloquear empresa");
                         ejecutarBloquearDesbloquearEmpresa(scanner);
                         break;
                     case 8:
-                        System.out.println("\n Eliminar empresa por RUT...");
+                        System.out.println("\n Eliminar empresa por RUT");
+                        ejecutarEliminarEmpresa(scanner);
                         break;
                     case 9:
-                        System.out.println("\n Listar todas las empresas...");
+                        ejecutarListarEmpresas();
                         break;
                     case 10:
-                        System.out.println("\n MODIFICAR EMPRESA");
+                        System.out.println("\n Modificar empresa");
                         ejecutarModificarEmpresa(scanner);
                         break;
                     case 11:
@@ -172,13 +174,49 @@ public class Menu {
                         break;
                     case 0:
                         salirAdmin = true;
-                        System.out.println("\nSaliendo del Panel de Administrador...");
+                        System.out.println("\n Saliendo del Panel de Administrador...");
                         break;
                     default:
-                        System.out.println("\nError: Opción administrativa no válida.");
+                        System.out.println("\n Error: Opción administrativa no válida.");
                 }
             } catch (SQLException e) {
                 System.out.println("\nError: Ocurrió un problema ejecutando la opción: " + e.getMessage());
+            }
+        }
+    }
+
+    private void ejecutarRegistrarAdmin(Scanner scanner) throws SQLException {
+
+        System.out.print("Ingrese el nombre de usuario: ");
+        String usuario = scanner.nextLine().trim();
+
+        System.out.print("Ingrese la contraseña: ");
+        String password = scanner.nextLine().trim();
+
+        //Que no este vacio el campo
+        if (usuario.isEmpty() || password.isEmpty()) {
+            System.out.println("Error: Los campos no pueden estar vacíos.");
+            return;
+        }
+
+        if (adminDAO.buscarPorId(usuario) != null) {
+            System.out.println("Error: El usuario '" + usuario + "' ya existe. Elija otro nombre.");
+            return;
+        }
+
+        // 3. Instanciamos y guardamos
+        Administrador nuevoAdmin = new Administrador();
+        nuevoAdmin.setUsuario(usuario);
+        nuevoAdmin.setPassword(password);
+
+        try {
+            adminDAO.agregar(nuevoAdmin);
+            System.out.println("Administrador registrado correctamente.");
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) { // Código de error de MariaDB para PK duplicada
+                System.out.println("Error: El nombre de usuario ya se encuentra registrado.");
+            } else {
+                throw e;
             }
         }
     }
@@ -217,6 +255,7 @@ public class Menu {
             System.out.println("Error: No existe ningún postulante registrado con la CI " + ciBuscada);
         }
     }
+
     private void ejecutarBloquearDesbloquearEmpresa(Scanner scanner) throws SQLException {
         System.out.print("Ingrese el RUT de la empresa que desea gestionar: ");
         String RUTBuscado = scanner.nextLine();
@@ -257,7 +296,6 @@ public class Menu {
             System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + RUTBuscado);
         }
     }
-
     private void ejecutarModificarEmpresa(Scanner scanner) throws SQLException {
 
         // LISTAR EMPRESAS DISPONIBLES
@@ -376,6 +414,49 @@ public class Menu {
         empresaDAO.modificar(empresa);
 
         System.out.println("\nEmpresa modificada correctamente.");
+    }
+    private void ejecutarEliminarEmpresa(Scanner scanner) throws SQLException {
+        System.out.print("Ingrese el RUT de la empresa que desea eliminar: ");
+        String rutBuscado = scanner.nextLine().trim();
+
+        Empresa empresa = empresaDAO.buscarPorId(rutBuscado);
+
+        if (empresa != null) {
+            System.out.println("Empresa encontrada: " + empresa.getNombre() + " (RUT: " + empresa.getRut() + ")");
+            System.out.print("¿Está seguro que desea eliminar permanentemente esta empresa? (S/N): ");
+            String confirmacion = scanner.nextLine().trim().toUpperCase();
+
+            if (confirmacion.equals("S")) {
+                empresaDAO.eliminar(empresa.getRut());
+                System.out.println("La empresa ha sido eliminada correctamente del registro");
+            } else {
+                System.out.println("Operación cancelada. No se han realizado cambios.");
+            }
+        } else {
+            System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + rutBuscado);
+        }
+    }
+    private void ejecutarListarEmpresas() throws SQLException {
+        List<Empresa> empresas = empresaDAO.listar();
+
+        if (empresas.isEmpty()) {
+            System.out.println("No hay empresas registradas en el sistema.");
+        } else {
+            System.out.println("LISTADO DE EMPRESAS REGISTRADAS");
+            for (Empresa emp : empresas) {
+                String estado = emp.isBloqueado() ? "Bloqueada" : "Activa";
+
+                System.out.println("----------------------------------------");
+                System.out.println("RUT:          " + emp.getRut());
+                System.out.println("Nombre:       " + emp.getNombre());
+                System.out.println("Email:        " + emp.getMail());
+                System.out.println("Teléfono:     " + emp.getTelefono());
+                System.out.println("Sitio Web:    " + emp.getSitioWeb());
+                System.out.println("Estado:       " + estado);
+            }
+            System.out.println("----------------------------------------");
+            System.out.println("Total de registros: " + empresas.size());
+        }
     }
 
     private void ejecutarListarOfertas() throws SQLException {
