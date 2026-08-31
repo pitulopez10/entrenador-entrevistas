@@ -2,6 +2,7 @@ package org.example;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.List;
 
 public class Menu {
 
@@ -9,6 +10,7 @@ public class Menu {
     private final PostulanteDAO postulanteDAO = new PostulanteDAO();
     private final AdministradorDAO adminDAO = new AdministradorDAO();
     private final EmpresaDAO empresaDAO = new EmpresaDAO();
+    private final OfertaLaboralDAO ofertaLaboralDAO = new OfertaLaboralDAO();
 
     private boolean isAdminAutenticado = false;
 
@@ -31,7 +33,7 @@ public class Menu {
                     case 1:
                         // Si no está validado, le pide credenciales primero
                         if (!isAdminAutenticado) {
-                            validarAdministrador(scanner);
+                            iniciarSesionAdministrador(scanner);
                         }
                         // Si la validación pasó con éxito, abre su panel
                         if (isAdminAutenticado) {
@@ -57,24 +59,40 @@ public class Menu {
         }
     }
 
-    private void validarAdministrador(Scanner scanner) {
-        System.out.println("\n--------------------------------------------------");
-        System.out.println("[VALIDACION DE ADMINISTRADOR]");
-        System.out.println("--------------------------------------------------");
+    private void iniciarSesionAdministrador(Scanner scanner) {
+        System.out.println("\n------------------------------");
+        System.out.println("INICIAR SESIÓN");
+        System.out.println("------------------------------");
+
         System.out.print("Usuario: ");
-        String usuario = scanner.nextLine();
-        System.out.print("Password: ");
+        String usuario = scanner.nextLine().trim();
+
+        System.out.print("Contraseña: ");
         String password = scanner.nextLine();
+
+        if (usuario.isEmpty() || password.isEmpty()) {
+            System.out.println("Error: El usuario y la contraseña son obligatorios.");
+            return;
+        }
 
         try {
             if (adminDAO.validarCredenciales(usuario, password)) {
                 isAdminAutenticado = true;
-                System.out.println("¡Validación exitosa! Bienvenido, Administrador Central.");
+
+                System.out.println(
+                        "Inicio de sesión exitoso. Bienvenido " + usuario + "."
+                );
+
             } else {
-                System.out.println("Error: Credenciales incorrectas. Acceso denegado.");
+                System.out.println(
+                        "Error: Usuario o contraseña incorrectos."
+                );
             }
+
         } catch (SQLException e) {
-            System.out.println("Error: No se pudo procesar la validación: " + e.getMessage());
+            System.out.println(
+                    "Error al acceder a la base de datos: " + e.getMessage()
+            );
         }
     }
 
@@ -137,10 +155,11 @@ public class Menu {
                         System.out.println("\n Listar todas las empresas...");
                         break;
                     case 10:
-                        System.out.println("\n Modificar datos de empresa...");
+                        System.out.println("\n MODIFICAR EMPRESA");
+                        ejecutarModificarEmpresa(scanner);
                         break;
                     case 11:
-                        System.out.println("\n Listar ofertas laborales...");
+                        ejecutarListarOfertas();
                         break;
                     case 12:
                         System.out.println("\n Eliminar ofertas laborales...");
@@ -236,6 +255,162 @@ public class Menu {
             }
         } else {
             System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + RUTBuscado);
+        }
+    }
+
+    private void ejecutarModificarEmpresa(Scanner scanner) throws SQLException {
+
+        // LISTAR EMPRESAS DISPONIBLES
+        List<Empresa> empresas = empresaDAO.listar();
+
+        if (empresas.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+            return;
+        }
+
+        System.out.println("\n------------------------------");
+        System.out.println("EMPRESAS REGISTRADAS");
+        System.out.println("------------------------------");
+
+        for (Empresa empresa : empresas) {
+            System.out.println("RUT: " + empresa.getRut());
+            System.out.println("Nombre: " + empresa.getNombre());
+            System.out.println("Mail: " + empresa.getMail());
+            System.out.println("------------------------------");
+        }
+
+        // PEDIR EMPRESA A MODIFICAR
+        System.out.print("\nIngrese el RUT de la empresa que desea modificar: ");
+        String rutBuscado = scanner.nextLine().trim();
+
+        Empresa empresa = empresaDAO.buscarPorId(rutBuscado);
+
+        if (empresa == null) {
+            System.out.println(
+                    "Error: No existe ninguna empresa registrada con el RUT: "
+                            + rutBuscado
+            );
+            return;
+        }
+
+        System.out.println("\nEmpresa seleccionada: " + empresa.getNombre());
+
+        // NOMBRE
+        System.out.print("Nuevo nombre (" + empresa.getNombre() + "): ");
+        String nuevoNombre = scanner.nextLine().trim();
+
+        if (!nuevoNombre.isEmpty()) {
+            empresa.setNombre(nuevoNombre);
+        }
+
+        // MAIL
+        System.out.print("Nuevo mail (" + empresa.getMail() + "): ");
+        String nuevoMail = scanner.nextLine().trim();
+
+        if (!nuevoMail.isEmpty()) {
+            empresa.setMail(nuevoMail);
+        }
+
+        // DESCRIPCIÓN
+        System.out.print(
+                "Nueva descripción (" + empresa.getDescripcion() + "): "
+        );
+        String nuevaDescripcion = scanner.nextLine().trim();
+
+        if (!nuevaDescripcion.isEmpty()) {
+            empresa.setDescripcion(nuevaDescripcion);
+        }
+
+        // SITIO WEB
+        System.out.print(
+                "Nuevo sitio web (" + empresa.getSitioWeb() + "): "
+        );
+        String nuevoSitioWeb = scanner.nextLine().trim();
+
+        if (!nuevoSitioWeb.isEmpty()) {
+            empresa.setSitioWeb(nuevoSitioWeb);
+        }
+
+        // LOGO
+        System.out.print(
+                "Nuevo logo (" + empresa.getLogo() + "): "
+        );
+        String nuevoLogo = scanner.nextLine().trim();
+
+        if (!nuevoLogo.isEmpty()) {
+            empresa.setLogo(nuevoLogo);
+        }
+
+        // TELÉFONO
+        System.out.print(
+                "Nuevo teléfono (" + empresa.getTelefono() + "): "
+        );
+        String telefonoIngresado = scanner.nextLine().trim();
+
+        if (!telefonoIngresado.isEmpty()) {
+
+            try {
+
+                int nuevoTelefono = Integer.parseInt(telefonoIngresado);
+
+                if (nuevoTelefono <= 0) {
+                    System.out.println(
+                            "Error: El teléfono debe ser mayor a 0."
+                    );
+                    return;
+                }
+
+                empresa.setTelefono(nuevoTelefono);
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "Error: El teléfono debe ser un número válido."
+                );
+
+                return;
+            }
+        }
+
+        // GUARDAR CAMBIOS
+        empresaDAO.modificar(empresa);
+
+        System.out.println("\nEmpresa modificada correctamente.");
+    }
+
+    private void ejecutarListarOfertas() throws SQLException {
+
+        List<OfertaLaboral> ofertas = ofertaLaboralDAO.listar();
+
+        System.out.println("\n------------------------------------------");
+        System.out.println("          OFERTAS LABORALES");
+        System.out.println("------------------------------------------");
+
+        if (ofertas.isEmpty()) {
+            System.out.println("No hay ofertas laborales registradas.");
+            return;
+        }
+
+        for (OfertaLaboral oferta : ofertas) {
+
+            System.out.println("ID: " + oferta.getId());
+            System.out.println("Título: " + oferta.getTitulo());
+            System.out.println("Descripción: " + oferta.getDescripcion());
+            System.out.println("Requisitos: " + oferta.getRequisitos());
+            System.out.println("Fecha publicación: " + oferta.getFechaPublicacion());
+            System.out.println("Fecha cierre: " + oferta.getFechaCierre());
+            System.out.println("Estado: " + oferta.getEstado());
+
+            if (oferta.getEmpresa() != null) {
+                System.out.println(
+                        "Empresa: " +
+                                oferta.getEmpresa().getNombre() +
+                                " - RUT: " +
+                                oferta.getEmpresa().getRut()
+                );
+            }
+
+            System.out.println("------------------------------------------");
         }
     }
 }
