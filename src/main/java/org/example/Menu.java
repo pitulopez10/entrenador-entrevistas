@@ -11,6 +11,7 @@ public class Menu {
     private final AdministradorDAO adminDAO = new AdministradorDAO();
     private final EmpresaDAO empresaDAO = new EmpresaDAO();
     private final OfertaLaboralDAO ofertaLaboralDAO = new OfertaLaboralDAO();
+    private final PostulacionDAO postulacionDAO = new PostulacionDAO();
 
     private boolean isAdminAutenticado = false;
 
@@ -169,7 +170,7 @@ public class Menu {
                         System.out.println("\n Eliminar ofertas laborales...");
                         break;
                     case 13:
-                        System.out.println("\n Listar postulaciones hechas...");
+                        ejecutarListarPostulaciones();
                         break;
                     case 14:
                         System.out.println("\n Eliminar postulación...");
@@ -557,6 +558,54 @@ public class Menu {
                                 oferta.getEmpresa().getRut()
                 );
             }
+
+            System.out.println("------------------------------------------");
+        }
+    }
+    private void ejecutarListarPostulaciones() throws SQLException {
+
+        List<Postulacion> postulaciones = postulacionDAO.listar();
+
+        System.out.println("\n------------------------------------------");
+        System.out.println("              POSTULACIONES");
+        System.out.println("------------------------------------------");
+
+        if (postulaciones.isEmpty()) {
+            System.out.println("No hay postulaciones registradas.");
+            return;
+        }
+
+        for (Postulacion postulacion : postulaciones) {
+
+            System.out.println(
+                    "ID postulación: " + postulacion.getId()
+            );
+
+            System.out.println(
+                    "Fecha: " + postulacion.getFechaPostulacion()
+            );
+
+            System.out.println(
+                    "Estado: " + postulacion.getEstado()
+            );
+
+            System.out.println(
+                    "Mensaje: " + postulacion.getMensaje()
+            );
+
+            System.out.println(
+                    "Postulante: "
+                            + postulacion.getPostulante().getNombre()
+                            + " - CI: "
+                            + postulacion.getPostulante().getCi()
+            );
+
+            System.out.println(
+                    "Oferta: "
+                            + postulacion.getOfertaLaboral().getTitulo()
+                            + " - ID: "
+                            + postulacion.getOfertaLaboral().getId()
+            );
 
             System.out.println("------------------------------------------");
         }
