@@ -134,9 +134,11 @@ public class Menu {
                         break;
                     case 3:
                         System.out.println("\n Listar todos los postulantes...");
+                        ejecutarListarPostulantes();
                         break;
                     case 4:
                         System.out.println("\n Bloquear/Desbloquear postulante...");
+                        ejecutarBloqDesbloqPostulante(scanner);
                         break;
                     case 5:
                         System.out.println("\n Modificar postulante");
@@ -296,6 +298,7 @@ public class Menu {
             System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + RUTBuscado);
         }
     }
+
     private void ejecutarModificarEmpresa(Scanner scanner) throws SQLException {
 
         // LISTAR EMPRESAS DISPONIBLES
@@ -456,6 +459,70 @@ public class Menu {
             }
             System.out.println("----------------------------------------");
             System.out.println("Total de registros: " + empresas.size());
+        }
+    }
+    private void ejecutarListarPostulantes() throws SQLException {
+        List<Postulante> postulantes = postulanteDAO.listar();
+
+        if (postulantes.isEmpty()) {
+            System.out.println("No hay postulantes registrados en el sistema.");
+        } else {
+            System.out.println("LISTADO DE POSTULANTES REGISTRADOS");
+            for (Postulante postulante : postulantes) {
+                String estado = postulante.isBloqueado() ? "Bloqueado" : "Activo";
+
+                System.out.println("----------------------------------------");
+                System.out.println("CI:           " + postulante.getCi());
+                System.out.println("Nombre:       " + postulante.getNombre());
+                System.out.println("Email:        " + postulante.getMail());
+                System.out.println("Teléfono:     " + postulante.getTelefono());
+                System.out.println("Localidad:    " + postulante.getLocalidad());
+                System.out.println("Estado:       " + estado);
+            }
+            System.out.println("----------------------------------------");
+            System.out.println("Total de registros: " + postulantes.size());
+        }
+    }
+
+    private void ejecutarBloqDesbloqPostulante (Scanner scanner) throws SQLException{
+        ejecutarListarPostulantes();
+        if (postulanteDAO.listar().isEmpty()){
+            return;
+        }
+        System.out.print("\nIngrese la CI del postulante que desea gestionar: ");
+        int ciBuscada = scanner.nextInt();
+        scanner.nextLine(); // limpiar buffer
+
+        Postulante postulante = postulanteDAO.buscarPorId(ciBuscada);
+
+        if (postulante != null) {
+            System.out.println("Postulante encontrado: " + postulante.getNombre());
+
+            if (postulante.isBloqueado()) {
+                System.out.println("Estado actual: BLOQUEADO");
+                System.out.print("¿Desea DESBLOQUEAR a este postulante? (S/N): ");
+                String respuesta = scanner.nextLine().trim().toUpperCase();
+
+                if (respuesta.equals("S")) {
+                    postulanteDAO.desbloquear(postulante.getCi());
+                    System.out.println("El postulante ha sido desbloqueado correctamente.");
+                } else {
+                    System.out.println("Operación cancelada. El postulante sigue bloqueado.");
+                }
+            } else {
+                System.out.println("Estado actual: ACTIVO");
+                System.out.print("¿Desea bloquear a este postulante? (S/N): ");
+                String respuesta = scanner.nextLine().trim().toUpperCase();
+
+                if (respuesta.equals("S")) {
+                    postulanteDAO.bloquear(postulante.getCi());
+                    System.out.println("El postulante ha sido bloqueado correctamente.");
+                } else {
+                    System.out.println("Operación cancelada. El postulante sigue activo.");
+                }
+            }
+        } else {
+            System.out.println("Error: No existe ningún postulante registrado con la CI " + ciBuscada);
         }
     }
 
