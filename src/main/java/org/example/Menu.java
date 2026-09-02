@@ -173,7 +173,7 @@ public class Menu {
                         ejecutarListarPostulaciones();
                         break;
                     case 14:
-                        System.out.println("\n Eliminar postulación...");
+                        ejecutarEliminarPostulacion(scanner);
                         break;
                     case 0:
                         salirAdmin = true;
@@ -609,5 +609,87 @@ public class Menu {
 
             System.out.println("------------------------------------------");
         }
+    }
+    private void ejecutarEliminarPostulacion(Scanner scanner) throws SQLException {
+
+        System.out.println("\n------------------------------------------");
+        System.out.println("          ELIMINAR POSTULACIÓN");
+        System.out.println("------------------------------------------");
+
+        // Primero mostramos las postulaciones existentes
+        List<Postulacion> postulaciones = postulacionDAO.listar();
+
+        if (postulaciones.isEmpty()) {
+            System.out.println("No hay postulaciones registradas.");
+            return;
+        }
+
+        for (Postulacion postulacion : postulaciones) {
+
+            System.out.println("ID: " + postulacion.getId());
+
+            System.out.println(
+                    "Postulante: "
+                            + postulacion.getPostulante().getNombre()
+                            + " - CI: "
+                            + postulacion.getPostulante().getCi()
+            );
+
+            System.out.println(
+                    "Oferta: "
+                            + postulacion.getOfertaLaboral().getTitulo()
+                            + " - ID: "
+                            + postulacion.getOfertaLaboral().getId()
+            );
+
+            System.out.println(
+                    "Estado: " + postulacion.getEstado()
+            );
+
+            System.out.println("------------------------------------------");
+        }
+
+        System.out.print("\nIngrese el ID de la postulación que desea eliminar: ");
+        String idIngresado = scanner.nextLine().trim();
+
+        int id;
+
+        try {
+            id = Integer.parseInt(idIngresado);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID debe ser un número.");
+            return;
+        }
+
+        // Verificamos que exista
+        Postulacion postulacion = postulacionDAO.buscarPorId(id);
+
+        if (postulacion == null) {
+            System.out.println(
+                    "Error: No existe una postulación con ID " + id + "."
+            );
+            return;
+        }
+
+        System.out.println("\nPostulación seleccionada:");
+        System.out.println("ID: " + postulacion.getId());
+        System.out.println(
+                "Postulante: " + postulacion.getPostulante().getNombre()
+        );
+        System.out.println(
+                "Oferta: " + postulacion.getOfertaLaboral().getTitulo()
+        );
+
+        System.out.print("\n¿Confirma que desea eliminarla? (S/N): ");
+        String confirmacion = scanner.nextLine().trim();
+
+        if (!confirmacion.equalsIgnoreCase("S")) {
+            System.out.println("Eliminación cancelada.");
+            return;
+        }
+
+        postulacionDAO.eliminar(id);
+
+        System.out.println("Postulación eliminada correctamente.");
     }
 }
