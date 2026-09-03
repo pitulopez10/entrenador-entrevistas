@@ -5,7 +5,6 @@ public class Respuesta {
     // ATRIBUTOS
     private int id;
     private String texto;
-    private float puntajeRespuesta;
 
     // RELACIÓN
     private Pregunta pregunta;
@@ -17,12 +16,10 @@ public class Respuesta {
 
     // CONSTRUCTOR COMPLETO
     public Respuesta(int id,
-                     float puntajeRespuesta,
                      String texto,
                      Pregunta pregunta) {
 
         this.id = id;
-        this.puntajeRespuesta = puntajeRespuesta;
         this.texto = texto;
         this.pregunta = pregunta;
     }
@@ -31,10 +28,6 @@ public class Respuesta {
 
     public int getId() {
         return id;
-    }
-
-    public float getPuntajeRespuesta() {
-        return puntajeRespuesta;
     }
 
     public String getTexto() {
@@ -49,10 +42,6 @@ public class Respuesta {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setPuntajeRespuesta(float puntajeRespuesta) {
-        this.puntajeRespuesta = puntajeRespuesta;
     }
 
     public void setTexto(String texto) {

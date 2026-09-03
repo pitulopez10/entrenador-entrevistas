@@ -10,7 +10,6 @@ public class Entrevista {
     private int id;
     private LocalDate fecha;
     private int duracionMin;
-    private float puntajeTotal;
     private EstadoEntrevista estado;
 
     // RELACIONES
@@ -29,7 +28,6 @@ public class Entrevista {
                       EstadoEntrevista estado,
                       LocalDate fecha,
                       int id,
-                      float puntajeTotal,
                       Postulante postulante,
                       OfertaLaboral ofertaLaboral,
                       RetroAlimentacion retroAlimentacion) {
@@ -38,7 +36,6 @@ public class Entrevista {
         this.estado = estado;
         this.fecha = fecha;
         this.id = id;
-        this.puntajeTotal = puntajeTotal;
 
         this.postulante = postulante;
         this.ofertaLaboral = ofertaLaboral;
@@ -63,10 +60,6 @@ public class Entrevista {
 
     public int getId() {
         return id;
-    }
-
-    public float getPuntajeTotal() {
-        return puntajeTotal;
     }
 
     public Postulante getPostulante() {
@@ -101,10 +94,6 @@ public class Entrevista {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setPuntajeTotal(float puntajeTotal) {
-        this.puntajeTotal = puntajeTotal;
     }
 
     public void setPostulante(Postulante postulante) {
