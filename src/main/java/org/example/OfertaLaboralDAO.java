@@ -16,7 +16,37 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
 
     @Override
     public OfertaLaboral buscarPorId(Integer id) throws SQLException {
-        return null;
+        String sql = """
+                SELECT *
+                FROM ofertalaboral
+                WHERE id = ?
+                """;
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    OfertaLaboral oferta = new OfertaLaboral();
+
+                    oferta.setId(rs.getInt("id"));
+                    oferta.setTitulo(rs.getString("titulo"));
+                    oferta.setDescripcion(rs.getString("descripcion"));
+                    oferta.setRequisitos(rs.getString("requisitos"));
+
+                    if (rs.getDate("fechaPublicacion") != null) {
+                        oferta.setFechaPublicacion(rs.getDate("fechaPublicacion").toLocalDate());
+                    }
+                    if (rs.getDate("fechaCierre") != null) {
+                        oferta.setFechaCierre(rs.getDate("fechaCierre").toLocalDate());
+                    }
+                    oferta.setEstado(EstadoEntrevista.valueOf(rs.getString("estado").toUpperCase()));
+
+                    return oferta;
+                }
+                return null;
+            }
+        }
     }
 
     @Override
@@ -82,6 +112,31 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
 
     @Override
     public void eliminar(Integer id) throws SQLException {
+        String sqlPostulaciones = """
+            
+                DELETE FROM postulacion
+            WHERE ofertalaboral_id = ?
+            """;
 
+        String sqlOferta =
+                """
+            DELETE FROM
+                ofertalaboral
+                            WHERE id = ?
+            """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion()) {
+
+
+            try (PreparedStatement stmtPostulaciones = conexion.prepareStatement(sqlPostulaciones)) {
+                stmtPostulaciones.setInt(1, id);
+                stmtPostulaciones.executeUpdate();
+            }
+
+            try (PreparedStatement stmtOferta = conexion.prepareStatement(sqlOferta)) {
+                stmtOferta.setInt(1, id);
+                stmtOferta.executeUpdate();
+        }
     }
+}
 }

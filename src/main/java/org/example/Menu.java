@@ -168,6 +168,7 @@ public class Menu {
                         break;
                     case 12:
                         System.out.println("\n Eliminar ofertas laborales...");
+                        ejecutarEliminarOferta(scanner);
                         break;
                     case 13:
                         ejecutarListarPostulaciones();
@@ -691,5 +692,34 @@ public class Menu {
         postulacionDAO.eliminar(id);
 
         System.out.println("Postulación eliminada correctamente.");
-    }
+
 }
+private void ejecutarEliminarOferta(Scanner scanner) throws SQLException {
+
+    ejecutarListarOfertas();
+
+    if (ofertaLaboralDAO.listar().isEmpty()) {
+        return;
+    }
+
+    System.out.print("\nIngrese el ID de la oferta que desea eliminar: ");
+    int idBuscado = scanner.nextInt();
+    scanner.nextLine();
+
+    OfertaLaboral oferta = ofertaLaboralDAO.buscarPorId(idBuscado);
+
+    if (oferta != null) {
+        System.out.println("Oferta encontrada: " + oferta.getTitulo() + " (ID: " + oferta.getId() + ")");
+        System.out.print("¿Está seguro que desea eliminar permanentemente esta oferta? (S/N): ");
+        String confirmacion = scanner.nextLine().trim().toUpperCase();
+
+        if (confirmacion.equals("S")) {
+            ofertaLaboralDAO.eliminar(oferta.getId());
+            System.out.println("La oferta ha sido eliminada correctamente, junto con sus postulaciones asociadas.");
+        } else {
+            System.out.println("Operación cancelada. No se han realizado cambios.");
+        }
+    } else {
+        System.out.println("Error: No existe ninguna oferta registrada con el ID " + idBuscado);
+    }
+}}
