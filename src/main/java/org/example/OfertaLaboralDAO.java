@@ -139,4 +139,48 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
         }
     }
 }
+
+    public List<OfertaLaboral> listarPorEmpresa(String rut) throws SQLException {
+
+        List<OfertaLaboral> ofertas = new ArrayList<>();
+
+        String sql = """
+        SELECT o.*, e.nombre AS nombreEmpresa
+        FROM ofertalaboral o
+        JOIN empresa e ON o.empresa_rut = e.rut
+        WHERE o.empresa_rut = ?
+        ORDER BY o.id
+        """;
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)){
+             stmt.setString(1, rut);
+             try(ResultSet rs= stmt.executeQuery()){
+                while(rs.next()){
+                    OfertaLaboral oferta = new OfertaLaboral();
+
+                    oferta.setId(rs.getInt("id"));
+                    oferta.setTitulo(rs.getString("titulo"));
+                    oferta.setDescripcion(rs.getString("descripcion"));
+                    oferta.setRequisitos(rs.getString("requisitos"));
+
+                    if (rs.getDate("fechaPublicacion") != null) {
+                        oferta.setFechaPublicacion(rs.getDate("fechaPublicacion").toLocalDate());
+                    }
+                    if (rs.getDate("fechaCierre") != null) {
+                        oferta.setFechaCierre(rs.getDate("fechaCierre").toLocalDate());
+                    }
+
+                    oferta.setEstado(EstadoEntrevista.valueOf(rs.getString("estado").toUpperCase()));
+
+                    ofertas.add(oferta);
+                }
+             }
+        }
+        return ofertas;
+    }
+
+
+
+
+
 }

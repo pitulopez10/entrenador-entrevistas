@@ -292,4 +292,55 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
             stmt.executeUpdate();
         }
     }
+    public List<Postulacion> listarPorPostulante(int ci) throws SQLException {
+
+        List<Postulacion> postulaciones = new ArrayList<>();
+
+        String sql = """
+            SELECT p.*, o.titulo AS tituloOferta, o.id AS ofertaId, e.nombre AS nombreEmpresa
+            FROM postulacion p
+            JOIN ofertalaboral o ON p.ofertalaboral_id = o.id
+            JOIN empresa e ON o.empresa_rut = e.rut
+            WHERE p.postulante_ci = ?
+            ORDER BY p.fechaPostulacion
+            """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setInt(1, ci);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    Postulacion postulacion = new Postulacion();
+                    postulacion.setId(rs.getInt("id"));
+                    postulacion.setFechaPostulacion(rs.getDate("fechaPostulacion").toLocalDate());
+                    postulacion.setMensaje(rs.getString("mensaje"));
+
+                    postulacion.setEstado(EstadoPostulacion.valueOf(rs.getString("estado")));
+
+                    // una oferta solo con lo que necesitamos mostrar
+                    OfertaLaboral oferta = new OfertaLaboral();
+                    oferta.setId(rs.getInt("ofertaId"));
+                    oferta.setTitulo(rs.getString("tituloOferta"));
+                    postulacion.setOfertaLaboral(oferta);
+
+                    // Idem con una empresa
+                    Empresa empresa = new Empresa();
+                    empresa.setNombre(rs.getString("nombreEmpresa"));
+                    oferta.setEmpresa(empresa);
+
+                    postulaciones.add(postulacion);
+                }
+            }
+        }
+
+        return postulaciones;
+    }
+
+
+
+
 }

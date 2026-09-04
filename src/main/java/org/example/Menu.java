@@ -107,7 +107,7 @@ public class Menu {
             System.out.println("3. Listar postulantes");
             System.out.println("4. Bloquear/desbloquear postulante");
             System.out.println("5. Modificar postulante");
-            System.out.println("6. Eliminar postulante");
+            System.out.println("6. Consultar ofertas de una empresa");
             System.out.println("7. Bloquear/desbloquear empresa");
             System.out.println("8. Eliminar empresas");
             System.out.println("9. Listar empresas");
@@ -116,6 +116,7 @@ public class Menu {
             System.out.println("12. Eliminar ofertas");
             System.out.println("13. Listar Postulaciones");
             System.out.println("14. Eliminar postulacion");
+            System.out.println("15. Consultar postulaciones de un usuario");
             System.out.println("0. Volver al Menú Principal");
             System.out.print("Seleccione un Caso de Uso: ");
 
@@ -134,11 +135,11 @@ public class Menu {
                         salirAdmin = true;
                         break;
                     case 3:
-                        System.out.println("\n Listar todos los postulantes...");
+                        System.out.println("\n Listar todos los postulantes");
                         ejecutarListarPostulantes();
                         break;
                     case 4:
-                        System.out.println("\n Bloquear/Desbloquear postulante...");
+                        System.out.println("\n Bloquear/Desbloquear postulante");
                         ejecutarBloqDesbloqPostulante(scanner);
                         break;
                     case 5:
@@ -146,7 +147,8 @@ public class Menu {
                         ejecutarModificarPostulante(scanner, postulanteDAO);
                         break;
                     case 6:
-                        System.out.println("\n Eliminar postulante...");
+                        System.out.println("\n Consultar ofertas de una empresa");
+                        ejecutarConsultarOfertasEmp(scanner);
                         break;
                     case 7:
                         System.out.println("\n Bloquear / desbloquear empresa");
@@ -167,7 +169,7 @@ public class Menu {
                         ejecutarListarOfertas();
                         break;
                     case 12:
-                        System.out.println("\n Eliminar ofertas laborales...");
+                        System.out.println("\n Eliminar ofertas laborales");
                         ejecutarEliminarOferta(scanner);
                         break;
                     case 13:
@@ -175,6 +177,10 @@ public class Menu {
                         break;
                     case 14:
                         ejecutarEliminarPostulacion(scanner);
+                        break;
+                    case 15:
+                        System.out.println("\n Consultar postulaciones por usuario ");
+                        ejecutarConsultarPostulacionUsu(scanner);
                         break;
                     case 0:
                         salirAdmin = true;
@@ -228,7 +234,7 @@ public class Menu {
     private void ejecutarModificarPostulante(Scanner scanner, PostulanteDAO postulanteDAO) throws SQLException {
         System.out.print("Ingrese la CI del postulante que desea modificar: ");
         int ciBuscada = scanner.nextInt();
-        scanner.nextLine(); // Limpiar buffer
+        scanner.nextLine();
 
         Postulante encontrado = postulanteDAO.buscarPorId(ciBuscada);
 
@@ -249,7 +255,7 @@ public class Menu {
 
             System.out.print("Nuevo Teléfono (" + encontrado.getTelefono() + "): ");
             int nuevoTelefono = scanner.nextInt();
-            scanner.nextLine(); //Limpia el buffer
+            scanner.nextLine();
             encontrado.setTelefono(nuevoTelefono);
 
             System.out.println("\n Guardando cambios en MariaDB...");
@@ -420,6 +426,7 @@ public class Menu {
 
         System.out.println("\nEmpresa modificada correctamente.");
     }
+
     private void ejecutarEliminarEmpresa(Scanner scanner) throws SQLException {
         System.out.print("Ingrese el RUT de la empresa que desea eliminar: ");
         String rutBuscado = scanner.nextLine().trim();
@@ -441,6 +448,7 @@ public class Menu {
             System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + rutBuscado);
         }
     }
+
     private void ejecutarListarEmpresas() throws SQLException {
         List<Empresa> empresas = empresaDAO.listar();
 
@@ -463,6 +471,7 @@ public class Menu {
             System.out.println("Total de registros: " + empresas.size());
         }
     }
+
     private void ejecutarListarPostulantes() throws SQLException {
         List<Postulante> postulantes = postulanteDAO.listar();
 
@@ -486,9 +495,9 @@ public class Menu {
         }
     }
 
-    private void ejecutarBloqDesbloqPostulante (Scanner scanner) throws SQLException{
+    private void ejecutarBloqDesbloqPostulante(Scanner scanner) throws SQLException {
         ejecutarListarPostulantes();
-        if (postulanteDAO.listar().isEmpty()){
+        if (postulanteDAO.listar().isEmpty()) {
             return;
         }
         System.out.print("\nIngrese la CI del postulante que desea gestionar: ");
@@ -563,6 +572,7 @@ public class Menu {
             System.out.println("------------------------------------------");
         }
     }
+
     private void ejecutarListarPostulaciones() throws SQLException {
 
         List<Postulacion> postulaciones = postulacionDAO.listar();
@@ -611,6 +621,7 @@ public class Menu {
             System.out.println("------------------------------------------");
         }
     }
+
     private void ejecutarEliminarPostulacion(Scanner scanner) throws SQLException {
 
         System.out.println("\n------------------------------------------");
@@ -693,33 +704,129 @@ public class Menu {
 
         System.out.println("Postulación eliminada correctamente.");
 
-}
-private void ejecutarEliminarOferta(Scanner scanner) throws SQLException {
-
-    ejecutarListarOfertas();
-
-    if (ofertaLaboralDAO.listar().isEmpty()) {
-        return;
     }
 
-    System.out.print("\nIngrese el ID de la oferta que desea eliminar: ");
-    int idBuscado = scanner.nextInt();
-    scanner.nextLine();
+    private void ejecutarEliminarOferta(Scanner scanner) throws SQLException {
 
-    OfertaLaboral oferta = ofertaLaboralDAO.buscarPorId(idBuscado);
+        ejecutarListarOfertas();
 
-    if (oferta != null) {
-        System.out.println("Oferta encontrada: " + oferta.getTitulo() + " (ID: " + oferta.getId() + ")");
-        System.out.print("¿Está seguro que desea eliminar permanentemente esta oferta? (S/N): ");
-        String confirmacion = scanner.nextLine().trim().toUpperCase();
-
-        if (confirmacion.equals("S")) {
-            ofertaLaboralDAO.eliminar(oferta.getId());
-            System.out.println("La oferta ha sido eliminada correctamente, junto con sus postulaciones asociadas.");
-        } else {
-            System.out.println("Operación cancelada. No se han realizado cambios.");
+        if (ofertaLaboralDAO.listar().isEmpty()) {
+            return;
         }
-    } else {
-        System.out.println("Error: No existe ninguna oferta registrada con el ID " + idBuscado);
+
+        System.out.print("\nIngrese el ID de la oferta que desea eliminar: ");
+        int idBuscado = scanner.nextInt();
+        scanner.nextLine();
+
+        OfertaLaboral oferta = ofertaLaboralDAO.buscarPorId(idBuscado);
+
+        if (oferta != null) {
+            System.out.println("Oferta encontrada: " + oferta.getTitulo() + " (ID: " + oferta.getId() + ")");
+            System.out.print("¿Está seguro que desea eliminar permanentemente esta oferta? (S/N): ");
+            String confirmacion = scanner.nextLine().trim().toUpperCase();
+
+            if (confirmacion.equals("S")) {
+                ofertaLaboralDAO.eliminar(oferta.getId());
+                System.out.println("La oferta ha sido eliminada correctamente, junto con sus postulaciones asociadas.");
+            } else {
+                System.out.println("Operación cancelada. No se han realizado cambios.");
+            }
+        } else {
+            System.out.println("Error: No existe ninguna oferta registrada con el ID " + idBuscado);
+        }
     }
-}}
+
+    private void ejecutarConsultarOfertasEmp(Scanner scanner) throws SQLException{
+
+        List<Empresa> empresas = empresaDAO.listar();
+
+        if (empresas.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+            return;
+        }
+
+        System.out.println("\nEmpresas registradas:");
+        for (Empresa empresa : empresas) {
+            System.out.println("RUT: " + empresa.getRut() + " - " + empresa.getNombre());
+        }
+
+        System.out.print("\nIngrese el RUT de la empresa que desea consultar: ");
+        String rutBuscado = scanner.nextLine().trim();
+
+        Empresa empresa = empresaDAO.buscarPorId(rutBuscado);
+        if(empresa==null){
+            System.out.println("Error: No existe ninguna empresa registrada con el RUT: " + rutBuscado);
+            return;
+        }
+        System.out.println("\nEmpresa: " + empresa.getNombre() + " (RUT: " + empresa.getRut() + ")");
+
+        List<OfertaLaboral> ofertas = ofertaLaboralDAO.listarPorEmpresa(rutBuscado);
+
+        if (ofertas.isEmpty()) {
+            System.out.println("Esta empresa no tiene ofertas publicadas.");
+            return;
+        }
+
+        System.out.println("\nOfertas publicadas:");
+        for (OfertaLaboral oferta : ofertas) {
+            System.out.println("----------------------------------------");
+            System.out.println("ID:                 " + oferta.getId());
+            System.out.println("Título:             " + oferta.getTitulo());
+            System.out.println("Estado:             " + oferta.getEstado());
+            System.out.println("Fecha publicación:  " + oferta.getFechaPublicacion());
+            System.out.println("Fecha cierre:       " + oferta.getFechaCierre());
+        }
+        System.out.println("----------------------------------------");
+
+    }
+
+    private void ejecutarConsultarPostulacionUsu(Scanner scanner) throws SQLException {
+        List<Postulante> postulantes = postulanteDAO.listar();
+
+        if (postulantes.isEmpty()) {
+            System.out.println("No hay postulantes registrados.");
+            return;
+        }
+
+        System.out.println("\nPostulantes registrados:");
+        for (Postulante postulante : postulantes) {
+            System.out.println("CI: " + postulante.getCi() + " - " + postulante.getNombre());
+        }
+
+        System.out.print("\nIngrese la CI del postulante que desea consultar: ");
+        int ciBuscada = scanner.nextInt();
+        scanner.nextLine();
+
+        Postulante postulante = postulanteDAO.buscarPorId(ciBuscada);
+
+        if (postulante == null) {
+            System.out.println("Error: No existe ningún postulante registrado con la CI " + ciBuscada);
+            return;
+        }
+
+        System.out.println("\nPostulante: " + postulante.getNombre() + " (CI: " + postulante.getCi() + ")");
+
+        List<Postulacion> postulaciones = postulacionDAO.listarPorPostulante(ciBuscada);
+
+        if (postulaciones.isEmpty()) {
+            System.out.println("Este postulante no registra postulaciones.");
+            return;
+        }
+
+        System.out.println("\nPostulaciones realizadas:");
+        for (Postulacion postulacion : postulaciones) {
+            System.out.println("----------------------------------------");
+            System.out.println("Oferta:   " + postulacion.getOfertaLaboral().getTitulo());
+            System.out.println("Empresa:  " + postulacion.getOfertaLaboral().getEmpresa().getNombre());
+            System.out.println("Fecha:    " + postulacion.getFechaPostulacion());
+            System.out.println("Estado:   " + postulacion.getEstado());
+            System.out.println("Mensaje:  " + postulacion.getMensaje());
+        }
+        System.out.println("----------------------------------------");
+    }
+
+}
+
+
+
+
