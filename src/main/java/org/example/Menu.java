@@ -766,6 +766,22 @@ public class Menu {
             Scanner scanner
     ) throws SQLException {
 
+        List<Empresa> empresas = empresaDAO.listar();
+
+        if (empresas.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+            return;
+        }
+
+        System.out.println("\nEmpresas registradas:");
+        for (Empresa emp : empresas) {
+            System.out.println("RUT: " + emp.getRut() + " - " + emp.getNombre());
+        }
+
+        System.out.print(
+                "\nIngrese el RUT de la empresa que desea gestionar: "
+        );
+
         System.out.print(
                 "Ingrese el RUT de la empresa que desea gestionar: "
         );
@@ -1116,8 +1132,7 @@ public class Menu {
     private void ejecutarListarEmpresas()
             throws SQLException {
 
-        List<Empresa> empresas =
-                empresaDAO.listar();
+        List<Empresa> empresas = empresaDAO.listar();
 
         if (empresas.isEmpty()) {
 
@@ -1795,8 +1810,7 @@ public class Menu {
             );
         }
 
-        System.out.println(
-                "----------------------------------------"
-        );
+        System.out.println("----------------------------------------");
+
     }
 }
