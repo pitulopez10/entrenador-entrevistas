@@ -479,102 +479,67 @@ public class Menu {
             Scanner scanner,
             PostulanteDAO postulanteDAO
     ) throws SQLException {
+        ejecutarListarPostulantes();
 
-        System.out.print(
-                "Ingrese la CI del postulante que desea modificar: "
-        );
+        System.out.print("Ingrese la CI del postulante que desea modificar: ");
+        String ciIngresada = scanner.nextLine().trim();
 
-        int ciBuscada = scanner.nextInt();
-        scanner.nextLine();
+        int ciBuscada;
+        try {
+            ciBuscada = Integer.parseInt(ciIngresada);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: La CI debe ser un número entero válido.");
+            return;
+        }
 
-        Postulante encontrado =
-                postulanteDAO.buscarPorId(ciBuscada);
+        Postulante encontrado = postulanteDAO.buscarPorId(ciBuscada);
 
-        if (encontrado != null) {
+        if (encontrado == null) {
+            System.out.println("Error: No existe ningún postulante registrado con la CI " + ciBuscada);
+            return;
+        }
 
-            System.out.println(
-                    "Postulante encontrado: "
-                            + encontrado.getNombre()
-            );
+        System.out.println("\n--- MODIFICANDO POSTULANTE: " + encontrado.getNombre() + " ---");
+        System.out.println("(Nota: Deje el campo vacío y presione Enter para mantener la información actual)\n");
 
-            System.out.print(
-                    "Nueva Localidad ("
-                            + encontrado.getLocalidad()
-                            + "): "
-            );
+        System.out.print("Nueva Localidad (" + encontrado.getLocalidad() + "): ");
+        String nuevaLocalidad = scanner.nextLine().trim();
+        if (!nuevaLocalidad.isBlank()) {
+            encontrado.setLocalidad(nuevaLocalidad);
+        }
 
-            String nuevaLocalidad = scanner.nextLine();
+        System.out.print("Nuevos Datos de Estudio (" + encontrado.getDatosEstudio() + "): ");
+        String nuevosEstudios = scanner.nextLine().trim();
+        if (!nuevosEstudios.isBlank()) {
+            encontrado.setDatosEstudio(nuevosEstudios);
+        }
 
-            if (!nuevaLocalidad.isBlank()) {
-                encontrado.setLocalidad(nuevaLocalidad);
+        System.out.print("Nuevos Datos de Experiencia (" + encontrado.getDatosExperiencia() + "): ");
+        String nuevaExperiencia = scanner.nextLine().trim();
+        if (!nuevaExperiencia.isBlank()) {
+            encontrado.setDatosExperiencia(nuevaExperiencia);
+        }
+
+        System.out.print("Nuevo Teléfono (" + encontrado.getTelefono() + "): ");
+        String telefonoIngresado = scanner.nextLine().trim();
+        if (!telefonoIngresado.isEmpty()) {
+            try {
+                int nuevoTelefono = Integer.parseInt(telefonoIngresado);
+                encontrado.setTelefono(nuevoTelefono);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: El teléfono debe ser numérico. Modificación cancelada.");
+                return;
             }
+        }
 
-            System.out.print(
-                    "Nuevos Datos de Estudio ("
-                            + encontrado.getDatosEstudio()
-                            + "): "
-            );
+        System.out.print("\n¿Desea guardar los cambios realizados? (S/N): ");
+        String confirmacion = scanner.nextLine().trim().toUpperCase();
 
-            String nuevosEstudios = scanner.nextLine();
-
-            if (!nuevosEstudios.isBlank()) {
-                encontrado.setDatosEstudio(nuevosEstudios);
-            }
-
-            System.out.print(
-                    "Nuevos Datos de Experiencia ("
-                            + encontrado.getDatosExperiencia()
-                            + "): "
-            );
-
-            String nuevaExperiencia = scanner.nextLine();
-
-            if (!nuevaExperiencia.isBlank()) {
-                encontrado.setDatosExperiencia(nuevaExperiencia);
-            }
-
-            System.out.print(
-                    "Nuevo Teléfono ("
-                            + encontrado.getTelefono()
-                            + "): "
-            );
-
-            String telefonoIngresado =
-                    scanner.nextLine().trim();
-
-            if (!telefonoIngresado.isEmpty()) {
-
-                try {
-
-                    int nuevoTelefono =
-                            Integer.parseInt(telefonoIngresado);
-
-                    encontrado.setTelefono(
-                            nuevoTelefono
-                    );
-
-                } catch (NumberFormatException e) {
-
-                    System.out.println(
-                            "Error: El teléfono debe ser numérico."
-                    );
-
-                    return;
-                }
-            }
-
+        if (confirmacion.equals("S")) {
             postulanteDAO.modificar(encontrado);
-
-            System.out.println(
-                    "El registro ha sido modificado correctamente."
-            );
-
+            System.out.println("El registro ha sido modificado correctamente en la base de datos");
         } else {
-
-            System.out.println(
-                    "Error: No existe ningún postulante registrado con la CI "
-                            + ciBuscada
-            );
+            System.out.println("Modificación cancelada. No se aplicaron cambios al postulante.");
         }
     }
 
