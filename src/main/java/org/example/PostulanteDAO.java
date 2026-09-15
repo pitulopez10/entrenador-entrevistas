@@ -281,4 +281,149 @@ public class PostulanteDAO implements CrudDAO<Postulante, Integer> {
             stmt.executeUpdate();
         }
     }
+    public Postulante buscarPorMail(
+            String mail
+    ) throws SQLException {
+
+        String sql = """
+            SELECT *
+            FROM postulante
+            WHERE mail = ?
+            """;
+
+        try (
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setString(1, mail);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+
+                    Postulante postulante =
+                            new Postulante();
+
+                    postulante.setCi(
+                            rs.getInt("ci")
+                    );
+
+                    postulante.setNombre(
+                            rs.getString("nombre")
+                    );
+
+                    postulante.setMail(
+                            rs.getString("mail")
+                    );
+
+                    postulante.setPassword(
+                            rs.getString("password")
+                    );
+
+                    if (rs.getDate("fechaRegistro") != null) {
+
+                        postulante.setFechaRegistro(
+                                rs.getDate("fechaRegistro")
+                                        .toLocalDate()
+                        );
+                    }
+
+                    postulante.setTelefono(
+                            rs.getInt("telefono")
+                    );
+
+                    postulante.setDescripcion(
+                            rs.getString("descripcion")
+                    );
+
+                    postulante.setFotoPerfil(
+                            rs.getString("fotoPerfil")
+                    );
+
+                    postulante.setCv(
+                            rs.getString("cv")
+                    );
+
+                    if (rs.getDate("fechaNacimiento") != null) {
+
+                        postulante.setFechaNacimiento(
+                                rs.getDate("fechaNacimiento")
+                                        .toLocalDate()
+                        );
+                    }
+
+                    String genero =
+                            rs.getString("genero");
+
+                    if (genero != null) {
+
+                        postulante.setGenero(
+                                DTGenero.valueOf(genero)
+                        );
+                    }
+
+                    postulante.setLocalidad(
+                            rs.getString("localidad")
+                    );
+
+                    postulante.setDatosEstudio(
+                            rs.getString("datosEstudio")
+                    );
+
+                    postulante.setDatosExperiencia(
+                            rs.getString("datosExperiencia")
+                    );
+
+                    postulante.setBloqueado(
+                            rs.getBoolean("bloqueado")
+                    );
+
+                    return postulante;
+                }
+            }
+        }
+
+        return null;
+    }
+    public Postulante iniciarSesion(
+            String mail,
+            String password
+    ) throws SQLException {
+
+        String sql = """
+            SELECT ci
+            FROM postulante
+            WHERE mail = ?
+              AND password = ?
+            """;
+
+        try (
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setString(1, mail);
+            stmt.setString(2, password);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+
+                    int ci =
+                            rs.getInt("ci");
+
+                    return buscarPorId(ci);
+                }
+            }
+        }
+
+        return null;
+    }
 }

@@ -14,6 +14,7 @@ public class Menu {
     private final PostulacionDAO postulacionDAO = new PostulacionDAO();
 
     private boolean isAdminAutenticado = false;
+    private Postulante postulanteAutenticado = null;
 
     public void iniciar() {
 
@@ -28,7 +29,7 @@ public class Menu {
                 System.out.println("========================================");
                 System.out.println("1. Panel de ADMINISTRADOR");
                 System.out.println("2. Panel de EMPRESA (Próximamente)");
-                System.out.println("3. Panel de POSTULANTE (Próximamente)");
+                System.out.println("3. Panel de POSTULANTE");
                 System.out.println("0. Salir del Sistema");
                 System.out.print("Seleccione una opción: ");
 
@@ -54,7 +55,7 @@ public class Menu {
                         break;
 
                     case 3:
-                        System.out.println("\nMódulo de Postulantes en desarrollo...");
+                        menuAccesoPostulante(scanner);
                         break;
 
                     case 0:
@@ -1778,4 +1779,603 @@ public class Menu {
         System.out.println("----------------------------------------");
 
     }
+    private void menuAccesoPostulante(Scanner scanner) {
+
+        boolean volver = false;
+
+        while (!volver) {
+
+            System.out.println("\n========================================");
+            System.out.println("              POSTULANTE");
+            System.out.println("========================================");
+            System.out.println("1. Registrarse");
+            System.out.println("2. Iniciar sesión");
+            System.out.println("0. Volver al Menú Principal");
+            System.out.print("Seleccione una opción: ");
+
+            String opcion = scanner.nextLine().trim();
+
+            try {
+
+                switch (opcion) {
+
+                    case "1":
+                        ejecutarRegistrarPostulante(scanner);
+                        break;
+
+                    case "2":
+                        ejecutarIniciarSesionPostulante(scanner);
+
+                        if (postulanteAutenticado != null) {
+                            menuPostulante(scanner);
+                        }
+
+                        break;
+
+                    case "0":
+                        volver = true;
+                        break;
+
+                    default:
+                        System.out.println("Error: Opción no válida.");
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Error al acceder a la base de datos: "
+                                + e.getMessage()
+                );
+            }
+        }
+    }
+
+    private void menuPostulante(Scanner scanner) {
+
+        boolean cerrarSesion = false;
+
+        while (!cerrarSesion && postulanteAutenticado != null) {
+
+            System.out.println("\n========================================");
+            System.out.println("           PANEL DE POSTULANTE");
+            System.out.println("========================================");
+            System.out.println(
+                    "Bienvenido/a, "
+                            + postulanteAutenticado.getNombre()
+            );
+            System.out.println("----------------------------------------");
+            System.out.println("1. Completar información personal");
+            System.out.println("2. Agregar estudios");
+            System.out.println("3. Cerrar sesión");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione una opción: ");
+
+            String opcion = scanner.nextLine().trim();
+
+            try {
+
+                switch (opcion) {
+
+                    case "1":
+                        ejecutarCompletarInformacionPersonal(scanner);
+                        break;
+
+                    case "2":
+                        ejecutarAgregarEstudios(scanner);
+                        break;
+
+                    case "3":
+                        ejecutarCerrarSesionPostulante();
+                        cerrarSesion = true;
+                        break;
+
+                    case "0":
+                        cerrarSesion = true;
+                        break;
+
+                    default:
+                        System.out.println("Error: Opción no válida.");
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Error al acceder a la base de datos: "
+                                + e.getMessage()
+                );
+            }
+        }
+    }
+
+
+    private void ejecutarIniciarSesionPostulante(
+            Scanner scanner
+    ) throws SQLException {
+
+        System.out.println("\n========================================");
+        System.out.println("      INICIAR SESIÓN - POSTULANTE");
+        System.out.println("========================================");
+
+        System.out.print("Mail: ");
+        String mail =
+                scanner.nextLine().trim();
+
+        System.out.print("Contraseña: ");
+        String password =
+                scanner.nextLine();
+
+        if (mail.isEmpty() || password.isEmpty()) {
+
+            System.out.println(
+                    "Error: El mail y la contraseña son obligatorios."
+            );
+
+            return;
+        }
+
+        Postulante postulante =
+                postulanteDAO.iniciarSesion(
+                        mail,
+                        password
+                );
+
+        if (postulante == null) {
+
+            System.out.println(
+                    "Error: Mail o contraseña incorrectos."
+            );
+
+            return;
+        }
+
+        if (postulante.isBloqueado()) {
+
+            System.out.println(
+                    "Error: Su usuario se encuentra bloqueado."
+            );
+
+            return;
+        }
+
+        postulanteAutenticado = postulante;
+
+        System.out.println("\nInicio de sesión exitoso.");
+
+        System.out.println(
+                "Bienvenido/a "
+                        + postulanteAutenticado.getNombre()
+                        + "."
+        );
+
+        mostrarDatosPostulante(postulanteAutenticado);
+    }
+
+    private void ejecutarCompletarInformacionPersonal(
+            Scanner scanner
+    ) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+
+            System.out.println(
+                    "Error: Debe iniciar sesión."
+            );
+
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("     COMPLETAR INFORMACIÓN PERSONAL");
+        System.out.println("========================================");
+
+        // TELÉFONO
+        System.out.print("Teléfono: ");
+        String telefonoIngresado =
+                scanner.nextLine().trim();
+
+        if (!telefonoIngresado.isEmpty()) {
+
+            try {
+
+                int telefono =
+                        Integer.parseInt(
+                                telefonoIngresado
+                        );
+
+                if (telefono <= 0) {
+
+                    System.out.println(
+                            "Error: El teléfono debe ser mayor a 0."
+                    );
+
+                    return;
+                }
+
+                postulanteAutenticado.setTelefono(
+                        telefono
+                );
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "Error: El teléfono debe ser numérico."
+                );
+
+                return;
+            }
+        }
+
+        // DESCRIPCIÓN
+        System.out.print(
+                "Descripción personal: "
+        );
+
+        String descripcion =
+                scanner.nextLine().trim();
+
+        if (!descripcion.isEmpty()) {
+
+            postulanteAutenticado.setDescripcion(
+                    descripcion
+            );
+        }
+
+        // FOTO
+        System.out.print(
+                "Ruta o URL de foto de perfil: "
+        );
+
+        String foto =
+                scanner.nextLine().trim();
+
+        if (!foto.isEmpty()) {
+
+            postulanteAutenticado.setFotoPerfil(
+                    foto
+            );
+        }
+
+        // CV
+        System.out.print(
+                "Ruta o URL del CV: "
+        );
+
+        String cv =
+                scanner.nextLine().trim();
+
+        if (!cv.isEmpty()) {
+
+            postulanteAutenticado.setCv(
+                    cv
+            );
+        }
+
+        // FECHA NACIMIENTO
+        System.out.print(
+                "Fecha de nacimiento (AAAA-MM-DD): "
+        );
+
+        String fechaIngresada =
+                scanner.nextLine().trim();
+
+        if (!fechaIngresada.isEmpty()) {
+
+            try {
+
+                postulanteAutenticado.setFechaNacimiento(
+                        java.time.LocalDate.parse(
+                                fechaIngresada
+                        )
+                );
+
+            } catch (
+                    java.time.format.DateTimeParseException e
+            ) {
+
+                System.out.println(
+                        "Error: La fecha debe tener formato AAAA-MM-DD."
+                );
+
+                return;
+            }
+        }
+
+        // LOCALIDAD
+        System.out.print("Localidad: ");
+
+        String localidad =
+                scanner.nextLine().trim();
+
+        if (!localidad.isEmpty()) {
+
+            postulanteAutenticado.setLocalidad(
+                    localidad
+            );
+        }
+
+        // GUARDAMOS
+        postulanteDAO.modificar(
+                postulanteAutenticado
+        );
+
+        System.out.println(
+                "\nInformación personal guardada correctamente."
+        );
+    }
+
+    private void ejecutarRegistrarPostulante(Scanner scanner) throws SQLException {
+
+        System.out.println("\n========================================");
+        System.out.println("        REGISTRO DE POSTULANTE");
+        System.out.println("========================================");
+
+        System.out.print("Ingrese su CI: ");
+        String ciIngresada = scanner.nextLine().trim();
+
+        int ci;
+
+        try {
+            ci = Integer.parseInt(ciIngresada);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: La CI debe ser numérica.");
+            return;
+        }
+
+        if (postulanteDAO.buscarPorId(ci) != null) {
+            System.out.println("Error: Ya existe un postulante con esa CI.");
+            return;
+        }
+
+        System.out.print("Nombre: ");
+        String nombre = scanner.nextLine().trim();
+
+        System.out.print("Mail: ");
+        String mail = scanner.nextLine().trim();
+
+        if (mail.isEmpty()) {
+            System.out.println("Error: El mail es obligatorio.");
+            return;
+        }
+
+        if (postulanteDAO.buscarPorMail(mail) != null) {
+            System.out.println("Error: El mail ingresado ya está en uso.");
+            return;
+        }
+
+        String password = leerPassword(scanner).trim();
+        if (password.isEmpty()) {
+            System.out.println("Error: La contraseña es obligatoria.");
+            return;
+        }
+
+        if (nombre.isEmpty() || mail.isEmpty() || password.isEmpty()) {
+            System.out.println("Error: Los campos son obligatorios.");
+            return;
+        }
+
+        System.out.println("Género:");
+        System.out.println("1. Masculino");
+        System.out.println("2. Femenino");
+        System.out.print("Seleccione una opción: ");
+
+        String opcionGenero = scanner.nextLine().trim();
+
+        DTGenero genero;
+
+        switch (opcionGenero) {
+
+            case "1":
+                genero = DTGenero.Masculino;
+                break;
+
+            case "2":
+                genero = DTGenero.Femenino;
+                break;
+
+            default:
+                System.out.println("Error: Opción de género no válida.");
+                return;
+        }
+
+        Postulante nuevo = new Postulante();
+
+        nuevo.setCi(ci);
+        nuevo.setNombre(nombre);
+        nuevo.setMail(mail);
+        nuevo.setPassword(password);
+        nuevo.setFechaRegistro(java.time.LocalDate.now());
+        nuevo.setGenero(genero);
+        nuevo.setTelefono(0);
+        nuevo.setBloqueado(false);
+
+        postulanteDAO.agregar(nuevo);
+
+        System.out.println("Postulante registrado correctamente.");
+    }
+
+    private void ejecutarAgregarEstudios(Scanner scanner) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+            System.out.println("Error: Debe iniciar sesión.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("             AGREGAR ESTUDIOS");
+        System.out.println("========================================");
+
+        String estudiosActuales =
+                postulanteAutenticado.getDatosEstudio();
+
+        if (estudiosActuales != null && !estudiosActuales.isBlank()) {
+
+            System.out.println("Estudios actuales:");
+            System.out.println(estudiosActuales);
+        }
+
+        System.out.print("Ingrese el nuevo estudio: ");
+        String nuevoEstudio = scanner.nextLine().trim();
+
+        if (nuevoEstudio.isEmpty()) {
+            System.out.println("Error: Debe ingresar un estudio.");
+            return;
+        }
+
+        if (estudiosActuales == null || estudiosActuales.isBlank()) {
+
+            postulanteAutenticado.setDatosEstudio(
+                    nuevoEstudio
+            );
+
+        } else {
+
+            postulanteAutenticado.setDatosEstudio(
+                    estudiosActuales + " | " + nuevoEstudio
+            );
+        }
+
+        postulanteDAO.modificar(
+                postulanteAutenticado
+        );
+
+        System.out.println(
+                "Estudio agregado correctamente."
+        );
+    }
+
+    private void ejecutarCerrarSesionPostulante() {
+
+        if (postulanteAutenticado == null) {
+            return;
+        }
+
+        System.out.println(
+                "Cerrando sesión de "
+                        + postulanteAutenticado.getNombre()
+                        + "..."
+        );
+
+        postulanteAutenticado = null;
+
+        System.out.println(
+                "Sesión cerrada correctamente."
+        );
+    }
+    private String leerPassword(Scanner scanner) {
+
+        java.io.Console console = System.console();
+
+        if (console != null) {
+            char[] passwordChars = console.readPassword("Contraseña: ");
+            return new String(passwordChars);
+        }
+
+        // Respaldo para IntelliJ
+        System.out.print("Contraseña: ");
+        return scanner.nextLine();
+    }
+    private void mostrarDatosPostulante(Postulante postulante) {
+
+        System.out.println("\n========================================");
+        System.out.println("               MI CV DIGITAL");
+        System.out.println("========================================");
+
+        System.out.println("CI: " + postulante.getCi());
+
+        System.out.println(
+                "Nombre: " + valorOIncompleto(postulante.getNombre())
+        );
+
+        System.out.println(
+                "Mail: " + valorOIncompleto(postulante.getMail())
+        );
+
+        System.out.println(
+                "Fecha de registro: "
+                        + (postulante.getFechaRegistro() != null
+                        ? postulante.getFechaRegistro()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Teléfono: "
+                        + (postulante.getTelefono() > 0
+                        ? postulante.getTelefono()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Descripción: "
+                        + valorOIncompleto(postulante.getDescripcion())
+        );
+
+        System.out.println(
+                "Foto de perfil: "
+                        + valorOIncompleto(postulante.getFotoPerfil())
+        );
+
+        System.out.println(
+                "CV: "
+                        + valorOIncompleto(postulante.getCv())
+        );
+
+        System.out.println(
+                "Fecha de nacimiento: "
+                        + (postulante.getFechaNacimiento() != null
+                        ? postulante.getFechaNacimiento()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Género: "
+                        + (postulante.getGenero() != null
+                        ? postulante.getGenero()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Localidad: "
+                        + valorOIncompleto(postulante.getLocalidad())
+        );
+
+        System.out.println(
+                "Estudios: "
+                        + valorOIncompleto(postulante.getDatosEstudio())
+        );
+
+        System.out.println(
+                "Experiencia: "
+                        + valorOIncompleto(postulante.getDatosExperiencia())
+        );
+
+        System.out.println(
+                "Estado: "
+                        + (postulante.isBloqueado()
+                        ? "Bloqueado"
+                        : "Activo")
+        );
+
+        System.out.println("========================================");
+    }
+
+    private String valorOIncompleto(String valor) {
+
+        if (valor == null || valor.isBlank()) {
+            return "No completado";
+        }
+
+        return valor;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
