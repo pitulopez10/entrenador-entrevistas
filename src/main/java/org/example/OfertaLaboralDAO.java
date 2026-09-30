@@ -12,8 +12,45 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
     @Override
     public void agregar(OfertaLaboral oferta) throws SQLException {
 
-    }
+        String sql = """
+            INSERT INTO ofertalaboral
+            (titulo, descripcion, requisitos, fechaPublicacion,
+             fechaCierre, estado, empresa_rut)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """;
 
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setString(1, oferta.getTitulo());
+            stmt.setString(2, oferta.getDescripcion());
+            stmt.setString(3, oferta.getRequisitos());
+
+            stmt.setDate(
+                    4,
+                    java.sql.Date.valueOf(oferta.getFechaPublicacion())
+            );
+
+            stmt.setDate(
+                    5,
+                    java.sql.Date.valueOf(oferta.getFechaCierre())
+            );
+
+            stmt.setString(
+                    6,
+                    oferta.getEstado().name()
+            );
+
+            stmt.setString(
+                    7,
+                    oferta.getEmpresa().getRut()
+            );
+
+            stmt.executeUpdate();
+        }
+    }
     @Override
     public OfertaLaboral buscarPorId(Integer id) throws SQLException {
         String sql = """
@@ -177,6 +214,30 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
              }
         }
         return ofertas;
+    }
+
+    public void cerrarOferta(Integer id) throws SQLException {
+
+        String sql = """
+            UPDATE ofertalaboral
+            SET estado = ?
+            WHERE id = ?
+            """;
+
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setString(
+                    1,
+                    EstadoEntrevista.TERMINADA.name()
+            );
+
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+        }
     }
 
 

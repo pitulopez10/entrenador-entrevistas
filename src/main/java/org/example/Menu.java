@@ -15,6 +15,7 @@ public class Menu {
 
     private boolean isAdminAutenticado = false;
     private Postulante postulanteAutenticado = null;
+    private Empresa empresaAutenticada = null;
 
     public void iniciar() {
 
@@ -28,7 +29,7 @@ public class Menu {
                 System.out.println("             MENU PRINCIPAL");
                 System.out.println("========================================");
                 System.out.println("1. Panel de ADMINISTRADOR");
-                System.out.println("2. Panel de EMPRESA (Próximamente)");
+                System.out.println("2. Panel de EMPRESA");
                 System.out.println("3. Panel de POSTULANTE");
                 System.out.println("0. Salir del Sistema");
                 System.out.print("Seleccione una opción: ");
@@ -51,11 +52,14 @@ public class Menu {
                         break;
 
                     case 2:
-                        System.out.println("\nMódulo de Empresas en desarrollo...");
+                        menuAccesoEmpresa(scanner);
                         break;
 
                     case 3:
                         menuAccesoPostulante(scanner);
+                        break;
+                    case 4:
+                        menuAccesoEmpresa(scanner);
                         break;
 
                     case 0:
@@ -2366,16 +2370,787 @@ public class Menu {
         return valor;
     }
 
+    private void ejecutarCrearOferta(
+            Scanner scanner
+    ) throws SQLException {
+
+        if (empresaAutenticada == null) {
+
+            System.out.println(
+                    "Error: Debe iniciar sesión como empresa para crear una oferta."
+            );
+
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("              CREAR OFERTA");
+        System.out.println("========================================");
+
+        // TÍTULO
+        System.out.print("Título de la oferta: ");
+        String titulo = scanner.nextLine().trim();
+
+        if (titulo.isEmpty()) {
+
+            System.out.println(
+                    "Error: El título es obligatorio."
+            );
+
+            return;
+        }
+
+        // DESCRIPCIÓN
+        System.out.print("Descripción: ");
+        String descripcion = scanner.nextLine().trim();
+
+        if (descripcion.isEmpty()) {
+
+            System.out.println(
+                    "Error: La descripción es obligatoria."
+            );
+
+            return;
+        }
+
+        // REQUISITOS
+        System.out.print("Requisitos: ");
+        String requisitos = scanner.nextLine().trim();
+
+        if (requisitos.isEmpty()) {
+
+            System.out.println(
+                    "Error: Los requisitos son obligatorios."
+            );
+
+            return;
+        }
+
+        // FECHA PUBLICACIÓN
+        System.out.print(
+                "Fecha de publicación (AAAA-MM-DD): "
+        );
+
+        String fechaPublicacionIngresada =
+                scanner.nextLine().trim();
+
+        java.time.LocalDate fechaPublicacion;
+
+        try {
+
+            fechaPublicacion =
+                    java.time.LocalDate.parse(
+                            fechaPublicacionIngresada
+                    );
+
+        } catch (java.time.format.DateTimeParseException e) {
+
+            System.out.println(
+                    "Error: La fecha de publicación debe tener formato AAAA-MM-DD."
+            );
+
+            return;
+        }
+
+        // FECHA CIERRE
+        System.out.print(
+                "Fecha de cierre (AAAA-MM-DD): "
+        );
+
+        String fechaCierreIngresada =
+                scanner.nextLine().trim();
+
+        java.time.LocalDate fechaCierre;
+
+        try {
+
+            fechaCierre =
+                    java.time.LocalDate.parse(
+                            fechaCierreIngresada
+                    );
+
+        } catch (java.time.format.DateTimeParseException e) {
+
+            System.out.println(
+                    "Error: La fecha de cierre debe tener formato AAAA-MM-DD."
+            );
+
+            return;
+        }
+
+        // VALIDAR FECHAS
+        if (fechaCierre.isBefore(fechaPublicacion)) {
+
+            System.out.println(
+                    "Error: La fecha de cierre no puede ser anterior a la fecha de publicación."
+            );
+
+            return;
+        }
+
+        // CREAR OBJETO
+        OfertaLaboral nuevaOferta =
+                new OfertaLaboral();
+
+        nuevaOferta.setTitulo(titulo);
+        nuevaOferta.setDescripcion(descripcion);
+        nuevaOferta.setRequisitos(requisitos);
+        nuevaOferta.setFechaPublicacion(fechaPublicacion);
+        nuevaOferta.setFechaCierre(fechaCierre);
+
+        nuevaOferta.setEstado(
+                EstadoEntrevista.ACTIVA
+        );
+
+        nuevaOferta.setEmpresa(
+                empresaAutenticada
+        );
+
+        // CONFIRMACIÓN
+        System.out.println("\n----------------------------------------");
+        System.out.println("        DATOS DE LA NUEVA OFERTA");
+        System.out.println("----------------------------------------");
+        System.out.println("Título: " + titulo);
+        System.out.println("Descripción: " + descripcion);
+        System.out.println("Requisitos: " + requisitos);
+        System.out.println(
+                "Fecha publicación: "
+                        + fechaPublicacion
+        );
+        System.out.println(
+                "Fecha cierre: "
+                        + fechaCierre
+        );
+        System.out.println(
+                "Empresa: "
+                        + empresaAutenticada.getNombre()
+        );
+
+        System.out.print(
+                "\n¿Desea publicar esta oferta? (S/N): "
+        );
+
+        String confirmacion =
+                scanner.nextLine()
+                        .trim()
+                        .toUpperCase();
+
+        if (!confirmacion.equals("S")) {
+
+            System.out.println(
+                    "Publicación cancelada."
+            );
+
+            return;
+        }
+
+        ofertaLaboralDAO.agregar(
+                nuevaOferta
+        );
+
+        System.out.println(
+                "\nOferta laboral creada correctamente."
+        );
+    }
+
+    private void ejecutarIniciarSesionEmpresa(
+            Scanner scanner
+    ) throws SQLException {
+
+        System.out.println("\n========================================");
+        System.out.println("        INICIAR SESIÓN - EMPRESA");
+        System.out.println("========================================");
+
+        System.out.print("Mail: ");
+        String mail = scanner.nextLine().trim();
+
+        System.out.print("Contraseña: ");
+        String password = scanner.nextLine();
+
+        if (mail.isEmpty() || password.isEmpty()) {
+
+            System.out.println(
+                    "Error: El mail y la contraseña son obligatorios."
+            );
+
+            return;
+        }
+
+        Empresa empresa =
+                empresaDAO.iniciarSesion(
+                        mail,
+                        password
+                );
+
+        if (empresa == null) {
+
+            System.out.println(
+                    "Error: Mail o contraseña incorrectos."
+            );
+
+            return;
+        }
+
+        if (empresa.isBloqueado()) {
+
+            System.out.println(
+                    "Error: La empresa se encuentra bloqueada."
+            );
+
+            return;
+        }
+
+        empresaAutenticada = empresa;
+
+        System.out.println("\nInicio de sesión exitoso.");
+
+        System.out.println(
+                "Bienvenido/a "
+                        + empresaAutenticada.getNombre()
+                        + "."
+        );
+
+        mostrarDatosEmpresa(
+                empresaAutenticada
+        );
+    }
+
+
+    private void mostrarDatosEmpresa(Empresa empresa) {
+
+        System.out.println("\n========================================");
+        System.out.println("             DATOS DE EMPRESA");
+        System.out.println("========================================");
+
+        System.out.println(
+                "RUT: " + empresa.getRut()
+        );
+
+        System.out.println(
+                "Nombre: " + empresa.getNombre()
+        );
+
+        System.out.println(
+                "Mail: " + empresa.getMail()
+        );
+
+        System.out.println(
+                "Fecha de registro: "
+                        + (empresa.getFechaRegistro() != null
+                        ? empresa.getFechaRegistro()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Teléfono: "
+                        + (empresa.getTelefono() > 0
+                        ? empresa.getTelefono()
+                        : "No completado")
+        );
+
+        System.out.println(
+                "Descripción: "
+                        + valorOIncompleto(
+                        empresa.getDescripcion()
+                )
+        );
+
+        System.out.println(
+                "Logo: "
+                        + valorOIncompleto(
+                        empresa.getLogo()
+                )
+        );
+
+        System.out.println(
+                "Sitio web: "
+                        + valorOIncompleto(
+                        empresa.getSitioWeb()
+                )
+        );
+
+        System.out.println(
+                "Estado: "
+                        + (empresa.isBloqueado()
+                        ? "Bloqueada"
+                        : "Activa")
+        );
+
+        System.out.println(
+                "========================================"
+        );
+    }
+
+    private void menuAccesoEmpresa(Scanner scanner) {
+
+        boolean volver = false;
+
+        while (!volver) {
+
+            System.out.println("\n========================================");
+            System.out.println("              ACCESO EMPRESA");
+            System.out.println("========================================");
+            System.out.println("1. Iniciar sesión");
+            System.out.println("2. Registrarse");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione una opción: ");
+
+            String opcion = scanner.nextLine().trim();
+
+            switch (opcion) {
+
+                case "1":
+
+                    try {
+
+                        ejecutarIniciarSesionEmpresa(scanner);
+
+                        if (empresaAutenticada != null) {
+                            menuEmpresa(scanner);
+                        }
+
+                    } catch (SQLException e) {
+
+                        System.out.println(
+                                "Error al acceder a la base de datos: "
+                                        + e.getMessage()
+                        );
+                    }
+
+                    break;
+
+                case "2":
+                    System.out.println(
+                            "\nRegistro de empresa todavía no implementado."
+                    );
+                    break;
+
+                case "0":
+                    volver = true;
+                    break;
+
+                default:
+                    System.out.println(
+                            "Error: Opción no válida."
+                    );
+            }
+        }
+    }
+
+    private void menuEmpresa(Scanner scanner) {
+
+        boolean cerrarSesion = false;
+
+        while (!cerrarSesion && empresaAutenticada != null) {
+
+            System.out.println("\n========================================");
+            System.out.println("             PANEL DE EMPRESA");
+            System.out.println("========================================");
+
+            System.out.println(
+                    "Empresa: " + empresaAutenticada.getNombre()
+            );
+
+            System.out.println("----------------------------------------");
+            System.out.println("1. Crear oferta");
+            System.out.println("2. Eliminar/cerrar oferta");
+            System.out.println("3. Consultar postulaciones");
+            System.out.println("4. Ver datos de la empresa");
+            System.out.println("5. Cerrar sesión");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione una opción: ");
+
+            String opcion = scanner.nextLine().trim();
+
+            try {
+
+                switch (opcion) {
+
+                    case "1":
+                        ejecutarCrearOferta(scanner);
+                        break;
+
+                    case "2":
+                        ejecutarEliminarCerrarOferta(scanner);
+                        break;
+
+                    case "3":
+                        ejecutarConsultarPostulacionesEmpresa();
+                        break;
+
+                    case "4":
+                        mostrarDatosEmpresa(
+                                empresaAutenticada
+                        );
+                        break;
+
+                    case "5":
+                        ejecutarCerrarSesionEmpresa();
+                        cerrarSesion = true;
+                        break;
+
+                    case "0":
+                        cerrarSesion = true;
+                        break;
+
+                    default:
+                        System.out.println(
+                                "Error: Opción no válida."
+                        );
+                }
+
+            } catch (SQLException e) {
+
+                System.out.println(
+                        "Error al acceder a la base de datos: "
+                                + e.getMessage()
+                );
+            }
+        }
+    }
+    private void ejecutarCerrarSesionEmpresa() {
+
+        if (empresaAutenticada == null) {
+            return;
+        }
+
+        System.out.println(
+                "Cerrando sesión de "
+                        + empresaAutenticada.getNombre()
+                        + "..."
+        );
+
+        empresaAutenticada = null;
+
+        System.out.println(
+                "Sesión cerrada correctamente."
+        );
+    }
+
+
+    private void ejecutarEliminarCerrarOferta(
+            Scanner scanner
+    ) throws SQLException {
+
+        if (empresaAutenticada == null) {
+
+            System.out.println(
+                    "Error: Debe iniciar sesión como empresa."
+            );
+
+            return;
+        }
+
+        // Traemos solamente las ofertas de la empresa autenticada
+        List<OfertaLaboral> ofertas =
+                ofertaLaboralDAO.listarPorEmpresa(
+                        empresaAutenticada.getRut()
+                );
+
+        if (ofertas.isEmpty()) {
+
+            System.out.println(
+                    "No tiene ofertas laborales publicadas."
+            );
+
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("            MIS OFERTAS");
+        System.out.println("========================================");
+
+        for (OfertaLaboral oferta : ofertas) {
+
+            System.out.println("----------------------------------------");
+            System.out.println("ID: " + oferta.getId());
+            System.out.println("Título: " + oferta.getTitulo());
+            System.out.println("Estado: " + oferta.getEstado());
+            System.out.println(
+                    "Fecha publicación: "
+                            + oferta.getFechaPublicacion()
+            );
+            System.out.println(
+                    "Fecha cierre: "
+                            + oferta.getFechaCierre()
+            );
+        }
+
+        System.out.println("----------------------------------------");
+
+        System.out.print(
+                "\nIngrese el ID de la oferta que desea gestionar: "
+        );
+
+        String idIngresado =
+                scanner.nextLine().trim();
+
+        int idOferta;
+
+        try {
+
+            idOferta =
+                    Integer.parseInt(idIngresado);
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Error: El ID debe ser un número."
+            );
+
+            return;
+        }
+
+        // Comprobamos que la oferta seleccionada
+        // realmente pertenezca a esta empresa
+        OfertaLaboral ofertaSeleccionada = null;
+
+        for (OfertaLaboral oferta : ofertas) {
+
+            if (oferta.getId() == idOferta) {
+
+                ofertaSeleccionada = oferta;
+                break;
+            }
+        }
+
+        if (ofertaSeleccionada == null) {
+
+            System.out.println(
+                    "Error: La oferta seleccionada no existe "
+                            + "o no pertenece a su empresa."
+            );
+
+            return;
+        }
+
+        System.out.println(
+                "\nOferta seleccionada: "
+                        + ofertaSeleccionada.getTitulo()
+        );
+
+        System.out.println(
+                "Estado actual: "
+                        + ofertaSeleccionada.getEstado()
+        );
+
+        System.out.println("\n¿Qué desea hacer?");
+        System.out.println("1. Cerrar oferta");
+        System.out.println("2. Eliminar oferta");
+        System.out.println("0. Cancelar");
+        System.out.print("Seleccione una opción: ");
+
+        String opcion =
+                scanner.nextLine().trim();
+
+        switch (opcion) {
+
+            case "1":
+
+                if (
+                        ofertaSeleccionada.getEstado()
+                                == EstadoEntrevista.TERMINADA
+                ) {
+
+                    System.out.println(
+                            "La oferta ya se encuentra cerrada."
+                    );
+
+                    return;
+                }
+
+                System.out.print(
+                        "¿Confirma que desea cerrar esta oferta? (S/N): "
+                );
+
+                String confirmarCierre =
+                        scanner.nextLine()
+                                .trim()
+                                .toUpperCase();
+
+                if (!confirmarCierre.equals("S")) {
+
+                    System.out.println(
+                            "Operación cancelada."
+                    );
+
+                    return;
+                }
+
+                ofertaLaboralDAO.cerrarOferta(
+                        idOferta
+                );
+
+                System.out.println(
+                        "Oferta cerrada correctamente."
+                );
+
+                break;
+
+            case "2":
+
+                System.out.println(
+                        "\nADVERTENCIA: Esta operación eliminará "
+                                + "permanentemente la oferta."
+                );
+
+                System.out.print(
+                        "¿Confirma que desea eliminarla? (S/N): "
+                );
+
+                String confirmarEliminar =
+                        scanner.nextLine()
+                                .trim()
+                                .toUpperCase();
+
+                if (!confirmarEliminar.equals("S")) {
+
+                    System.out.println(
+                            "Operación cancelada."
+                    );
+
+                    return;
+                }
+
+                ofertaLaboralDAO.eliminar(
+                        idOferta
+                );
+
+                System.out.println(
+                        "Oferta eliminada correctamente."
+                );
+
+                break;
+
+            case "0":
+
+                System.out.println(
+                        "Operación cancelada."
+                );
+
+                break;
+
+            default:
+
+                System.out.println(
+                        "Error: Opción no válida."
+                );
+        }
+    }
+
+    private void ejecutarConsultarPostulacionesEmpresa()
+            throws SQLException {
+
+        if (empresaAutenticada == null) {
+
+            System.out.println(
+                    "Error: Debe iniciar sesión como empresa."
+            );
+
+            return;
+        }
+
+        List<Postulacion> postulaciones =
+                postulacionDAO.listarPorEmpresa(
+                        empresaAutenticada.getRut()
+                );
+
+        System.out.println("\n========================================");
+        System.out.println("        POSTULACIONES RECIBIDAS");
+        System.out.println("========================================");
+
+        System.out.println(
+                "Empresa: "
+                        + empresaAutenticada.getNombre()
+        );
+
+        if (postulaciones.isEmpty()) {
+
+            System.out.println(
+                    "\nNo existen postulaciones para sus ofertas laborales."
+            );
+
+            return;
+        }
+
+        for (Postulacion postulacion : postulaciones) {
+
+            System.out.println(
+                    "\n----------------------------------------"
+            );
+
+            System.out.println(
+                    "ID postulación: "
+                            + postulacion.getId()
+            );
+
+            System.out.println(
+                    "Oferta: "
+                            + postulacion
+                            .getOfertaLaboral()
+                            .getTitulo()
+                            + " (ID: "
+                            + postulacion
+                            .getOfertaLaboral()
+                            .getId()
+                            + ")"
+            );
+
+            System.out.println(
+                    "Postulante: "
+                            + postulacion
+                            .getPostulante()
+                            .getNombre()
+            );
+
+            System.out.println(
+                    "CI: "
+                            + postulacion
+                            .getPostulante()
+                            .getCi()
+            );
+
+            System.out.println(
+                    "Mail: "
+                            + postulacion
+                            .getPostulante()
+                            .getMail()
+            );
+
+            System.out.println(
+                    "Fecha de postulación: "
+                            + postulacion
+                            .getFechaPostulacion()
+            );
+
+            System.out.println(
+                    "Estado: "
+                            + postulacion
+                            .getEstado()
+            );
+
+            System.out.println(
+                    "Mensaje: "
+                            + postulacion
+                            .getMensaje()
+            );
+        }
+
+        System.out.println(
+                "\n----------------------------------------"
+        );
+
+        System.out.println(
+                "Total de postulaciones recibidas: "
+                        + postulaciones.size()
+        );
+    }
 
 
 
 
 
 
-
-
-
-
-
+    
 }
 

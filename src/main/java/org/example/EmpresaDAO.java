@@ -208,4 +208,49 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
             stmt.executeUpdate();
         }
     }
+
+    public Empresa iniciarSesion(
+            String mail,
+            String password
+    ) throws SQLException {
+
+        String sql = """
+            SELECT rut
+            FROM empresa
+            WHERE mail = ?
+              AND password = ?
+            """;
+
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setString(1, mail);
+            stmt.setString(2, password);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+
+                    String rut = rs.getString("rut");
+
+                    return buscarPorId(rut);
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
