@@ -302,7 +302,7 @@ public class Menu {
                     break;
 
                 case 2:
-                    ejecutarModificarEmpresa(scanner);
+                    ejecutarModificarEmpresaAdmin(scanner);
                     break;
 
                 case 3:
@@ -847,7 +847,7 @@ public class Menu {
     // MODIFICAR EMPRESA
     // ============================================================
 
-    private void ejecutarModificarEmpresa(
+    private void ejecutarModificarEmpresaAdmin(
             Scanner scanner
     ) throws SQLException {
 
@@ -2763,7 +2763,8 @@ public class Menu {
             System.out.println("2. Eliminar/cerrar oferta");
             System.out.println("3. Consultar postulaciones");
             System.out.println("4. Ver datos de la empresa");
-            System.out.println("5. Cerrar sesión");
+            System.out.println("5. Modificar informacion");
+            System.out.println("6. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -2790,8 +2791,13 @@ public class Menu {
                                 empresaAutenticada
                         );
                         break;
-
                     case "5":
+                        ejecutarModificarEmpresa(
+                                scanner,
+                                empresaAutenticada
+                        );
+                        break;
+                    case "6":
                         ejecutarCerrarSesionEmpresa();
                         cerrarSesion = true;
                         break;
@@ -2815,6 +2821,7 @@ public class Menu {
             }
         }
     }
+
     private void ejecutarCerrarSesionEmpresa() {
 
         if (empresaAutenticada == null) {
@@ -3408,7 +3415,173 @@ public class Menu {
         );
     }
 
+    private void ejecutarModificarEmpresa(
+            Scanner scanner,
+            Empresa empresa
+    )throws SQLException {
+        Empresa empresaModificada = new Empresa();
+        empresaModificada.setRut(empresa.getRut());
+        empresaModificada.setNombre(empresa.getNombre());
+        empresaModificada.setMail(empresa.getMail());
+        empresaModificada.setPassword(empresa.getPassword());
+        empresaModificada.setFechaRegistro(empresa.getFechaRegistro());
+        empresaModificada.setTelefono(empresa.getTelefono());
+        empresaModificada.setDescripcion(empresa.getDescripcion());
+        empresaModificada.setLogo(empresa.getLogo());
+        empresaModificada.setSitioWeb(empresa.getSitioWeb());
+        empresaModificada.setBloqueado(empresa.isBloqueado());
 
+        System.out.println("\n=================================");
+
+        System.out.println("      DATOS ACTUALES");
+
+        System.out.println("=================================");
+
+        System.out.println("RUT: " + empresa.getRut());
+
+        System.out.println("Nombre: " + empresa.getNombre());
+
+        System.out.println("Mail: " + empresa.getMail());
+
+        System.out.println("Teléfono: " + empresa.getTelefono());
+
+        System.out.println("Descripción: " + empresa.getDescripcion());
+
+        System.out.println("Logo: " + empresa.getLogo());
+
+        System.out.println("Sitio web: " + empresa.getSitioWeb());
+
+        System.out.println("=================================");
+
+        System.out.println("\nIngrese los nuevos datos.");
+
+        System.out.println("Si deja un campo vacío, se mantendrá el valor actual.");
+
+        while (true) {
+
+            System.out.print(
+                    "\nNuevo nombre [" + empresa.getNombre() + "]: "
+            );
+
+            String nombre = scanner.nextLine().trim();
+
+            if (nombre.isEmpty()) {
+                break;
+            }
+            empresaModificada.setNombre(nombre);
+            break;
+        }
+
+        while (true) {
+
+            System.out.print(
+                    "Nuevo teléfono [" + empresa.getTelefono() + "]: "
+            );
+
+            String telefonoIngresado = scanner.nextLine().trim();
+
+            if (telefonoIngresado.isEmpty()) {
+                break;
+            }
+
+            try {
+
+                int telefono = Integer.parseInt(telefonoIngresado);
+
+                empresaModificada.setTelefono(telefono);
+                break;
+
+            } catch (NumberFormatException e) {
+
+                System.out.println("Error: El teléfono debe ser un número.");
+            }
+        }
+
+        System.out.print(
+                "Nueva descripción [" + empresa.getDescripcion() + "]: "
+        );
+
+        String descripcion = scanner.nextLine().trim();
+
+        if (!descripcion.isEmpty()) {
+            empresaModificada.setDescripcion(descripcion);
+        }
+
+        System.out.print(
+                "Nuevo logo [" + empresa.getLogo() + "]: "
+        );
+
+        String logo = scanner.nextLine().trim();
+
+        if (!logo.isEmpty()) {
+            empresaModificada.setLogo(logo);
+        }
+
+        System.out.print(
+                "Nuevo sitio web [" + empresa.getSitioWeb() + "]: "
+        );
+
+        String sitioWeb = scanner.nextLine().trim();
+
+        if (!sitioWeb.isEmpty()) {
+            empresaModificada.setSitioWeb(sitioWeb);
+        }
+
+        System.out.println("\n=================================");
+
+        System.out.println("      RESUMEN DE MODIFICACIÓN");
+
+        System.out.println("=================================");
+
+        System.out.println("RUT: " + empresaModificada.getRut());
+
+        System.out.println("Nombre: " + empresaModificada.getNombre());
+
+        System.out.println("Mail: " + empresaModificada.getMail());
+
+        System.out.println("Teléfono: " + empresaModificada.getTelefono());
+
+        System.out.println("Descripción: " + empresaModificada.getDescripcion());
+
+        System.out.println("Logo: " + empresaModificada.getLogo());
+
+        System.out.println("Sitio web: " + empresaModificada.getSitioWeb());
+
+        System.out.println("=================================");
+
+
+        while (true) {
+            System.out.print("¿Desea guardar estos cambios? (S/N): ");
+
+            String respuesta = scanner.nextLine().trim().toUpperCase();
+
+            if (respuesta.equals("S")) {
+
+                empresaDAO.modificar(empresaModificada);
+
+                empresa.setNombre(empresaModificada.getNombre());
+                empresa.setMail(empresaModificada.getMail());
+                empresa.setPassword(empresaModificada.getPassword());
+                empresa.setFechaRegistro(empresaModificada.getFechaRegistro());
+                empresa.setTelefono(empresaModificada.getTelefono());
+                empresa.setDescripcion(empresaModificada.getDescripcion());
+                empresa.setLogo(empresaModificada.getLogo());
+                empresa.setSitioWeb(empresaModificada.getSitioWeb());
+                empresa.setBloqueado(empresaModificada.isBloqueado());
+
+                System.out.println(
+                        "\nInformación de la empresa actualizada correctamente."
+                );
+
+                break;
+            } else if (respuesta.equals("N")) {
+                System.out.println("\nModificación cancelada.");
+                break;
+            } else {
+                System.out.println("Error: Ingrese S para confirmar o N para cancelar.");
+            }
+        }
+    }
 
 
 
