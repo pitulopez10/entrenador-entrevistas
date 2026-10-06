@@ -243,14 +243,75 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         return null;
     }
 
+    public Empresa buscarPorMail(String mail) throws SQLException {
 
+        String sql = """
+            SELECT *
+            FROM empresa
+            WHERE mail = ?
+            """;
 
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
+            stmt.setString(1, mail);
 
+            try (ResultSet rs = stmt.executeQuery()) {
 
+                if (rs.next()) {
 
+                    Empresa empresa = new Empresa();
 
+                    empresa.setRut(
+                            rs.getString("rut")
+                    );
 
+                    empresa.setNombre(
+                            rs.getString("nombre")
+                    );
 
+                    empresa.setMail(
+                            rs.getString("mail")
+                    );
+
+                    empresa.setPassword(
+                            rs.getString("password")
+                    );
+
+                    if (rs.getDate("fechaRegistro") != null) {
+
+                        empresa.setFechaRegistro(
+                                rs.getDate("fechaRegistro")
+                                        .toLocalDate()
+                        );
+                    }
+
+                    empresa.setTelefono(
+                            rs.getInt("telefono")
+                    );
+
+                    empresa.setDescripcion(
+                            rs.getString("descripcion")
+                    );
+
+                    empresa.setLogo(
+                            rs.getString("logo")
+                    );
+
+                    empresa.setSitioWeb(
+                            rs.getString("sitioWeb")
+                    );
+
+                    empresa.setBloqueado(
+                            rs.getBoolean("bloqueado")
+                    );
+
+                    return empresa;
+                }
+            }
+        }
+
+        return null;
+    }
 
 }

@@ -2720,11 +2720,18 @@ public class Menu {
                     break;
 
                 case "2":
-                    System.out.println(
-                            "\nRegistro de empresa todavía no implementado."
-                    );
-                    break;
+                    try {
 
+                        ejecutarRegistrarEmpresa(scanner);
+
+                    } catch (SQLException e) {
+
+                        System.out.println(
+                                "Error al acceder a la base de datos: "
+                                        + e.getMessage()
+                        );
+                    }
+                    break;
                 case "0":
                     volver = true;
                     break;
@@ -2827,6 +2834,261 @@ public class Menu {
         );
     }
 
+    private void ejecutarRegistrarEmpresa(
+            Scanner scanner
+    ) throws SQLException {
+        String rut;
+        String nombre;
+        String mail;
+        String password;
+        String telefonoIngresado;
+        int telefono;
+        String descripcion;
+        String logo;
+        String sitioWeb;
+        while (true) {
+
+            System.out.print("Ingrese el RUT: ");
+            rut = scanner.nextLine().trim();
+
+            if (rut.isEmpty()) {
+
+                System.out.println(
+                        "Error: El RUT es obligatorio."
+                );
+
+                continue;
+            }
+
+            Empresa empresaExistente = empresaDAO.buscarPorId(rut);
+
+            if (empresaExistente != null) {
+
+                System.out.println(
+                        "Error: Ya existe una empresa registrada con ese RUT."
+                );
+
+                continue;
+            }
+
+            break;
+        }
+
+        while (true) {
+
+            System.out.print("Ingrese el nombre: ");
+            nombre = scanner.nextLine().trim();
+
+            if (nombre.isEmpty()) {
+
+                System.out.println(
+                        "Error: El nombre es obligatorio."
+                );
+
+                continue;
+            }
+
+            break;
+        }
+
+        while (true) {
+
+            System.out.print("Ingrese el mail: ");
+            mail = scanner.nextLine().trim();
+
+            if (mail.isEmpty()) {
+
+                System.out.println(
+                        "Error: El mail es obligatorio."
+                );
+
+                continue;
+            }
+
+            Empresa empresaPorMail = empresaDAO.buscarPorMail(mail);
+
+            if (empresaPorMail != null) {
+
+                System.out.println(
+                        "Error: Ya existe una empresa registrada con ese mail."
+                );
+
+                continue;
+            }
+
+            break;
+        }
+
+        while (true) {
+
+            System.out.print("Ingrese la contraseña: ");
+            password = scanner.nextLine().trim();
+
+            if (password.isEmpty()) {
+
+                System.out.println(
+                        "Error: La contraseña es obligatoria."
+                );
+
+                continue;
+            }
+
+            break;
+        }
+
+        System.out.println(
+                "\n--- Datos opcionales ---"
+        );
+
+        while (true) {
+
+            System.out.print(
+                    "Ingrese el teléfono (opcional): "
+            );
+
+            telefonoIngresado = scanner.nextLine().trim();
+
+            if (telefonoIngresado.isEmpty()) {
+
+                telefono = 0;
+
+                break;
+            }
+
+            try {
+
+                telefono = Integer.parseInt(telefonoIngresado);
+
+                break;
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "Error: El teléfono debe ser un número."
+                );
+            }
+        }
+
+        System.out.print(
+                "Ingrese una descripción (opcional): "
+        );
+
+        descripcion = scanner.nextLine().trim();
+
+
+        System.out.print(
+                "Ingrese el logo (opcional): "
+        );
+
+        logo = scanner.nextLine().trim();
+
+
+        System.out.print(
+                "Ingrese el sitio web (opcional): "
+        );
+
+        sitioWeb = scanner.nextLine().trim();
+
+        System.out.println("\n=================================");
+
+        System.out.println("       RESUMEN DE LA EMPRESA");
+
+        System.out.println("=================================");
+
+        System.out.println("RUT: " + rut);
+
+        System.out.println("Nombre: " + nombre);
+
+        System.out.println("Mail: " + mail);
+
+        System.out.println("Contraseña: " + password);
+
+        System.out.println("Fecha de registro: " + java.time.LocalDate.now());
+
+        if (telefono == 0) {
+
+            System.out.println("Teléfono: No ingresado");
+
+        } else {
+
+            System.out.println("Teléfono: " + telefono);
+        }
+
+        if (descripcion.isEmpty()) {
+
+            System.out.println("Descripción: No ingresada");
+
+        } else {
+
+            System.out.println("Descripción: " + descripcion);
+        }
+
+        if (logo.isEmpty()) {
+
+            System.out.println("Logo: No ingresado");
+
+        } else {
+
+            System.out.println("Logo: " + logo);
+        }
+
+        if (sitioWeb.isEmpty()) {
+
+            System.out.println("Sitio web: No ingresado");
+
+        } else {
+
+            System.out.println("Sitio web: " + sitioWeb);
+        }
+
+        System.out.println("Bloqueado: false");
+
+        System.out.println("=================================");
+        while (true) {
+
+            System.out.print(
+                    "¿Desea agregar esta empresa? (S/N): "
+            );
+
+            String respuesta = scanner.nextLine().trim().toUpperCase();
+
+            if (respuesta.equals("S")) {
+
+                Empresa nuevaEmpresa = new Empresa();
+
+                nuevaEmpresa.setRut(rut);
+                nuevaEmpresa.setNombre(nombre);
+                nuevaEmpresa.setMail(mail);
+                nuevaEmpresa.setPassword(password);
+                nuevaEmpresa.setFechaRegistro(java.time.LocalDate.now());
+                nuevaEmpresa.setTelefono(telefono);
+                nuevaEmpresa.setDescripcion(descripcion);
+                nuevaEmpresa.setLogo(logo);
+                nuevaEmpresa.setSitioWeb(sitioWeb);
+                nuevaEmpresa.setBloqueado(false);
+
+                empresaDAO.agregar(nuevaEmpresa);
+
+                System.out.println("\nEmpresa registrada correctamente.");
+
+                break;
+
+            } else if (respuesta.equals("N")) {
+
+                System.out.println(
+                        "\nRegistro cancelado."
+                );
+
+                break;
+
+            } else {
+
+                System.out.println(
+                        "Error: Ingrese S para confirmar o N para cancelar."
+                );
+            }
+        }
+    }
 
     private void ejecutarEliminarCerrarOferta(
             Scanner scanner
