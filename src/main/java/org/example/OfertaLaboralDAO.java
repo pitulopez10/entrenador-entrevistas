@@ -243,5 +243,4 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
 
 
 
-
 }

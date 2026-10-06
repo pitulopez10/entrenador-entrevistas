@@ -1850,7 +1850,10 @@ public class Menu {
             System.out.println("----------------------------------------");
             System.out.println("1. Completar información personal");
             System.out.println("2. Agregar estudios");
-            System.out.println("3. Cerrar sesión");
+            System.out.println("3. Consultar ofertas");
+            System.out.println("4. Filtrar ofertas");
+            System.out.println("5. Postularse a una oferta");
+            System.out.println("6. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -1869,6 +1872,16 @@ public class Menu {
                         break;
 
                     case "3":
+                        ejecutarConsultarOfertas();
+                        break;
+
+                    case "4":
+                        break;
+
+                    case "5":
+                        break;
+
+                    case "6":
                         ejecutarCerrarSesionPostulante();
                         cerrarSesion = true;
                         break;
@@ -1891,6 +1904,38 @@ public class Menu {
         }
     }
 
+    private void ejecutarConsultarOfertas() throws SQLException {
+
+        List<OfertaLaboral> ofertas = ofertaLaboralDAO.listar();
+
+        boolean hayOfertasActivas = false;
+
+        System.out.println("\n========================================");
+        System.out.println("          OFERTAS LABORALES");
+        System.out.println("========================================");
+
+        for (OfertaLaboral oferta : ofertas) {
+
+            if (oferta.getEstado() != EstadoEntrevista.TERMINADA) {
+
+                hayOfertasActivas = true;
+
+                System.out.println("\n----------------------------------------");
+                System.out.println("ID: " + oferta.getId());
+                System.out.println("Título: " + oferta.getTitulo());
+                System.out.println("Descripción: " + oferta.getDescripcion());
+                System.out.println("Requisitos: " + oferta.getRequisitos());
+                System.out.println("Empresa: " + oferta.getEmpresa().getNombre());
+                System.out.println("Fecha de cierre: " + oferta.getFechaCierre());
+            }
+        }
+
+        if (!hayOfertasActivas) {
+            System.out.println("\nNo hay ofertas laborales activas.");
+        }
+
+        System.out.println("\n----------------------------------------");
+    }
 
     private void ejecutarIniciarSesionPostulante(
             Scanner scanner
