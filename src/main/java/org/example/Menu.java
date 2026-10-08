@@ -2807,9 +2807,11 @@ public class Menu {
             System.out.println("1. Crear oferta");
             System.out.println("2. Eliminar/cerrar oferta");
             System.out.println("3. Consultar postulaciones");
-            System.out.println("4. Ver datos de la empresa");
-            System.out.println("5. Modificar informacion");
-            System.out.println("6. Cerrar sesión");
+            System.out.println("4. Elegir postulante de una postulacion");
+            System.out.println("5. Ver perfil del postulante");
+            System.out.println("6. Ver datos de la empresa");
+            System.out.println("7. Modificar informacion");
+            System.out.println("8. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -2832,17 +2834,25 @@ public class Menu {
                         break;
 
                     case "4":
+                        ejecutarElegirPostulante(scanner);
+                        break;
+
+                    case "5":
+                        ejecutarVerPerfilPostulante(scanner);
+                        break;
+
+                    case "6":
                         mostrarDatosEmpresa(
                                 empresaAutenticada
                         );
                         break;
-                    case "5":
+                    case "7":
                         ejecutarModificarEmpresa(
                                 scanner,
                                 empresaAutenticada
                         );
                         break;
-                    case "6":
+                    case "8":
                         ejecutarCerrarSesionEmpresa();
                         cerrarSesion = true;
                         break;
@@ -3627,10 +3637,184 @@ public class Menu {
             }
         }
     }
+    private void ejecutarElegirPostulante(
+            Scanner scanner
+    ) throws SQLException {
+
+        if (empresaAutenticada == null) {
+
+            System.out.println(
+                    "Error: Debe iniciar sesión como empresa."
+            );
+
+            return;
+        }
+
+        List<Postulacion> postulaciones =
+                postulacionDAO.listarPorEmpresa(
+                        empresaAutenticada.getRut()
+                );
+
+        if (postulaciones.isEmpty()) {
+
+            System.out.println(
+                    "No tiene postulaciones recibidas."
+            );
+
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("        POSTULACIONES RECIBIDAS");
+        System.out.println("========================================");
+
+        for (Postulacion postulacion : postulaciones) {
+
+            System.out.println("----------------------------------------");
+            System.out.println("ID postulación: " + postulacion.getId());
+            System.out.println(
+                    "Oferta: " + postulacion.getOfertaLaboral().getTitulo()
+            );
+            System.out.println(
+                    "Postulante: " + postulacion.getPostulante().getNombre()
+            );
+            System.out.println("Estado actual: " + postulacion.getEstado());
+        }
+
+        System.out.println("----------------------------------------");
+
+        System.out.print(
+                "\nIngrese el ID de la postulación a seleccionar: "
+        );
+
+        String idIngresado = scanner.nextLine().trim();
+
+        int idPostulacion;
+
+        try {
+            idPostulacion = Integer.parseInt(idIngresado);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID debe ser un número.");
+            return;
+        }
+
+        Postulacion postulacionSeleccionada = null;
+
+        for (Postulacion postulacion : postulaciones) {
+            if (postulacion.getId() == idPostulacion) {
+                postulacionSeleccionada = postulacion;
+                break;
+            }
+        }
+
+        if (postulacionSeleccionada == null) {
+            System.out.println(
+                    "Error: La postulación no existe "
+                            + "o no pertenece a su empresa."
+            );
+            return;
+        }
+
+        System.out.println(
+                "\nPostulante: "
+                        + postulacionSeleccionada.getPostulante().getNombre()
+        );
+
+        System.out.print("¿Confirma la selección? (S/N): ");
+
+        String respuesta = scanner.nextLine().trim().toUpperCase();
+
+        if (respuesta.equals("S")) {
+
+            postulacionDAO.seleccionarPostulante(idPostulacion);
+
+            System.out.println(
+                    "\nPostulante seleccionado correctamente."
+            );
+
+        } else {
+            System.out.println("\nOperación cancelada.");
+        }
+    }
 
 
+    private void ejecutarVerPerfilPostulante(
+            Scanner scanner
+    ) throws SQLException {
 
+        if (empresaAutenticada == null) {
+            System.out.println("Error: Debe iniciar sesión como empresa.");
+            return;
+        }
 
+        List<Postulacion> postulaciones =
+                postulacionDAO.listarPorEmpresa(
+                        empresaAutenticada.getRut()
+                );
+
+        if (postulaciones.isEmpty()) {
+            System.out.println("No tiene postulaciones recibidas.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("        POSTULACIONES RECIBIDAS");
+        System.out.println("========================================");
+
+        for (Postulacion postulacion : postulaciones) {
+            System.out.println("----------------------------------------");
+            System.out.println("ID postulación: " + postulacion.getId());
+            System.out.println("Postulante: " + postulacion.getPostulante().getNombre());
+            System.out.println("CI: " + postulacion.getPostulante().getCi());
+        }
+
+        System.out.println("----------------------------------------");
+        System.out.print("\nIngrese el ID de la postulación para ver el perfil: ");
+
+        String idIngresado = scanner.nextLine().trim();
+
+        int idPostulacion;
+        try {
+            idPostulacion = Integer.parseInt(idIngresado);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID debe ser un número.");
+            return;
+        }
+
+        Postulacion postulacionSeleccionada = null;
+        for (Postulacion postulacion : postulaciones) {
+            if (postulacion.getId() == idPostulacion) {
+                postulacionSeleccionada = postulacion;
+                break;
+            }
+        }
+
+        if (postulacionSeleccionada == null) {
+            System.out.println("Error: La postulación no existe o no pertenece a su empresa.");
+            return;
+        }
+
+        int ciPostulante = postulacionSeleccionada.getPostulante().getCi();
+        Postulante postulante = postulanteDAO.buscarPorId(ciPostulante);
+
+        if (postulante == null) {
+            System.out.println("Error: No se encontró el perfil del postulante.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("          PERFIL DEL POSTULANTE");
+        System.out.println("========================================");
+        System.out.println("Nombre: " + postulante.getNombre());
+        System.out.println("CI: " + postulante.getCi());
+        System.out.println("Mail: " + postulante.getMail());
+        System.out.println("Teléfono: " + postulante.getTelefono());
+        System.out.println("Localidad: " + postulante.getLocalidad());
+        System.out.println("Descripción: " + postulante.getDescripcion());
+        System.out.println("CV: " + postulante.getCv());
+        System.out.println("Estudios: " + postulante.getDatosEstudio());
+        System.out.println("Experiencia: " + postulante.getDatosExperiencia());
+    }
     
 }
 

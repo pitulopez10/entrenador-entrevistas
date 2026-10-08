@@ -449,8 +449,23 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
 
         return postulaciones;
     }
+    public void seleccionarPostulante(Integer id) throws SQLException {
 
+        String sql = """
+            UPDATE postulacion
+            SET estado = ?
+            WHERE id = ?
+            """;
 
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
 
+            stmt.setString(1, EstadoPostulacion.seleccionado.name());
+            stmt.setInt(2, id);
 
+            stmt.executeUpdate();
+        }
+    }
 }
