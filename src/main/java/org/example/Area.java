@@ -12,10 +12,12 @@ public class Area {
 
     // RELACIONES
     private List<Postulante> postulantes;
+    private List<OfertaLaboral> ofertasLaborales;
 
     // CONSTRUCTOR VACÍO
     public Area() {
         this.postulantes = new ArrayList<>();
+        this.ofertasLaborales = new ArrayList<>();
     }
 
     // CONSTRUCTOR COMPLETO
@@ -24,6 +26,7 @@ public class Area {
         this.descripcion = descripcion;
         this.nombre = nombre;
         this.postulantes = new ArrayList<>();
+        this.ofertasLaborales = new ArrayList<>();
     }
 
     // GETTERS
@@ -44,6 +47,10 @@ public class Area {
         return postulantes;
     }
 
+    public List<OfertaLaboral> getOfertasLaborales() {
+        return ofertasLaborales;
+    }
+
     // SETTERS
 
     public void setId(int id) {
@@ -61,4 +68,9 @@ public class Area {
     public void setPostulantes(List<Postulante> postulantes) {
         this.postulantes = postulantes;
     }
+
+    public void setOfertasLaborales(List<OfertaLaboral> ofertasLaborales) {
+        this.ofertasLaborales = ofertasLaborales;
+    }
+
 }

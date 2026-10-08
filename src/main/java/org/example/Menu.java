@@ -12,6 +12,7 @@ public class Menu {
     private final EmpresaDAO empresaDAO = new EmpresaDAO();
     private final OfertaLaboralDAO ofertaLaboralDAO = new OfertaLaboralDAO();
     private final PostulacionDAO postulacionDAO = new PostulacionDAO();
+    private final AreaDAO areaDAO = new AreaDAO();
 
     private boolean isAdminAutenticado = false;
     private Postulante postulanteAutenticado = null;
@@ -1876,6 +1877,7 @@ public class Menu {
                         break;
 
                     case "4":
+                        ejecutarFiltrarOfertas(scanner);
                         break;
 
                     case "5":
@@ -1932,6 +1934,86 @@ public class Menu {
 
         if (!hayOfertasActivas) {
             System.out.println("\nNo hay ofertas laborales activas.");
+        }
+
+        System.out.println("\n----------------------------------------");
+    }
+
+    private void ejecutarFiltrarOfertas(Scanner scanner) throws SQLException {
+
+        List<OfertaLaboral> ofertas = ofertaLaboralDAO.listar();
+
+        if (ofertas == null || ofertas.isEmpty()) {
+            System.out.println("\nNo hay ofertas laborales registradas.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("           FILTRAR OFERTAS");
+        System.out.println("========================================");
+
+        System.out.println("Deje vacío un filtro si no desea aplicarlo.");
+
+        System.out.print("\nÁrea o característica: ");
+        String criterio = scanner.nextLine().trim().toLowerCase();
+
+        System.out.print("Empresa: ");
+        String empresaBuscada = scanner.nextLine().trim().toLowerCase();
+
+        boolean hayResultados = false;
+
+        System.out.println("\n========================================");
+        System.out.println("         RESULTADOS DE BÚSQUEDA");
+        System.out.println("========================================");
+
+        for (OfertaLaboral oferta : ofertas) {
+
+            // Solo mostrar ofertas que estén activas
+            if (oferta.getEstado() != EstadoEntrevista.ACTIVA) {
+                continue;
+            }
+
+            boolean cumpleCriterio = true;
+            boolean cumpleEmpresa = true;
+
+            String nombreEmpresa = (oferta.getEmpresa() != null) ? oferta.getEmpresa().getNombre() : "";
+            String nombreArea = (oferta.getArea() != null) ? oferta.getArea().getNombre() : "";
+
+            // Filtro por área o características (título, descripción, requisitos y nombre del área)
+            if (!criterio.isEmpty()) {
+                String datosOferta = (oferta.getTitulo() + " "
+                        + oferta.getDescripcion() + " "
+                        + oferta.getRequisitos() + " "
+                        + nombreArea).toLowerCase();
+
+                cumpleCriterio = datosOferta.contains(criterio);
+            }
+
+            // Filtro por empresa
+            if (!empresaBuscada.isEmpty()) {
+                cumpleEmpresa = nombreEmpresa.toLowerCase().contains(empresaBuscada);
+            }
+
+            // Mostrar solo si cumple con todos los filtros aplicados
+            if (cumpleCriterio && cumpleEmpresa) {
+
+                hayResultados = true;
+
+                System.out.println("\n----------------------------------------");
+                System.out.println("ID: " + oferta.getId());
+                System.out.println("Título: " + oferta.getTitulo());
+                System.out.println("Descripción: " + oferta.getDescripcion());
+                System.out.println("Requisitos: " + oferta.getRequisitos());
+                System.out.println("Área: " + (nombreArea.isEmpty() ? "No asignada" : nombreArea));
+                System.out.println("Empresa: " + (nombreEmpresa.isEmpty() ? "No asignada" : nombreEmpresa));
+                System.out.println("Fecha de publicación: " + oferta.getFechaPublicacion());
+                System.out.println("Fecha de cierre: " + oferta.getFechaCierre());
+                System.out.println("Estado: " + oferta.getEstado());
+            }
+        }
+
+        if (!hayResultados) {
+            System.out.println("\nNo se encontraron ofertas que cumplan con los filtros.");
         }
 
         System.out.println("\n----------------------------------------");
@@ -2471,6 +2553,66 @@ public class Menu {
             return;
         }
 
+        List<Area> areas = areaDAO.listar();
+
+        if (areas == null || areas.isEmpty()) {
+            System.out.println("Error: No hay áreas registradas en el sistema.");
+            return;
+        }
+
+        System.out.println("ÁREAS DISPONIBLES: ");
+
+        for (Area area : areas) {
+
+            System.out.println(
+                    area.getId()
+                            + " - "
+                            + area.getNombre()
+                            + " | "
+                            + area.getDescripcion()
+            );
+        }
+
+        System.out.print("\nSeleccione el ID del área: ");
+
+        int idArea;
+
+        try {
+
+            idArea = Integer.parseInt(
+                    scanner.nextLine().trim()
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Error: Debe ingresar un número válido."
+            );
+
+            return;
+        }
+
+        Area areaSeleccionada = null;
+
+        for (Area area : areas) {
+
+            if (area.getId() == idArea) {
+
+                areaSeleccionada = area;
+                break;
+            }
+        }
+
+        if (areaSeleccionada == null) {
+
+            System.out.println(
+                    "Error: El área seleccionada no existe."
+            );
+
+            return;
+        }
+
+
         // FECHA PUBLICACIÓN
         System.out.print(
                 "Fecha de publicación (AAAA-MM-DD): "
@@ -2558,6 +2700,7 @@ public class Menu {
         System.out.println("Título: " + titulo);
         System.out.println("Descripción: " + descripcion);
         System.out.println("Requisitos: " + requisitos);
+        System.out.println("Área: " + areaSeleccionada.getNombre());
         System.out.println(
                 "Fecha publicación: "
                         + fechaPublicacion

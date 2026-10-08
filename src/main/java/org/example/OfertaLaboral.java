@@ -19,6 +19,7 @@ public class OfertaLaboral {
     private Empresa empresa;
     private List<Postulacion> postulaciones;
     private Entrevista entrevista;
+    private Area area;
 
     // CONSTRUCTOR VACÍO
     public OfertaLaboral() {
@@ -34,7 +35,8 @@ public class OfertaLaboral {
                          String requisitos,
                          String titulo,
                          Empresa empresa,
-                         Entrevista entrevista) {
+                         Entrevista entrevista,
+                         Area area) {
 
         this.descripcion = descripcion;
         this.estado = estado;
@@ -47,6 +49,7 @@ public class OfertaLaboral {
         this.empresa = empresa;
         this.entrevista = entrevista;
         this.postulaciones = new ArrayList<>();
+        this.area = area;
     }
 
     // GETTERS
@@ -81,6 +84,10 @@ public class OfertaLaboral {
 
     public Empresa getEmpresa() {
         return empresa;
+    }
+
+    public Area getArea() {
+        return area;
     }
 
     public List<Postulacion> getPostulaciones() {
@@ -123,6 +130,10 @@ public class OfertaLaboral {
 
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
+    }
+
+    public void setArea(Area area) {
+        this.area = area;
     }
 
     public void setPostulaciones(List<Postulacion> postulaciones) {

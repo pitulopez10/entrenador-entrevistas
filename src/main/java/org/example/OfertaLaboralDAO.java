@@ -15,8 +15,8 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
         String sql = """
             INSERT INTO ofertalaboral
             (titulo, descripcion, requisitos, fechaPublicacion,
-             fechaCierre, estado, empresa_rut)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+             fechaCierre, estado, empresa_rut, area_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
         try (
@@ -48,9 +48,15 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
                     oferta.getEmpresa().getRut()
             );
 
+            stmt.setInt(
+                    8,
+                    oferta.getArea().getId()
+            );
+
             stmt.executeUpdate();
         }
     }
+
     @Override
     public OfertaLaboral buscarPorId(Integer id) throws SQLException {
         String sql = """
@@ -92,9 +98,14 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
         List<OfertaLaboral> ofertas = new ArrayList<>();
 
         String sql = """
-                SELECT o.*, e.nombre AS nombreEmpresa
+                SELECT o.*,
+                        e.nombre AS nombreEmpresa,
+                        a.id AS areaId,
+                        a.nombre AS nombreArea,
+                        a.descripcion AS descripcionArea
                 FROM ofertalaboral o
                 JOIN empresa e ON o.empresa_rut = e.rut
+                JOIN area a ON o.area_id = a.id
                 ORDER BY o.id
                 """;
 
@@ -134,6 +145,13 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
                 empresa.setNombre(rs.getString("nombreEmpresa"));
 
                 oferta.setEmpresa(empresa);
+
+                Area area = new Area();
+                area.setId(rs.getInt("areaId"));
+                area.setNombre(rs.getString("nombreArea"));
+                area.setDescripcion(rs.getString("descripcionArea"));
+
+                oferta.setArea(area);
 
                 ofertas.add(oferta);
             }
@@ -182,9 +200,14 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
         List<OfertaLaboral> ofertas = new ArrayList<>();
 
         String sql = """
-        SELECT o.*, e.nombre AS nombreEmpresa
+        SELECT o.*,
+                e.nombre AS nombreEmpresa,
+                a.id AS areaId,
+                a.nombre AS nombreArea,
+                a.descripcion AS descripcionArea
         FROM ofertalaboral o
         JOIN empresa e ON o.empresa_rut = e.rut
+        JOIN area a ON o.area_id = a.id
         WHERE o.empresa_rut = ?
         ORDER BY o.id
         """;
@@ -208,6 +231,21 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
                     }
 
                     oferta.setEstado(EstadoEntrevista.valueOf(rs.getString("estado").toUpperCase()));
+
+                    // EMPRESA
+                    Empresa empresa = new Empresa();
+                    empresa.setRut(rs.getString("empresa_rut"));
+                    empresa.setNombre(rs.getString("nombreEmpresa"));
+
+                    oferta.setEmpresa(empresa);
+
+                    // ÁREA
+                    Area area = new Area();
+                    area.setId(rs.getInt("areaId"));
+                    area.setNombre(rs.getString("nombreArea"));
+                    area.setDescripcion(rs.getString("descripcionArea"));
+
+                    oferta.setArea(area);
 
                     ofertas.add(oferta);
                 }
@@ -239,7 +277,6 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
             stmt.executeUpdate();
         }
     }
-
 
 
 
