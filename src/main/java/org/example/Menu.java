@@ -1882,6 +1882,7 @@ public class Menu {
                         break;
 
                     case "5":
+                        ejecutarPostularseAOferta(scanner);
                         break;
 
                     case "6":
@@ -2021,6 +2022,73 @@ public class Menu {
         }
 
         System.out.println("\n----------------------------------------");
+    }
+
+    private void ejecutarPostularseAOferta(Scanner scanner) throws SQLException {
+        System.out.println("\n=== POSTULACIÓN A OFERTA LABORAL ===");
+
+        // 1. Mostrar ofertas disponibles
+        ejecutarConsultarOfertas();
+
+        System.out.print("\nIngrese el ID de la oferta laboral a la que desea postularse: ");
+        String idIngresado = scanner.nextLine().trim();
+
+        int idOferta;
+        try {
+            idOferta = Integer.parseInt(idIngresado);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID de la oferta debe ser un número entero.");
+            return;
+        }
+
+        // 2. Buscar la oferta en la base de datos
+        OfertaLaboral oferta = ofertaLaboralDAO.buscarPorId(idOferta);
+
+        if (oferta == null) {
+            System.out.println("Error: No existe ninguna oferta laboral con el ID " + idOferta + ".");
+            return;
+        }
+
+        // 3. Regla 1: Verificar que la oferta esté activa usando EstadoEntrevista.ACTIVA
+        if (oferta.getEstado() != EstadoEntrevista.ACTIVA) {
+            System.out.println("Error: La oferta '" + oferta.getTitulo() + "' no se encuentra activa.");
+            return;
+        }
+
+        // 4. Regla 2: Verificar que el postulante no se haya postulado previamente
+        int ciPostulante = postulanteAutenticado.getCi();
+        List<Postulacion> misPostulaciones = postulacionDAO.listarPorPostulante(ciPostulante);
+
+        boolean yaPostulado = misPostulaciones.stream()
+                .anyMatch(p -> p.getOfertaLaboral().getId() == idOferta);
+
+        if (yaPostulado) {
+            System.out.println("Error: Ya te has postulado anteriormente a la oferta '" + oferta.getTitulo() + "'.");
+            return;
+        }
+
+        // 5. Mensaje opcional para la postulación
+        System.out.print("Ingrese un mensaje o carta de presentación (opcional, presione Enter para omitir): ");
+        String mensaje = scanner.nextLine().trim();
+
+        // 6. Confirmación
+        System.out.print("¿Confirma que desea postularse a '" + oferta.getTitulo() + "'? (S/N): ");
+        String confirmacion = scanner.nextLine().trim().toUpperCase();
+
+        if (confirmacion.equals("S")) {
+            Postulacion nuevaPostulacion = new Postulacion();
+            nuevaPostulacion.setFechaPostulacion(java.time.LocalDate.now());
+            nuevaPostulacion.setEstado(EstadoPostulacion.enviado);
+            nuevaPostulacion.setMensaje(mensaje.isEmpty() ? null : mensaje);
+            nuevaPostulacion.setPostulante(postulanteAutenticado);
+            nuevaPostulacion.setOfertaLaboral(oferta);
+
+            postulacionDAO.agregar(nuevaPostulacion);
+
+            System.out.println("=== [ÉXITO] Te has postulado correctamente a la oferta laboral ===");
+        } else {
+            System.out.println("-> Postulación cancelada.");
+        }
     }
 
     private void ejecutarIniciarSesionPostulante(
