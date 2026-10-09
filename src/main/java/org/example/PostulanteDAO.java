@@ -425,5 +425,46 @@ public class PostulanteDAO implements CrudDAO<Postulante, Integer> {
         }
 
         return null;
+
     }
+
+    public void asignarArea(int ci, int areaId) throws SQLException {
+
+        String sql = """
+            INSERT INTO postulante_area (postulante_ci, area_id)
+            VALUES (?, ?)
+            """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setInt(1, ci);
+            stmt.setInt(2, areaId);
+
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<Integer> listarIdsAreas(int ci) throws SQLException {
+
+        List<Integer> ids = new ArrayList<>();
+
+        String sql = "SELECT area_id FROM postulante_area WHERE postulante_ci = ?";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setInt(1, ci);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("area_id"));
+                }
+            }
+        }
+
+        return ids;
+    }
+
+
 }

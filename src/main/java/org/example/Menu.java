@@ -13,6 +13,9 @@ public class Menu {
     private final OfertaLaboralDAO ofertaLaboralDAO = new OfertaLaboralDAO();
     private final PostulacionDAO postulacionDAO = new PostulacionDAO();
     private final AreaDAO areaDAO = new AreaDAO();
+    private final EntrevistaDAO entrevistaDAO = new EntrevistaDAO();
+    private final PreguntaDAO preguntaDAO = new PreguntaDAO();
+    private final RespuestaDAO respuestaDAO = new RespuestaDAO();
 
     private boolean isAdminAutenticado = false;
     private Postulante postulanteAutenticado = null;
@@ -1855,7 +1858,10 @@ public class Menu {
             System.out.println("4. Filtrar ofertas");
             System.out.println("5. Postularse a una oferta");
             System.out.println("6. Agregar experiencia");
-            System.out.println("7. Cerrar sesión");
+            System.out.println("7. Seleccionar puesto/área");
+            System.out.println("8. Iniciar entrevista simulada");
+            System.out.println("9. Responder preguntas");
+            System.out.println("10. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -1887,7 +1893,20 @@ public class Menu {
                     case "6":
                         ejecutarAgregarExperiencia(scanner);
                         break;
+
                     case "7":
+                        ejecutarSeleccionarArea(scanner);
+                        break;
+
+                    case "8":
+                        ejecutarIniciarEntrevistaSimulada(scanner);
+                        break;
+
+                    case "9":
+                        ejecutarResponderPregunta(scanner);
+                        break;
+
+                    case "10":
                         ejecutarCerrarSesionPostulante();
                         cerrarSesion = true;
                         break;
@@ -2425,6 +2444,253 @@ public class Menu {
                 "Experiencia agregada correctamente."
         );
     }
+    private void ejecutarSeleccionarArea(Scanner scanner) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+            System.out.println("Error: Debe iniciar sesión.");
+            return;
+        }
+
+        List<Area> areas = areaDAO.listar();
+
+        if (areas.isEmpty()) {
+            System.out.println("No hay áreas disponibles.");
+            return;
+        }
+
+        List<Integer> misAreas =
+                postulanteDAO.listarIdsAreas(postulanteAutenticado.getCi());
+
+        System.out.println("\n========================================");
+        System.out.println("          SELECCIONAR ÁREA");
+        System.out.println("========================================");
+
+        for (Area area : areas) {
+            String marca = misAreas.contains(area.getId()) ? "  [ya seleccionada]" : "";
+            System.out.println(area.getId() + ". " + area.getNombre() + marca);
+        }
+
+        System.out.print("\nIngrese el ID del área (0 para cancelar): ");
+        String ingreso = scanner.nextLine().trim();
+
+        int areaId;
+        try {
+            areaId = Integer.parseInt(ingreso);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID debe ser un número.");
+            return;
+        }
+
+        if (areaId == 0) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
+
+        boolean existe = false;
+        for (Area area : areas) {
+            if (area.getId() == areaId) {
+                existe = true;
+                break;
+            }
+        }
+
+        if (!existe) {
+            System.out.println("Error: No existe un área con ese ID.");
+            return;
+        }
+
+        if (misAreas.contains(areaId)) {
+            System.out.println("Error: Ya tiene seleccionada esa área.");
+            return;
+        }
+
+        postulanteDAO.asignarArea(postulanteAutenticado.getCi(), areaId);
+
+        System.out.println("Área seleccionada correctamente.");
+    }
+
+    private void ejecutarIniciarEntrevistaSimulada(Scanner scanner) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+            System.out.println("Error: Debe iniciar sesión.");
+            return;
+        }
+
+        // Áreas que el postulante ya seleccionó
+        List<Integer> idsMisAreas =
+                postulanteDAO.listarIdsAreas(postulanteAutenticado.getCi());
+
+        List<Area> misAreas = new java.util.ArrayList<>();
+        for (Area area : areaDAO.listar()) {
+            if (idsMisAreas.contains(area.getId())) {
+                misAreas.add(area);
+            }
+        }
+
+        if (misAreas.isEmpty()) {
+            System.out.println(
+                    "Primero debe seleccionar al menos un área "
+                            + "(opción Seleccionar puesto/área)."
+            );
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("        INICIAR ENTREVISTA SIMULADA");
+        System.out.println("========================================");
+
+        for (Area area : misAreas) {
+            System.out.println(area.getId() + ". " + area.getNombre());
+        }
+
+        System.out.print("\nIngrese el ID del área para practicar (0 para cancelar): ");
+
+        int areaId;
+        try {
+            areaId = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: El ID debe ser un número.");
+            return;
+        }
+
+        if (areaId == 0) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
+
+        Area areaElegida = null;
+        for (Area area : misAreas) {
+            if (area.getId() == areaId) {
+                areaElegida = area;
+                break;
+            }
+        }
+
+        if (areaElegida == null) {
+            System.out.println("Error: Esa no es una de sus áreas seleccionadas.");
+            return;
+        }
+
+        // 1) Crear la entrevista
+        Entrevista entrevista = new Entrevista();
+        entrevista.setFecha(java.time.LocalDate.now());
+        entrevista.setDuracionMin(0);
+        entrevista.setEstado(EstadoEntrevista.ACTIVA);
+        entrevista.setPostulante(postulanteAutenticado);
+
+        int entrevistaId = entrevistaDAO.agregar(entrevista);
+
+        // 2) Generar y guardar las preguntas
+        // (placeholder: más adelante se reemplaza por las preguntas de la IA)
+        String nombreArea = areaElegida.getNombre();
+
+        Pregunta p1 = new Pregunta();
+        p1.setTexto("Contame sobre una situación en la que tuviste que trabajar en equipo.");
+        p1.setTipo(TipoPregunta.CONDUCTUAL);
+        p1.setDificultad(TipoDificultad.BAJA);
+
+        Pregunta p2 = new Pregunta();
+        p2.setTexto("¿Qué conocimientos o herramientas considerás clave para trabajar en "
+                + nombreArea + "?");
+        p2.setTipo(TipoPregunta.TECNICA);
+        p2.setDificultad(TipoDificultad.MEDIA);
+
+        Pregunta p3 = new Pregunta();
+        p3.setTexto("Si un proyecto de " + nombreArea
+                + " se atrasa a pocos días de la entrega, ¿cómo actuarías?");
+        p3.setTipo(TipoPregunta.SITUACIONAL);
+        p3.setDificultad(TipoDificultad.ALTA);
+
+        Pregunta[] preguntas = {p1, p2, p3};
+
+        for (Pregunta p : preguntas) {
+            preguntaDAO.agregar(p, entrevistaId);
+        }
+
+        // 3) Mostrar
+        System.out.println("\nEntrevista iniciada (ID " + entrevistaId + ") - Área: " + nombreArea);
+        System.out.println("----------------------------------------");
+
+        int numero = 1;
+        for (Pregunta p : preguntas) {
+            System.out.println(numero + ". [" + p.getTipo() + "] " + p.getTexto());
+            numero++;
+        }
+    }
+
+    private void ejecutarResponderPregunta(Scanner scanner) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+            System.out.println("Error: Debe iniciar sesión.");
+            return;
+        }
+
+        Integer entrevistaId =
+                entrevistaDAO.buscarActivaDePostulante(
+                        postulanteAutenticado.getCi()
+                );
+
+        if (entrevistaId == null) {
+            System.out.println(
+                    "No tiene ninguna entrevista activa. "
+                            + "Inicie una entrevista simulada primero."
+            );
+            return;
+        }
+
+        List<Pregunta> pendientes =
+                preguntaDAO.listarSinRespuesta(entrevistaId);
+
+        if (pendientes.isEmpty()) {
+            entrevistaDAO.terminar(entrevistaId);
+            System.out.println("Ya respondió todas las preguntas. Entrevista terminada.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("        RESPONDER PREGUNTAS");
+        System.out.println("========================================");
+        System.out.println("Escriba 'salir' para pausar y continuar más tarde.");
+
+        int numero = 1;
+
+        for (Pregunta pregunta : pendientes) {
+
+            System.out.println("\nPregunta " + numero + " de " + pendientes.size()
+                    + " [" + pregunta.getTipo() + "]");
+            System.out.println(pregunta.getTexto());
+
+            String respuesta;
+
+            while (true) {
+                System.out.print("Su respuesta: ");
+                respuesta = scanner.nextLine().trim();
+
+                if (!respuesta.isEmpty()) {
+                    break;
+                }
+
+                System.out.println("Error: La respuesta no puede estar vacía.");
+            }
+
+            if (respuesta.equalsIgnoreCase("salir")) {
+                System.out.println("Entrevista pausada. Puede continuarla más tarde.");
+                return;
+            }
+
+            respuestaDAO.agregar(respuesta, pregunta.getId());
+
+            numero++;
+        }
+
+        entrevistaDAO.terminar(entrevistaId);
+
+        System.out.println("\nEntrevista terminada. ¡Buen trabajo!");
+    }
+
+
+
+
 
     private void ejecutarCerrarSesionPostulante() {
 
