@@ -1854,7 +1854,8 @@ public class Menu {
             System.out.println("3. Consultar ofertas");
             System.out.println("4. Filtrar ofertas");
             System.out.println("5. Postularse a una oferta");
-            System.out.println("6. Cerrar sesión");
+            System.out.println("6. Agregar experiencia");
+            System.out.println("7. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -1884,6 +1885,9 @@ public class Menu {
                         break;
 
                     case "6":
+                        ejecutarAgregarExperiencia(scanner);
+                        break;
+                    case "7":
                         ejecutarCerrarSesionPostulante();
                         cerrarSesion = true;
                         break;
@@ -2370,6 +2374,55 @@ public class Menu {
 
         System.out.println(
                 "Estudio agregado correctamente."
+        );
+    }
+    private void ejecutarAgregarExperiencia(Scanner scanner) throws SQLException {
+
+        if (postulanteAutenticado == null) {
+            System.out.println("Error: Debe iniciar sesión.");
+            return;
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("           AGREGAR EXPERIENCIA");
+        System.out.println("========================================");
+
+        String experienciaActual =
+                postulanteAutenticado.getDatosExperiencia();
+
+        if (experienciaActual != null && !experienciaActual.isBlank()) {
+
+            System.out.println("Experiencia actual:");
+            System.out.println(experienciaActual);
+        }
+
+        System.out.print("Ingrese la nueva experiencia: ");
+        String nuevaExperiencia = scanner.nextLine().trim();
+
+        if (nuevaExperiencia.isEmpty()) {
+            System.out.println("Error: Debe ingresar una experiencia.");
+            return;
+        }
+
+        if (experienciaActual == null || experienciaActual.isBlank()) {
+
+            postulanteAutenticado.setDatosExperiencia(
+                    nuevaExperiencia
+            );
+
+        } else {
+
+            postulanteAutenticado.setDatosExperiencia(
+                    experienciaActual + " | " + nuevaExperiencia
+            );
+        }
+
+        postulanteDAO.modificar(
+                postulanteAutenticado
+        );
+
+        System.out.println(
+                "Experiencia agregada correctamente."
         );
     }
 
@@ -2954,7 +3007,8 @@ public class Menu {
             System.out.println("5. Ver perfil del postulante");
             System.out.println("6. Ver datos de la empresa");
             System.out.println("7. Modificar informacion");
-            System.out.println("8. Cerrar sesión");
+            System.out.println("8. Filtrar postulantes");
+            System.out.println("9. Cerrar sesión");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -2995,7 +3049,12 @@ public class Menu {
                                 empresaAutenticada
                         );
                         break;
+
                     case "8":
+                        ejecutarFiltrarPostulantes(scanner);
+                        break;
+
+                    case "9":
                         ejecutarCerrarSesionEmpresa();
                         cerrarSesion = true;
                         break;
@@ -3958,6 +4017,90 @@ public class Menu {
         System.out.println("Estudios: " + postulante.getDatosEstudio());
         System.out.println("Experiencia: " + postulante.getDatosExperiencia());
     }
-    
+
+private void ejecutarFiltrarPostulantes(
+        Scanner scanner
+) throws SQLException {
+
+    if (empresaAutenticada == null) {
+        System.out.println("Error: Debe iniciar sesión como empresa.");
+        return;
+    }
+
+    List<Postulacion> postulaciones =
+            postulacionDAO.listarPorEmpresa(
+                    empresaAutenticada.getRut()
+            );
+
+    if (postulaciones.isEmpty()) {
+        System.out.println("No tiene postulaciones recibidas.");
+        return;
+    }
+
+    System.out.println("\n========================================");
+    System.out.println("          FILTRAR POSTULANTES");
+    System.out.println("========================================");
+    System.out.println("Deje vacío el criterio que no quiera aplicar.");
+
+    System.out.print("Localidad: ");
+    String localidad = scanner.nextLine().trim().toLowerCase();
+
+    System.out.print("Estudios (palabra clave): ");
+    String estudios = scanner.nextLine().trim().toLowerCase();
+
+    System.out.print("Experiencia (palabra clave): ");
+    String experiencia = scanner.nextLine().trim().toLowerCase();
+
+    if (localidad.isEmpty() && estudios.isEmpty() && experiencia.isEmpty()) {
+        System.out.println("Error: Debe ingresar al menos un criterio.");
+        return;
+    }
+
+    boolean hayResultados = false;
+
+    System.out.println("\n========================================");
+    System.out.println("              RESULTADOS");
+    System.out.println("========================================");
+
+    for (Postulacion postulacion : postulaciones) {
+
+        Postulante p = postulanteDAO.buscarPorId(
+                postulacion.getPostulante().getCi()
+        );
+
+        if (p == null) {
+            continue;
+        }
+
+        if (!coincide(p.getLocalidad(), localidad)
+                || !coincide(p.getDatosEstudio(), estudios)
+                || !coincide(p.getDatosExperiencia(), experiencia)) {
+            continue;
+        }
+
+        hayResultados = true;
+
+        System.out.println("----------------------------------------");
+        System.out.println("ID postulación: " + postulacion.getId());
+        System.out.println("Postulante: " + p.getNombre());
+        System.out.println("CI: " + p.getCi());
+        System.out.println("Localidad: " + p.getLocalidad());
+        System.out.println("Estudios: " + p.getDatosEstudio());
+        System.out.println("Experiencia: " + p.getDatosExperiencia());
+    }
+
+    if (!hayResultados) {
+        System.out.println("No hay postulantes que cumplan los criterios.");
+    }
 }
 
+
+private boolean coincide(String valor, String criterio) {
+
+    if (criterio.isEmpty()) {
+        return true;
+    }
+
+    return valor != null && valor.toLowerCase().contains(criterio);
+}
+}
