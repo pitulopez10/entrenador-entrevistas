@@ -13,10 +13,16 @@ public class ConexionDB {
     private static final String PASSWORD = "";
 
     private ConexionDB() {
-
     }
 
     public static Connection obtenerConexion() throws SQLException {
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("No se pudo cargar el driver de MariaDB", e);
+        }
+
         return DriverManager.getConnection(URL, USUARIO, PASSWORD);
     }
 }
