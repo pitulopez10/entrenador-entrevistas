@@ -1,0 +1,1011 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    font-family: "Segoe UI", Inter, Arial, sans-serif;
+    background: #f7faff;
+    color: #16315f;
+    line-height: 1.5;
+}
+
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.topbar {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e6edf7;
+
+    padding: 12px 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    flex-wrap: wrap;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+}
+
+
+/* LOGO */
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+
+.logo-img {
+    width: 105px;
+    height: auto;
+
+    display: block;
+}
+
+
+/* NAVEGACIÓN */
+
+.main-nav {
+    display: flex;
+    align-items: center;
+
+    gap: 28px;
+
+    flex-wrap: wrap;
+}
+
+
+.main-nav a {
+    color: #50627f;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    padding: 12px 0;
+
+    border-bottom: 3px solid transparent;
+
+    transition: 0.2s;
+}
+
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: #16315f;
+
+    border-bottom-color: #1f78ff;
+}
+
+
+/* BOTONES HEADER */
+
+.nav-actions {
+    display: flex;
+
+    gap: 14px;
+
+    flex-wrap: wrap;
+}
+
+
+.btn-outline,
+.btn-primary {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 13px 25px;
+
+    border-radius: 999px;
+
+    font-weight: 700;
+
+    transition: 0.2s ease;
+}
+
+
+.btn-outline {
+    color: #1f78ff;
+
+    border: 2px solid #1f78ff;
+
+    background: white;
+}
+
+
+.btn-outline:hover {
+    background: #f2f8ff;
+}
+
+
+.btn-primary {
+    color: white;
+
+    background: linear-gradient(
+            135deg,
+            #1f78ff,
+            #1869e6
+    );
+
+    border: 2px solid transparent;
+}
+
+
+.btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+
+.small {
+    padding: 10px 18px;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   HERO
+   ========================= */
+
+.hero {
+    position: relative;
+
+    min-height: 580px;
+
+    padding: 75px 20px 100px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+            linear-gradient(
+                    rgba(12, 32, 70, 0.66),
+                    rgba(12, 32, 70, 0.66)
+            ),
+            linear-gradient(
+                    135deg,
+                    #789ac8,
+                    #29466f
+            );
+
+    overflow: hidden;
+}
+
+
+/* CURVA ABAJO */
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    left: -5%;
+    right: -5%;
+
+    bottom: -110px;
+
+    height: 210px;
+
+    background: #f7faff;
+
+    border-radius: 50% 50% 0 0;
+}
+
+
+.hero-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 1100px;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: white;
+}
+
+
+.hero-badge {
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    padding: 9px 22px;
+
+    border: 2px solid #8dc3ff;
+
+    border-radius: 999px;
+
+    color: #d8ebff;
+
+    font-weight: 700;
+
+    background: rgba(
+            255,
+            255,
+            255,
+            0.08
+    );
+}
+
+
+.hero h1 {
+    font-size: 60px;
+
+    line-height: 1.05;
+
+    font-weight: 800;
+
+    margin-bottom: 22px;
+}
+
+
+.hero h1 span {
+    color: #90c7ff;
+}
+
+
+.hero p {
+    max-width: 760px;
+
+    margin: 0 auto 34px;
+
+    font-size: 18px;
+
+    color: #e4efff;
+}
+
+
+/* =========================
+   BUSCADOR
+   ========================= */
+
+.search-box {
+    max-width: 900px;
+
+    margin: 0 auto 26px;
+
+    background: white;
+
+    border-radius: 999px;
+
+    padding: 10px 12px 10px 20px;
+
+    display: flex;
+
+    gap: 14px;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    box-shadow:
+            0 14px 30px
+            rgba(15, 42, 84, 0.20);
+
+    flex-wrap: wrap;
+}
+
+
+.search-field {
+    flex: 1;
+
+    min-width: 250px;
+
+    text-align: left;
+
+    padding: 7px 20px;
+
+    border-radius: 999px;
+
+    transition:
+            background-color
+            0.2s ease;
+}
+
+
+.search-field:hover {
+    background-color: #f5f9ff;
+}
+
+
+.search-field label {
+    display: block;
+
+    margin-bottom: 1px;
+
+    color: #7285a3;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.3px;
+}
+
+
+.search-field select {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding:
+            6px
+            36px
+            6px
+            0;
+
+    border: none;
+
+    outline: none;
+
+    background-color: transparent;
+
+    color: #183765;
+
+    font-family:
+            "Segoe UI",
+            Inter,
+            Arial,
+            sans-serif;
+
+    font-size: 17px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.search-field select option {
+    background: white;
+
+    color: #183765;
+
+    font-family:
+            "Segoe UI",
+            Inter,
+            Arial,
+            sans-serif;
+
+    font-size: 16px;
+
+    font-weight: 500;
+}
+
+
+.search-btn {
+    border: none;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #1f78ff,
+                    #1869e6
+            );
+
+    color: white;
+
+    padding: 18px 32px;
+
+    border-radius: 999px;
+
+    font-family:
+            "Segoe UI",
+            Arial,
+            sans-serif;
+
+    font-weight: 700;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    min-width: 210px;
+}
+
+
+.search-btn:hover {
+    filter: brightness(1.05);
+}
+
+
+/* ACCESOS RÁPIDOS */
+
+.quick-tags {
+    margin-top: 12px;
+}
+
+
+.quick-tags > span {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: #dbeafe;
+
+    font-weight: 600;
+}
+
+
+.tag-list {
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+
+.tag {
+    padding: 9px 18px;
+
+    border-radius: 999px;
+
+    border:
+            1px solid
+            rgba(255, 255, 255, 0.55);
+
+    color: white;
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.08
+            );
+
+    transition: 0.2s;
+}
+
+
+.tag:hover {
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.18
+            );
+}
+
+
+/* =========================
+   SECCIONES
+   ========================= */
+
+.section {
+    width: min(1200px, 92%);
+
+    margin: 0 auto;
+
+    padding: 65px 0;
+}
+
+
+.section-mini-title,
+.section-kicker {
+    display: inline-block;
+
+    color: #1f78ff;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================
+   OFERTAS
+   ========================= */
+
+.offers-section {
+    scroll-margin-top: 115px;
+}
+
+
+.section-header {
+    margin-bottom: 28px;
+}
+
+
+.offers-section h2 {
+    font-size: 42px;
+
+    color: #16315f;
+}
+
+
+.offers-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 24px;
+}
+
+
+.offer-card {
+    background: white;
+
+    border:
+            1px solid
+            #e3ecf8;
+
+    border-radius: 28px;
+
+    padding: 26px;
+
+    box-shadow:
+            0 10px 22px
+            rgba(25, 64, 122, 0.06);
+
+    transition:
+            0.2s ease;
+}
+
+
+.offer-card:hover {
+    transform:
+            translateY(-4px);
+
+    box-shadow:
+            0 16px 30px
+            rgba(25, 64, 122, 0.12);
+}
+
+
+.offer-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+            space-between;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+}
+
+
+.offer-area,
+.offer-status {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+}
+
+
+.offer-area {
+    background: #edf5ff;
+
+    color: #1f78ff;
+}
+
+
+.offer-status {
+    background: #effaf2;
+
+    color: #17854b;
+}
+
+
+.offer-card h3 {
+    font-size: 24px;
+
+    margin-bottom: 14px;
+
+    color: #16315f;
+}
+
+
+.offer-company {
+    margin-bottom: 12px;
+
+    color: #36507a;
+}
+
+
+.offer-description {
+    color: #5a6d89;
+
+    margin-bottom: 18px;
+
+    min-height: 72px;
+}
+
+
+.offer-meta {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    color: #48607e;
+
+    font-size: 14px;
+
+    margin-bottom: 20px;
+}
+
+
+.offer-actions {
+    display: flex;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+
+.empty-state {
+    background: white;
+
+    border-radius: 24px;
+
+    padding: 32px;
+
+    border:
+            1px solid
+            #e3ecf8;
+
+    text-align: center;
+
+    color: #587090;
+}
+
+
+/* =========================
+   COMO FUNCIONA
+   ========================= */
+
+.how-it-works {
+    padding-top: 35px;
+}
+
+
+.steps-wrapper {
+    background: #eaf3ff;
+
+    border-radius: 36px;
+
+    padding: 50px 34px;
+}
+
+
+.steps-wrapper h2 {
+    text-align: center;
+
+    font-size: 46px;
+
+    line-height: 1.15;
+
+    margin-bottom: 36px;
+
+    color: #16315f;
+}
+
+
+.steps-wrapper h2 span {
+    color: #2f86ff;
+}
+
+
+.steps-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 24px;
+}
+
+
+.step-card {
+    background: white;
+
+    border-radius: 28px;
+
+    padding: 30px 26px;
+
+    box-shadow:
+            0 12px 25px
+            rgba(25, 64, 122, 0.08);
+
+    display: flex;
+
+    gap: 18px;
+
+    align-items: flex-start;
+}
+
+
+.step-number {
+    min-width: 64px;
+
+    height: 64px;
+
+    border-radius: 18px;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #7eb6ff,
+                    #0d73ff
+            );
+
+    color: white;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.step-card h3 {
+    font-size: 20px;
+
+    margin-bottom: 8px;
+
+    color: #16315f;
+}
+
+
+.step-card p {
+    color: #536785;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+    margin-top: 65px;
+
+    background:
+            linear-gradient(
+                    180deg,
+                    #ffffff,
+                    #edf5ff
+            );
+
+    border-top:
+            1px solid
+            #dce8f7;
+
+    padding:
+            50px
+            5%
+            24px;
+}
+
+
+.footer-brand {
+    max-width: 360px;
+
+    margin-bottom: 30px;
+}
+
+
+.footer-logo {
+    width: 125px;
+
+    height: auto;
+
+    margin-bottom: 15px;
+}
+
+
+.footer-brand p {
+    color: #617898;
+
+    font-size: 16px;
+}
+
+
+.footer-columns {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 28px;
+
+    margin-bottom: 34px;
+}
+
+
+.footer-columns h4 {
+    margin-bottom: 14px;
+
+    color: #16315f;
+
+    font-size: 19px;
+}
+
+
+.footer-columns a {
+    display: block;
+
+    color: #617898;
+
+    margin-bottom: 10px;
+}
+
+
+.footer-columns a:hover {
+    color: #1f78ff;
+}
+
+
+.footer-copy {
+    text-align: center;
+
+    border-top:
+            1px solid
+            #dce8f7;
+
+    padding-top: 20px;
+
+    color: #6f84a3;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 1100px) {
+
+    .offers-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .steps-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .hero h1 {
+        font-size: 50px;
+    }
+
+}
+
+
+@media (max-width: 780px) {
+
+    .topbar {
+        padding: 12px 20px;
+    }
+
+
+    .logo-img {
+        width: 90px;
+    }
+
+
+    .main-nav {
+        width: 100%;
+
+        justify-content:
+                center;
+    }
+
+
+    .nav-actions {
+        width: 100%;
+
+        justify-content:
+                center;
+    }
+
+
+    .hero {
+        min-height: auto;
+
+        padding:
+                55px
+                16px
+                95px;
+    }
+
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+
+    .hero p {
+        font-size: 16px;
+    }
+
+
+    .search-box {
+        border-radius: 28px;
+
+        padding: 16px;
+    }
+
+
+    .search-field {
+        width: 100%;
+    }
+
+
+    .search-btn {
+        width: 100%;
+    }
+
+
+    .offers-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .footer-columns {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .steps-wrapper h2,
+    .offers-section h2 {
+        font-size: 32px;
+    }
+
+}
