@@ -75,5 +75,23 @@ public class EntrevistaDAO {
             stmt.executeUpdate();
         }
     }
+    public Entrevista buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM entrevista WHERE id = ?";
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Entrevista e = new Entrevista();
+                    e.setId(rs.getInt("id"));
+                    e.setFecha(rs.getDate("fecha").toLocalDate());
+                    e.setDuracionMin(rs.getInt("duracionMin"));
+                    e.setEstado(EstadoEntrevista.valueOf(rs.getString("estado")));
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
 
 }

@@ -60,5 +60,24 @@ public class PreguntaDAO {
 
         return preguntas;
     }
+    public List<Pregunta> listarPorEntrevista(int entrevistaId) throws SQLException {
+        List<Pregunta> preguntas = new ArrayList<>();
+        String sql = "SELECT id, texto, tipo, dificultad FROM pregunta WHERE entrevista_id = ? ORDER BY id";
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, entrevistaId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Pregunta p = new Pregunta();
+                    p.setId(rs.getInt("id"));
+                    p.setTexto(rs.getString("texto"));
+                    p.setTipo(TipoPregunta.valueOf(rs.getString("tipo").toUpperCase()));
+                    p.setDificultad(TipoDificultad.valueOf(rs.getString("dificultad").toUpperCase()));
+                    preguntas.add(p);
+                }
+            }
+        }
+        return preguntas;
+    }
 
 }

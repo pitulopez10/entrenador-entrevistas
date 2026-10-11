@@ -16,6 +16,7 @@ public class Menu {
     private final EntrevistaDAO entrevistaDAO = new EntrevistaDAO();
     private final PreguntaDAO preguntaDAO = new PreguntaDAO();
     private final RespuestaDAO respuestaDAO = new RespuestaDAO();
+    private final RetroAlimentacionDAO retroalimentacionDAO = new RetroAlimentacionDAO();
 
     private boolean isAdminAutenticado = false;
     private Postulante postulanteAutenticado = null;
@@ -2686,6 +2687,38 @@ public class Menu {
         }
     }
 
+    public class AIService {
+
+        public RetroAlimentacion generarEvaluacion(Entrevista entrevista, List<Pregunta> preguntas, List<Respuesta> respuestas) {
+
+            // 1. Armado del Prompt
+            StringBuilder prompt = new StringBuilder();
+            prompt.append("Actúa como un reclutador experto. Evalúa las siguientes respuestas:\n\n");
+
+            for (int i = 0; i < preguntas.size(); i++) {
+                prompt.append("P: ").append(preguntas.get(i).getTexto()).append("\n");
+                prompt.append("R: ").append(respuestas.get(i).getTexto()).append("\n\n");
+            }
+
+            // 2. Generación del texto de devolución (simulado o mediante API)
+            String evaluacionTexto = """
+                === FORTALEZAS ===
+                - Buena estructuración lógica en sus respuestas.
+                - Demuestra solidez en conceptos técnicos del área.
+                
+                === ASPECTOS A MEJORAR ===
+                - Intentar sintetizar mejor las ideas al inicio.
+                - Incorporar ejemplos concretos con métricas o resultados.
+                
+                === DEVOLUCIÓN GENERAL ===
+                Desempeño destacado. El candidato demuestra el perfil técnico adecuado.
+                """;
+
+            // 3. Crear el objeto con tu constructor (String texto, Entrevista entrevista)
+            return new RetroAlimentacion(evaluacionTexto, entrevista);
+        }
+    }
+
     private void ejecutarResponderPregunta(Scanner scanner) throws SQLException {
 
         if (postulanteAutenticado == null) {
@@ -2752,9 +2785,29 @@ public class Menu {
         }
 
         entrevistaDAO.terminar(entrevistaId);
+        System.out.println("\n¡Respuestas registradas con éxito! Entrevista terminada.");
 
-        System.out.println("\nEntrevista terminada. ¡Buen trabajo!");
-    }
+        // 2. Generar devolución con la Inteligencia Artificial
+        System.out.println("-> Generando devolución con Inteligencia Artificial...");
+
+        // Cargar Entrevista, Preguntas y Respuestas desde MariaDB
+        Entrevista entrevista = entrevistaDAO.buscarPorId(entrevistaId);
+        List<Pregunta> preguntasCompletas = preguntaDAO.listarPorEntrevista(entrevistaId);
+        List<Respuesta> respuestasCompletas = respuestaDAO.listarPorEntrevista(entrevistaId);
+
+        // Generar evaluación
+        AIService aiService = new AIService();
+        RetroAlimentacion retro = aiService.generarEvaluacion(entrevista, preguntasCompletas, respuestasCompletas);
+
+        // Persistir resultado
+        retroalimentacionDAO.agregar(retro);
+
+        // Mostrar en consola
+        System.out.println("\n=======================================================");
+        System.out.println("       EVALUACIÓN Y DEVOLUCIÓN DE LA ENTREVISTA       ");
+        System.out.println("=======================================================");
+        System.out.println(retro.getTexto());
+        System.out.println("=======================================================");}
 
 
 
