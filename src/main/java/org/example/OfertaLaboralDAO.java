@@ -61,10 +61,16 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
     public OfertaLaboral buscarPorId(Integer id) throws SQLException {
 
         String sql = """
-                SELECT *
-                FROM ofertalaboral
-                WHERE id = ?
-                """;
+            SELECT o.*,
+                   e.nombre AS nombreEmpresa,
+                   a.id AS areaId,
+                   a.nombre AS nombreArea,
+                   a.descripcion AS descripcionArea
+            FROM ofertalaboral o
+            JOIN empresa e ON o.empresa_rut = e.rut
+            JOIN area a ON o.area_id = a.id
+            WHERE o.id = ?
+            """;
 
         try (
                 Connection conexion = ConexionDB.obtenerConexion();
@@ -101,6 +107,19 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
                                     rs.getString("estado").toUpperCase()
                             )
                     );
+
+                    Empresa empresa = new Empresa();
+                    empresa.setRut(rs.getString("empresa_rut"));
+                    empresa.setNombre(rs.getString("nombreEmpresa"));
+
+                    oferta.setEmpresa(empresa);
+
+                    Area area = new Area();
+                    area.setId(rs.getInt("areaId"));
+                    area.setNombre(rs.getString("nombreArea"));
+                    area.setDescripcion(rs.getString("descripcionArea"));
+
+                    oferta.setArea(area);
 
                     return oferta;
                 }

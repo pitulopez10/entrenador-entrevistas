@@ -6,6 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Entrenador Entrevista | Ofertas laborales</title>
 
@@ -15,9 +16,12 @@
 
 <body>
 
+<!-- =========================
+     HEADER
+     ========================= -->
+
 <header class="topbar">
 
-    <!-- LOGO -->
     <a href="${pageContext.request.contextPath}/ofertas"
        class="logo">
 
@@ -28,7 +32,6 @@
     </a>
 
 
-    <!-- NAVEGACIÓN -->
     <nav class="main-nav">
 
         <a href="${pageContext.request.contextPath}/ofertas"
@@ -51,7 +54,6 @@
     </nav>
 
 
-    <!-- ACCIONES -->
     <div class="nav-actions">
 
         <a href="#"
@@ -71,8 +73,19 @@
 
 <main>
 
-    <!-- HERO -->
-    <section class="hero">
+    <!-- =========================
+         HERO
+         ========================= -->
+
+    <section class="hero"
+             style="
+                     background-image:
+                     linear-gradient(
+                     rgba(8, 25, 55, 0.58),
+                     rgba(8, 25, 55, 0.64)
+                     ),
+                     url('${pageContext.request.contextPath}/img/fondo-entrevista.png');
+                     ">
 
         <div class="hero-content">
 
@@ -84,9 +97,7 @@
             <h1>
                 Prepárate para tu
                 <br>
-                <span>
-                    próxima entrevista
-                </span>
+                <span>próxima entrevista</span>
             </h1>
 
 
@@ -98,6 +109,7 @@
 
 
             <!-- BUSCADOR -->
+
             <form method="get"
                   action="${pageContext.request.contextPath}/ofertas#ofertas"
                   class="search-box">
@@ -108,14 +120,11 @@
                         Área profesional
                     </label>
 
-
                     <select name="area"
                             id="area">
 
                         <option value=""
-                                <c:if test="${empty param.area}">
-                                    selected
-                                </c:if>>
+                                <c:if test="${empty param.area}">selected</c:if>>
 
                             Todas las áreas
 
@@ -126,9 +135,7 @@
                                    items="${areas}">
 
                             <option value="${areaItem.id}"
-                                    <c:if test="${param.area eq areaItem.id}">
-                                        selected
-                                    </c:if>>
+                                    <c:if test="${param.area eq areaItem.id}">selected</c:if>>
 
                                     ${areaItem.nombre}
 
@@ -152,12 +159,12 @@
 
 
             <!-- ACCESOS RÁPIDOS -->
+
             <div class="quick-tags">
 
                 <span>
                     Explorar rápidamente
                 </span>
-
 
                 <div class="tag-list">
 
@@ -190,28 +197,28 @@
     </section>
 
 
-    <!-- OFERTAS -->
+    <!-- =========================
+         OFERTAS
+         ========================= -->
+
     <section class="section offers-section"
              id="ofertas">
 
         <div class="section-header">
 
-            <div>
+            <span class="section-kicker">
+                Oportunidades laborales
+            </span>
 
-                <span class="section-kicker">
-                    Oportunidades laborales
-                </span>
-
-                <h2>
-                    Ofertas disponibles
-                </h2>
-
-            </div>
+            <h2>
+                Ofertas disponibles
+            </h2>
 
         </div>
 
 
-        <!-- SIN OFERTAS -->
+        <!-- SIN RESULTADOS -->
+
         <c:if test="${empty ofertas}">
 
             <div class="empty-state">
@@ -221,8 +228,7 @@
                 </h3>
 
                 <p>
-                    No se encontraron ofertas
-                    para el área seleccionada.
+                    No se encontraron ofertas para el área seleccionada.
                 </p>
 
             </div>
@@ -230,7 +236,8 @@
         </c:if>
 
 
-        <!-- LISTADO DE OFERTAS -->
+        <!-- TARJETAS -->
+
         <div class="offers-grid">
 
             <c:forEach var="oferta"
@@ -275,19 +282,12 @@
                     <div class="offer-meta">
 
                         <span>
-                            <strong>
-                                Publicación:
-                            </strong>
-
+                            <strong>Publicación:</strong>
                             ${oferta.fechaPublicacion}
                         </span>
 
-
                         <span>
-                            <strong>
-                                Cierre:
-                            </strong>
-
+                            <strong>Cierre:</strong>
                             ${oferta.fechaCierre}
                         </span>
 
@@ -296,19 +296,9 @@
 
                     <div class="offer-actions">
 
-                        <a href="#"
+                        <a href="${pageContext.request.contextPath}/oferta?id=${oferta.id}"
                            class="btn-outline small">
-
                             Ver oferta
-
-                        </a>
-
-
-                        <a href="#"
-                           class="btn-primary small">
-
-                            Postularme
-
                         </a>
 
                     </div>
@@ -322,7 +312,10 @@
     </section>
 
 
-    <!-- COMO FUNCIONA -->
+    <!-- =========================
+         COMO FUNCIONA
+         ========================= -->
+
     <section class="section how-it-works">
 
         <div class="section-mini-title">
@@ -335,7 +328,6 @@
             <h2>
                 Practica y mejora tu desempeño
                 <br>
-
                 <span>
                     en entrevistas
                 </span>
@@ -344,13 +336,11 @@
 
             <div class="steps-grid">
 
-                <!-- PASO 1 -->
                 <article class="step-card">
 
                     <div class="step-number">
                         1
                     </div>
-
 
                     <div>
 
@@ -360,8 +350,7 @@
 
                         <p>
                             Registra tu experiencia,
-                            áreas de interés y objetivos
-                            profesionales.
+                            áreas de interés y objetivos profesionales.
                         </p>
 
                     </div>
@@ -369,13 +358,11 @@
                 </article>
 
 
-                <!-- PASO 2 -->
                 <article class="step-card">
 
                     <div class="step-number">
                         2
                     </div>
-
 
                     <div>
 
@@ -385,8 +372,7 @@
 
                         <p>
                             Responde preguntas y practica
-                            con situaciones similares
-                            al mundo laboral.
+                            con situaciones similares al mundo laboral.
                         </p>
 
                     </div>
@@ -394,13 +380,11 @@
                 </article>
 
 
-                <!-- PASO 3 -->
                 <article class="step-card">
 
                     <div class="step-number">
                         3
                     </div>
-
 
                     <div>
 
@@ -409,9 +393,8 @@
                         </h3>
 
                         <p>
-                            Obtén una devolución
-                            personalizada para mejorar
-                            tus respuestas.
+                            Obtén una devolución personalizada
+                            para mejorar tus respuestas.
                         </p>
 
                     </div>
@@ -427,86 +410,92 @@
 </main>
 
 
-<!-- FOOTER -->
+<!-- =========================
+     FOOTER
+     ========================= -->
+
 <footer class="footer">
 
-    <div class="footer-brand">
+    <div class="footer-top">
 
-        <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista"
-             class="footer-logo">
+        <div class="footer-brand">
 
+            <img src="${pageContext.request.contextPath}/img/logo.png"
+                 alt="Entrenador Entrevista"
+                 class="footer-logo">
 
-        <p>
-            Tu aliado para conseguir mejores oportunidades.
-            Practica, recibe retroalimentación y llega
-            preparado a tu próxima entrevista.
-        </p>
-
-    </div>
-
-
-    <div class="footer-columns">
-
-        <div>
-
-            <h4>
-                Institucional
-            </h4>
-
-            <a href="#">
-                Quiénes somos
-            </a>
-
-            <a href="#">
-                Contacto
-            </a>
-
-            <a href="#">
-                Nuestro propósito
-            </a>
+            <p>
+                Tu aliado para conseguir mejores oportunidades.
+                Practica, recibe retroalimentación y llega preparado
+                a tu próxima entrevista.
+            </p>
 
         </div>
 
 
-        <div>
+        <div class="footer-columns">
 
-            <h4>
-                Candidatos
-            </h4>
+            <div>
 
-            <a href="${pageContext.request.contextPath}/ofertas">
-                Buscar ofertas
-            </a>
+                <h4>
+                    Institucional
+                </h4>
 
-            <a href="#">
-                Practicar entrevistas
-            </a>
+                <a href="#">
+                    Quiénes somos
+                </a>
 
-            <a href="#">
-                Crear perfil
-            </a>
+                <a href="#">
+                    Contacto
+                </a>
 
-        </div>
+                <a href="#">
+                    Nuestro propósito
+                </a>
+
+            </div>
 
 
-        <div>
+            <div>
 
-            <h4>
-                Empresas
-            </h4>
+                <h4>
+                    Candidatos
+                </h4>
 
-            <a href="#">
-                Publicar vacantes
-            </a>
+                <a href="${pageContext.request.contextPath}/ofertas">
+                    Buscar ofertas
+                </a>
 
-            <a href="#">
-                Buscar candidatos
-            </a>
+                <a href="#">
+                    Practicar entrevistas
+                </a>
 
-            <a href="#">
-                Soluciones para empresas
-            </a>
+                <a href="#">
+                    Crear perfil
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h4>
+                    Empresas
+                </h4>
+
+                <a href="#">
+                    Publicar vacantes
+                </a>
+
+                <a href="#">
+                    Buscar candidatos
+                </a>
+
+                <a href="#">
+                    Soluciones para empresas
+                </a>
+
+            </div>
 
         </div>
 

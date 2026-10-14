@@ -33,9 +33,13 @@ public class OfertaServlet extends HttpServlet {
             List<OfertaLaboral> ofertas;
 
             if (areaParam != null && !areaParam.isBlank()) {
+
                 int areaId = Integer.parseInt(areaParam);
+
                 ofertas = ofertaLaboralDAO.listarPorArea(areaId);
+
             } else {
+
                 ofertas = ofertaLaboralDAO.listar();
             }
 
@@ -44,10 +48,12 @@ public class OfertaServlet extends HttpServlet {
             request.setAttribute("ofertas", ofertas);
             request.setAttribute("areas", areas);
 
-            request.getRequestDispatcher("/WEB-INF/views/ofertas.jsp")
-                    .forward(request, response);
+            request.getRequestDispatcher(
+                    "/WEB-INF/views/ofertas.jsp"
+            ).forward(request, response);
 
         } catch (SQLException e) {
+
             throw new ServletException(
                     "Error al cargar las ofertas laborales",
                     e
