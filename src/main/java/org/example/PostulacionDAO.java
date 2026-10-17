@@ -468,4 +468,35 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
             stmt.executeUpdate();
         }
     }
+
+    public boolean existePostulacion(
+            int ciPostulante,
+            int idOferta
+    ) throws SQLException {
+
+        String sql = """
+            SELECT COUNT(*) AS cantidad
+            FROM postulacion
+            WHERE postulante_ci = ?
+              AND ofertalaboral_id = ?
+            """;
+
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setInt(1, ciPostulante);
+            stmt.setInt(2, idOferta);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getInt("cantidad") > 0;
+                }
+            }
+        }
+
+        return false;
+    }
 }

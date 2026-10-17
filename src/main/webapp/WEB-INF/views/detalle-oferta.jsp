@@ -50,15 +50,36 @@
 
     <div class="nav-actions">
 
-        <a href="#"
-           class="btn-outline">
-            Iniciar sesión
-        </a>
+        <c:choose>
 
-        <a href="#"
-           class="btn-primary">
-            Crear perfil
-        </a>
+            <c:when test="${not empty sessionScope.postulanteLogueado}">
+
+            <span class="usuario-logueado">
+                Hola, ${sessionScope.postulanteLogueado.nombre}
+            </span>
+
+                <a href="${pageContext.request.contextPath}/logout"
+                   class="btn-outline">
+                    Cerrar sesión
+                </a>
+
+            </c:when>
+
+            <c:otherwise>
+
+                <a href="${pageContext.request.contextPath}/login"
+                   class="btn-outline">
+                    Iniciar sesión
+                </a>
+
+                <a href="#"
+                   class="btn-primary">
+                    Crear perfil
+                </a>
+
+            </c:otherwise>
+
+        </c:choose>
 
     </div>
 
@@ -277,17 +298,39 @@
 
                 <div class="panel-linea"></div>
 
+                <c:if test="${param.postulacion == 'ok'}">
+                    <div class="mensaje-postulacion exito">
+                        Postulación realizada correctamente.
+                    </div>
+                </c:if>
 
-                <a href="#"
-                   class="boton-postular">
+                <c:if test="${param.error == 'duplicada'}">
+                    <div class="mensaje-postulacion error">
+                        Ya te postulaste a esta oferta.
+                    </div>
+                </c:if>
 
-                    <span>
-                        ✈
-                    </span>
+                <c:if test="${param.error == 'noActiva'}">
+                    <div class="mensaje-postulacion error">
+                        Esta oferta ya no está activa.
+                    </div>
+                </c:if>
+                <form method="post"
+                      action="${pageContext.request.contextPath}/postularse">
 
-                    Postularme
+                    <input type="hidden"
+                           name="ofertaId"
+                           value="${oferta.id}">
 
-                </a>
+                    <button type="submit"
+                            class="boton-postular">
+
+                        <span>✈</span>
+                        Postularme
+
+                    </button>
+
+                </form>
 
 
                 <div class="panel-login-aviso">
@@ -298,7 +341,7 @@
 
                     <p>
                         Para postularte necesitás
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/login">
                             iniciar sesión
                         </a>.
                     </p>

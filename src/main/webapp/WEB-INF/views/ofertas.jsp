@@ -56,15 +56,36 @@
 
     <div class="nav-actions">
 
-        <a href="#"
-           class="btn-outline">
-            Iniciar sesión
-        </a>
+        <c:choose>
 
-        <a href="#"
-           class="btn-primary">
-            Crear perfil
-        </a>
+            <c:when test="${not empty sessionScope.postulanteLogueado}">
+
+            <span class="usuario-logueado">
+                Hola, ${sessionScope.postulanteLogueado.nombre}
+            </span>
+
+                <a href="${pageContext.request.contextPath}/logout"
+                   class="btn-outline">
+                    Cerrar sesión
+                </a>
+
+            </c:when>
+
+            <c:otherwise>
+
+                <a href="${pageContext.request.contextPath}/login"
+                   class="btn-outline">
+                    Iniciar sesión
+                </a>
+
+                <a href="#"
+                   class="btn-primary">
+                    Crear perfil
+                </a>
+
+            </c:otherwise>
+
+        </c:choose>
 
     </div>
 

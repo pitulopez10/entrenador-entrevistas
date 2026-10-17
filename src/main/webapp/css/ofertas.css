@@ -1253,3 +1253,43 @@ a {
         justify-self: start;
     }
 }
+
+.usuario-logueado {
+    display: flex;
+    align-items: center;
+
+    color: #16315f;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+.boton-postular {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.mensaje-postulacion {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+
+    border-radius: 8px;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.mensaje-postulacion.exito {
+    background: #eef7ff;
+    color: #174ea6;
+    border: 1px solid #bcd7f5;
+}
+
+.mensaje-postulacion.error {
+    background: #fff4f4;
+    color: #a61b1b;
+    border: 1px solid #efcaca;
+}
