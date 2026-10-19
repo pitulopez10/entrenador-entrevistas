@@ -14,9 +14,20 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
 
         String sql = """
                 INSERT INTO empresa
-                (rut, nombre, mail, password, fechaRegistro, telefono,
-                 descripcion, logo, sitioWeb, bloqueado)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (
+                    rut,
+                    nombre,
+                    mail,
+                    password,
+                    fechaRegistro,
+                    telefono,
+                    descripcion,
+                    logo,
+                    logoPublicId,
+                    sitioWeb,
+                    bloqueado
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conexion = ConexionDB.obtenerConexion();
@@ -26,18 +37,59 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
             stmt.setString(2, empresa.getNombre());
             stmt.setString(3, empresa.getMail());
             stmt.setString(4, empresa.getPassword());
-            stmt.setDate(5, java.sql.Date.valueOf(empresa.getFechaRegistro()));
-            stmt.setInt(6, empresa.getTelefono());
-            stmt.setString(7, empresa.getDescripcion());
-            stmt.setString(8, empresa.getLogo());
-            stmt.setString(9, empresa.getSitioWeb());
-            stmt.setBoolean(10, empresa.isBloqueado());
+
+            if (empresa.getFechaRegistro() != null) {
+                stmt.setDate(
+                        5,
+                        java.sql.Date.valueOf(empresa.getFechaRegistro())
+                );
+            } else {
+                stmt.setNull(
+                        5,
+                        java.sql.Types.DATE
+                );
+            }
+
+            stmt.setInt(
+                    6,
+                    empresa.getTelefono()
+            );
+
+            stmt.setString(
+                    7,
+                    empresa.getDescripcion()
+            );
+
+            // CLOUDINARY - LOGO
+            stmt.setString(
+                    8,
+                    empresa.getLogo()
+            );
+
+            stmt.setString(
+                    9,
+                    empresa.getLogoPublicId()
+            );
+
+            stmt.setString(
+                    10,
+                    empresa.getSitioWeb()
+            );
+
+            stmt.setBoolean(
+                    11,
+                    empresa.isBloqueado()
+            );
 
             stmt.executeUpdate();
         }
     }
 
-    public Empresa buscarPorId(String rut) throws SQLException {
+
+    @Override
+    public Empresa buscarPorId(
+            String rut
+    ) throws SQLException {
 
         String sql = """
                 SELECT *
@@ -48,32 +100,16 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, rut);
+            stmt.setString(
+                    1,
+                    rut
+            );
 
             try (ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next()) {
 
-                    Empresa empresa = new Empresa();
-
-                    empresa.setRut(rs.getString("rut"));
-                    empresa.setNombre(rs.getString("nombre"));
-                    empresa.setMail(rs.getString("mail"));
-                    empresa.setPassword(rs.getString("password"));
-
-                    if (rs.getDate("fechaRegistro") != null) {
-                        empresa.setFechaRegistro(
-                                rs.getDate("fechaRegistro").toLocalDate()
-                        );
-                    }
-
-                    empresa.setTelefono(rs.getInt("telefono"));
-                    empresa.setDescripcion(rs.getString("descripcion"));
-                    empresa.setLogo(rs.getString("logo"));
-                    empresa.setSitioWeb(rs.getString("sitioWeb"));
-                    empresa.setBloqueado(rs.getBoolean("bloqueado"));
-
-                    return empresa;
+                    return crearEmpresaDesdeResultSet(rs);
                 }
             }
         }
@@ -81,10 +117,12 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         return null;
     }
 
+
     @Override
     public List<Empresa> listar() throws SQLException {
 
-        List<Empresa> empresas = new ArrayList<>();
+        List<Empresa> empresas =
+                new ArrayList<>();
 
         String sql = """
                 SELECT *
@@ -97,34 +135,20 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
 
             while (rs.next()) {
 
-                Empresa empresa = new Empresa();
-
-                empresa.setRut(rs.getString("rut"));
-                empresa.setNombre(rs.getString("nombre"));
-                empresa.setMail(rs.getString("mail"));
-                empresa.setPassword(rs.getString("password"));
-
-                if (rs.getDate("fechaRegistro") != null) {
-                    empresa.setFechaRegistro(
-                            rs.getDate("fechaRegistro").toLocalDate()
-                    );
-                }
-
-                empresa.setTelefono(rs.getInt("telefono"));
-                empresa.setDescripcion(rs.getString("descripcion"));
-                empresa.setLogo(rs.getString("logo"));
-                empresa.setSitioWeb(rs.getString("sitioWeb"));
-                empresa.setBloqueado(rs.getBoolean("bloqueado"));
-
-                empresas.add(empresa);
+                empresas.add(
+                        crearEmpresaDesdeResultSet(rs)
+                );
             }
         }
 
         return empresas;
     }
 
+
     @Override
-    public void modificar(Empresa empresa) throws SQLException {
+    public void modificar(
+            Empresa empresa
+    ) throws SQLException {
 
         String sql = """
                 UPDATE empresa
@@ -135,6 +159,7 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
                     telefono = ?,
                     descripcion = ?,
                     logo = ?,
+                    logoPublicId = ?,
                     sitioWeb = ?,
                     bloqueado = ?
                 WHERE rut = ?
@@ -143,23 +168,83 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, empresa.getNombre());
-            stmt.setString(2, empresa.getMail());
-            stmt.setString(3, empresa.getPassword());
-            stmt.setDate(4, java.sql.Date.valueOf(empresa.getFechaRegistro()));
-            stmt.setInt(5, empresa.getTelefono());
-            stmt.setString(6, empresa.getDescripcion());
-            stmt.setString(7, empresa.getLogo());
-            stmt.setString(8, empresa.getSitioWeb());
-            stmt.setBoolean(9, empresa.isBloqueado());
-            stmt.setString(10, empresa.getRut());
+            stmt.setString(
+                    1,
+                    empresa.getNombre()
+            );
+
+            stmt.setString(
+                    2,
+                    empresa.getMail()
+            );
+
+            stmt.setString(
+                    3,
+                    empresa.getPassword()
+            );
+
+            if (empresa.getFechaRegistro() != null) {
+
+                stmt.setDate(
+                        4,
+                        java.sql.Date.valueOf(
+                                empresa.getFechaRegistro()
+                        )
+                );
+
+            } else {
+
+                stmt.setNull(
+                        4,
+                        java.sql.Types.DATE
+                );
+            }
+
+            stmt.setInt(
+                    5,
+                    empresa.getTelefono()
+            );
+
+            stmt.setString(
+                    6,
+                    empresa.getDescripcion()
+            );
+
+            // CLOUDINARY - LOGO
+            stmt.setString(
+                    7,
+                    empresa.getLogo()
+            );
+
+            stmt.setString(
+                    8,
+                    empresa.getLogoPublicId()
+            );
+
+            stmt.setString(
+                    9,
+                    empresa.getSitioWeb()
+            );
+
+            stmt.setBoolean(
+                    10,
+                    empresa.isBloqueado()
+            );
+
+            stmt.setString(
+                    11,
+                    empresa.getRut()
+            );
 
             stmt.executeUpdate();
         }
     }
 
+
     @Override
-    public void eliminar(String rut) throws SQLException {
+    public void eliminar(
+            String rut
+    ) throws SQLException {
 
         String sql = """
                 DELETE FROM empresa
@@ -169,13 +254,19 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, rut);
+            stmt.setString(
+                    1,
+                    rut
+            );
 
             stmt.executeUpdate();
         }
     }
 
-    public void bloquear(String rut) throws SQLException {
+
+    public void bloquear(
+            String rut
+    ) throws SQLException {
 
         String sql = """
                 UPDATE empresa
@@ -186,13 +277,19 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, rut);
+            stmt.setString(
+                    1,
+                    rut
+            );
 
             stmt.executeUpdate();
         }
     }
 
-    public void desbloquear(String rut) throws SQLException {
+
+    public void desbloquear(
+            String rut
+    ) throws SQLException {
 
         String sql = """
                 UPDATE empresa
@@ -203,11 +300,15 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, rut);
+            stmt.setString(
+                    1,
+                    rut
+            );
 
             stmt.executeUpdate();
         }
     }
+
 
     public Empresa iniciarSesion(
             String mail,
@@ -215,25 +316,36 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
     ) throws SQLException {
 
         String sql = """
-            SELECT rut
-            FROM empresa
-            WHERE mail = ?
-              AND password = ?
-            """;
+                SELECT rut
+                FROM empresa
+                WHERE mail = ?
+                  AND password = ?
+                """;
 
         try (
-                Connection conexion = ConexionDB.obtenerConexion();
-                PreparedStatement stmt = conexion.prepareStatement(sql)
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
         ) {
 
-            stmt.setString(1, mail);
-            stmt.setString(2, password);
+            stmt.setString(
+                    1,
+                    mail
+            );
+
+            stmt.setString(
+                    2,
+                    password
+            );
 
             try (ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next()) {
 
-                    String rut = rs.getString("rut");
+                    String rut =
+                            rs.getString("rut");
 
                     return buscarPorId(rut);
                 }
@@ -243,70 +355,30 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         return null;
     }
 
-    public Empresa buscarPorMail(String mail) throws SQLException {
+
+    public Empresa buscarPorMail(
+            String mail
+    ) throws SQLException {
 
         String sql = """
-            SELECT *
-            FROM empresa
-            WHERE mail = ?
-            """;
+                SELECT *
+                FROM empresa
+                WHERE mail = ?
+                """;
 
         try (Connection conexion = ConexionDB.obtenerConexion();
              PreparedStatement stmt = conexion.prepareStatement(sql)) {
 
-            stmt.setString(1, mail);
+            stmt.setString(
+                    1,
+                    mail
+            );
 
             try (ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next()) {
 
-                    Empresa empresa = new Empresa();
-
-                    empresa.setRut(
-                            rs.getString("rut")
-                    );
-
-                    empresa.setNombre(
-                            rs.getString("nombre")
-                    );
-
-                    empresa.setMail(
-                            rs.getString("mail")
-                    );
-
-                    empresa.setPassword(
-                            rs.getString("password")
-                    );
-
-                    if (rs.getDate("fechaRegistro") != null) {
-
-                        empresa.setFechaRegistro(
-                                rs.getDate("fechaRegistro")
-                                        .toLocalDate()
-                        );
-                    }
-
-                    empresa.setTelefono(
-                            rs.getInt("telefono")
-                    );
-
-                    empresa.setDescripcion(
-                            rs.getString("descripcion")
-                    );
-
-                    empresa.setLogo(
-                            rs.getString("logo")
-                    );
-
-                    empresa.setSitioWeb(
-                            rs.getString("sitioWeb")
-                    );
-
-                    empresa.setBloqueado(
-                            rs.getBoolean("bloqueado")
-                    );
-
-                    return empresa;
+                    return crearEmpresaDesdeResultSet(rs);
                 }
             }
         }
@@ -314,4 +386,74 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         return null;
     }
 
+
+    /*
+     * ==================================================
+     * MÉTODO AUXILIAR
+     * ==================================================
+     */
+
+    private Empresa crearEmpresaDesdeResultSet(
+            ResultSet rs
+    ) throws SQLException {
+
+        Empresa empresa =
+                new Empresa();
+
+        empresa.setRut(
+                rs.getString("rut")
+        );
+
+        empresa.setNombre(
+                rs.getString("nombre")
+        );
+
+        empresa.setMail(
+                rs.getString("mail")
+        );
+
+        empresa.setPassword(
+                rs.getString("password")
+        );
+
+        if (rs.getDate("fechaRegistro") != null) {
+
+            empresa.setFechaRegistro(
+                    rs.getDate("fechaRegistro")
+                            .toLocalDate()
+            );
+        }
+
+        empresa.setTelefono(
+                rs.getInt("telefono")
+        );
+
+        empresa.setDescripcion(
+                rs.getString("descripcion")
+        );
+
+
+        // ==============================
+        // CLOUDINARY - LOGO
+        // ==============================
+
+        empresa.setLogo(
+                rs.getString("logo")
+        );
+
+        empresa.setLogoPublicId(
+                rs.getString("logoPublicId")
+        );
+
+
+        empresa.setSitioWeb(
+                rs.getString("sitioWeb")
+        );
+
+        empresa.setBloqueado(
+                rs.getBoolean("bloqueado")
+        );
+
+        return empresa;
+    }
 }

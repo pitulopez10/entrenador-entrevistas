@@ -9,13 +9,13 @@ public class CloudinaryConfig {
             new Cloudinary(
                     ObjectUtils.asMap(
                             "cloud_name",
-                            System.getenv("CLOUDINARY_CLOUD_NAME"),
+                            System.getProperty("CLOUDINARY_CLOUD_NAME"),
 
                             "api_key",
-                            System.getenv("CLOUDINARY_API_KEY"),
+                            System.getProperty("CLOUDINARY_API_KEY"),
 
                             "api_secret",
-                            System.getenv("CLOUDINARY_API_SECRET")
+                            System.getProperty("CLOUDINARY_API_SECRET")
                     )
             );
 

@@ -14,7 +14,10 @@ public class Empresa {
     private LocalDate fechaRegistro;
     private int telefono;
     private String descripcion;
+
     private String logo;
+    private String logoPublicId;
+
     private String sitioWeb;
     private boolean bloqueado;
 
@@ -28,19 +31,23 @@ public class Empresa {
     }
 
     // CONSTRUCTOR COMPLETO
-    public Empresa(String descripcion,
-                   LocalDate fechaRegistro,
-                   String logo,
-                   String mail,
-                   String nombre,
-                   String password,
-                   String rut,
-                   String sitioWeb,
-                   int telefono) {
+    public Empresa(
+            String descripcion,
+            LocalDate fechaRegistro,
+            String logo,
+            String logoPublicId,
+            String mail,
+            String nombre,
+            String password,
+            String rut,
+            String sitioWeb,
+            int telefono
+    ) {
 
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
         this.logo = logo;
+        this.logoPublicId = logoPublicId;
         this.mail = mail;
         this.nombre = nombre;
         this.password = password;
@@ -87,6 +94,10 @@ public class Empresa {
         return logo;
     }
 
+    public String getLogoPublicId() {
+        return logoPublicId;
+    }
+
     public String getSitioWeb() {
         return sitioWeb;
     }
@@ -131,6 +142,10 @@ public class Empresa {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public void setLogoPublicId(String logoPublicId) {
+        this.logoPublicId = logoPublicId;
     }
 
     public void setSitioWeb(String sitioWeb) {

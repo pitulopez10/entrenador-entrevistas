@@ -1,0 +1,410 @@
+.editar-perfil-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 42px 28px 70px;
+    font-family: "Segoe UI", sans-serif;
+}
+
+
+/* ==================================================
+   ENCABEZADO
+   ================================================== */
+
+.editar-perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+
+    margin-bottom: 30px;
+}
+
+.editar-kicker {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.editar-perfil-header h1 {
+    margin: 0;
+
+    color: #14213d;
+
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.editar-perfil-header p {
+    margin: 9px 0 0;
+
+    color: #667085;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   FORMULARIO
+   ================================================== */
+
+.editar-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+
+/* ==================================================
+   TARJETAS
+   ================================================== */
+
+.editar-card {
+    padding: 28px 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e4e8ef;
+    border-radius: 14px;
+
+    box-shadow:
+            0 3px 10px rgba(16, 24, 40, 0.04);
+}
+
+.editar-card-header {
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.editar-card-header h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.editar-card-header p {
+    margin: 6px 0 0;
+
+    color: #7b8494;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   FOTO
+   ================================================== */
+
+.foto-edicion {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.foto-preview {
+    width: 110px;
+    height: 110px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border: 4px solid #eef4ff;
+    border-radius: 50%;
+
+    background: #eaf2ff;
+}
+
+.foto-preview img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.foto-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dbeafe;
+
+    color: #1d5fd1;
+
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.foto-controles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.foto-controles input[type="file"] {
+    display: none;
+}
+
+.btn-seleccionar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 17px;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+}
+
+.btn-seleccionar:hover {
+    background: #1d4ed8;
+}
+
+.archivo-ayuda {
+    color: #7b8494;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   CAMPOS
+   ================================================== */
+
+.editar-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 21px 24px;
+}
+
+.editar-campo {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.editar-campo:last-child {
+    margin-bottom: 0;
+}
+
+.editar-grid .editar-campo {
+    margin-bottom: 0;
+}
+
+.editar-campo-completo {
+    grid-column: 1 / -1;
+}
+
+.editar-campo label {
+    color: #344054;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.editar-campo input,
+.editar-campo select,
+.editar-campo textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
+    border: 1px solid #d7dce5;
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.editar-campo input,
+.editar-campo select {
+    height: 44px;
+}
+
+.editar-campo textarea {
+    min-height: 115px;
+
+    line-height: 1.55;
+
+    resize: vertical;
+}
+
+.editar-campo input:focus,
+.editar-campo select:focus,
+.editar-campo textarea:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* ==================================================
+   MENSAJE ERROR
+   ================================================== */
+
+.editar-mensaje-error {
+    margin-bottom: 22px;
+
+    padding: 13px 16px;
+
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    background: #fef2f2;
+
+    color: #b42318;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* ==================================================
+   ACCIONES
+   ================================================== */
+
+.editar-acciones {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 12px;
+
+    padding-top: 2px;
+}
+
+.btn-cancelar-editar,
+.btn-guardar-editar {
+    min-width: 135px;
+
+    box-sizing: border-box;
+
+    padding: 11px 19px;
+
+    border-radius: 8px;
+
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: center;
+
+    cursor: pointer;
+}
+
+.btn-cancelar-editar {
+    border: 1px solid #d0d5dd;
+
+    background: #ffffff;
+
+    color: #344054;
+
+    text-decoration: none;
+}
+
+.btn-cancelar-editar:hover {
+    background: #f8fafc;
+}
+
+.btn-guardar-editar {
+    border: 1px solid #2563eb;
+
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+.btn-guardar-editar:hover {
+    background: #1d4ed8;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+   ================================================== */
+
+@media (max-width: 760px) {
+
+    .editar-perfil-page {
+        padding: 30px 18px 50px;
+    }
+
+    .editar-perfil-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .editar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .editar-campo-completo {
+        grid-column: auto;
+    }
+
+    .foto-edicion {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .editar-card {
+        padding: 22px 20px;
+    }
+
+    .editar-acciones {
+        flex-direction: column-reverse;
+    }
+
+    .btn-cancelar-editar,
+    .btn-guardar-editar {
+        width: 100%;
+    }
+}

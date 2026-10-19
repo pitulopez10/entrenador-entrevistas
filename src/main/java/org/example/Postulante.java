@@ -14,8 +14,13 @@ public class Postulante {
     private LocalDate fechaRegistro;
     private int telefono;
     private String descripcion;
+
     private String fotoPerfil;
+    private String fotoPerfilPublicId;
+
     private String cv;
+    private String cvPublicId;
+
     private LocalDate fechaNacimiento;
     private DTGenero genero;
     private String localidad;
@@ -37,29 +42,35 @@ public class Postulante {
     }
 
     // CONSTRUCTOR COMPLETO
-    public Postulante(int ci,
-                      String cv,
-                      String datosEstudio,
-                      String datosExperiencia,
-                      String descripcion,
-                      LocalDate fechaNacimiento,
-                      LocalDate fechaRegistro,
-                      String fotoPerfil,
-                      DTGenero genero,
-                      String localidad,
-                      String mail,
-                      String nombre,
-                      String password,
-                      int telefono) {
+    public Postulante(
+            int ci,
+            String cv,
+            String cvPublicId,
+            String datosEstudio,
+            String datosExperiencia,
+            String descripcion,
+            LocalDate fechaNacimiento,
+            LocalDate fechaRegistro,
+            String fotoPerfil,
+            String fotoPerfilPublicId,
+            DTGenero genero,
+            String localidad,
+            String mail,
+            String nombre,
+            String password,
+            int telefono
+    ) {
 
         this.ci = ci;
         this.cv = cv;
+        this.cvPublicId = cvPublicId;
         this.datosEstudio = datosEstudio;
         this.datosExperiencia = datosExperiencia;
         this.descripcion = descripcion;
         this.fechaNacimiento = fechaNacimiento;
         this.fechaRegistro = fechaRegistro;
         this.fotoPerfil = fotoPerfil;
+        this.fotoPerfilPublicId = fotoPerfilPublicId;
         this.genero = genero;
         this.localidad = localidad;
         this.mail = mail;
@@ -84,6 +95,10 @@ public class Postulante {
         return cv;
     }
 
+    public String getCvPublicId() {
+        return cvPublicId;
+    }
+
     public String getDatosEstudio() {
         return datosEstudio;
     }
@@ -106,6 +121,10 @@ public class Postulante {
 
     public String getFotoPerfil() {
         return fotoPerfil;
+    }
+
+    public String getFotoPerfilPublicId() {
+        return fotoPerfilPublicId;
     }
 
     public DTGenero getGenero() {
@@ -158,6 +177,10 @@ public class Postulante {
         this.cv = cv;
     }
 
+    public void setCvPublicId(String cvPublicId) {
+        this.cvPublicId = cvPublicId;
+    }
+
     public void setDatosEstudio(String datosEstudio) {
         this.datosEstudio = datosEstudio;
     }
@@ -180,6 +203,10 @@ public class Postulante {
 
     public void setFotoPerfil(String fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
+    }
+
+    public void setFotoPerfilPublicId(String fotoPerfilPublicId) {
+        this.fotoPerfilPublicId = fotoPerfilPublicId;
     }
 
     public void setGenero(DTGenero genero) {

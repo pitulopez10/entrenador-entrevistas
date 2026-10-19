@@ -6,7 +6,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>${oferta.titulo} | Entrenador Entrevista</title>
 
@@ -27,6 +28,7 @@
 
     </a>
 
+
     <nav class="main-nav">
 
         <a href="${pageContext.request.contextPath}/ofertas"
@@ -38,15 +40,36 @@
             Entrevistas
         </a>
 
-        <a href="#">
-            Empresas
-        </a>
+        <c:choose>
 
-        <a href="#">
-            Preguntas frecuentes
-        </a>
+            <c:when test="${not empty sessionScope.postulanteLogueado}">
+
+                <a href="${pageContext.request.contextPath}/mis-postulaciones">
+                    Mis postulaciones
+                </a>
+
+                <a href="${pageContext.request.contextPath}/perfil">
+                    Mi perfil
+                </a>
+
+            </c:when>
+
+            <c:otherwise>
+
+                <a href="#">
+                    Empresas
+                </a>
+
+                <a href="#">
+                    Preguntas frecuentes
+                </a>
+
+            </c:otherwise>
+
+        </c:choose>
 
     </nav>
+
 
     <div class="nav-actions">
 
@@ -54,9 +77,9 @@
 
             <c:when test="${not empty sessionScope.postulanteLogueado}">
 
-            <span class="usuario-logueado">
-                Hola, ${sessionScope.postulanteLogueado.nombre}
-            </span>
+                <span class="usuario-logueado">
+                    Hola, ${sessionScope.postulanteLogueado.nombre}
+                </span>
 
                 <a href="${pageContext.request.contextPath}/logout"
                    class="btn-outline">
@@ -94,11 +117,14 @@
 
         <a href="${pageContext.request.contextPath}/ofertas"
            class="detalle-volver">
+
             ← Volver a ofertas
+
         </a>
 
 
         <div class="detalle-layout">
+
 
             <!-- =========================
                  COLUMNA IZQUIERDA
@@ -107,8 +133,11 @@
             <div class="detalle-izquierda">
 
                 <div class="detalle-estado">
+
                     <span class="estado-punto"></span>
+
                     ${oferta.estado}
+
                 </div>
 
 
@@ -118,12 +147,16 @@
 
 
                 <p class="detalle-subtitulo">
+
                     Conocé los detalles de esta oportunidad laboral
                     y revisá los requisitos antes de postularte.
+
                 </p>
 
 
-                <!-- DESCRIPCIÓN -->
+                <!-- =========================
+                     DESCRIPCIÓN
+                     ========================= -->
 
                 <section class="detalle-bloque">
 
@@ -133,8 +166,11 @@
                              aria-hidden="true">
 
                             <path d="M6 2h9l5 5v15H6z"></path>
+
                             <path d="M14 2v6h6"></path>
+
                             <path d="M9 13h6"></path>
+
                             <path d="M9 17h6"></path>
 
                         </svg>
@@ -157,7 +193,9 @@
                 </section>
 
 
-                <!-- REQUISITOS -->
+                <!-- =========================
+                     REQUISITOS
+                     ========================= -->
 
                 <section class="detalle-bloque">
 
@@ -168,9 +206,11 @@
 
                             <circle cx="12"
                                     cy="12"
-                                    r="3"></circle>
+                                    r="3">
+                            </circle>
 
-                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"></path>
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z">
+                            </path>
 
                         </svg>
 
@@ -211,15 +251,19 @@
                                   y="7"
                                   width="18"
                                   height="13"
-                                  rx="2"></rect>
+                                  rx="2">
+                            </rect>
 
-                            <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
 
-                            <path d="M3 12h18"></path>
+                            <path d="M3 12h18">
+                            </path>
 
                         </svg>
 
                     </div>
+
 
                     <h2>
                         Detalles de la oferta
@@ -298,23 +342,48 @@
 
                 <div class="panel-linea"></div>
 
+
+                <!-- =========================
+                     MENSAJES
+                     ========================= -->
+
                 <c:if test="${param.postulacion == 'ok'}">
+
                     <div class="mensaje-postulacion exito">
+
                         Postulación realizada correctamente.
+
                     </div>
+
                 </c:if>
+
 
                 <c:if test="${param.error == 'duplicada'}">
+
                     <div class="mensaje-postulacion error">
+
                         Ya te postulaste a esta oferta.
+
                     </div>
+
                 </c:if>
 
+
                 <c:if test="${param.error == 'noActiva'}">
+
                     <div class="mensaje-postulacion error">
+
                         Esta oferta ya no está activa.
+
                     </div>
+
                 </c:if>
+
+
+                <!-- =========================
+                     POSTULARSE
+                     ========================= -->
+
                 <form method="post"
                       action="${pageContext.request.contextPath}/postularse">
 
@@ -326,6 +395,7 @@
                             class="boton-postular">
 
                         <span>✈</span>
+
                         Postularme
 
                     </button>
@@ -333,20 +403,31 @@
                 </form>
 
 
-                <div class="panel-login-aviso">
+                <!-- =========================
+                     AVISO SOLO SI NO HAY LOGIN
+                     ========================= -->
 
-                    <span class="info-icono">
-                        i
-                    </span>
+                <c:if test="${empty sessionScope.postulanteLogueado}">
 
-                    <p>
-                        Para postularte necesitás
-                        <a href="${pageContext.request.contextPath}/login">
-                            iniciar sesión
-                        </a>.
-                    </p>
+                    <div class="panel-login-aviso">
 
-                </div>
+                        <span class="info-icono">
+                            i
+                        </span>
+
+                        <p>
+
+                            Para postularte necesitás
+
+                            <a href="${pageContext.request.contextPath}/login?ofertaId=${oferta.id}">
+                                iniciar sesión
+                            </a>.
+
+                        </p>
+
+                    </div>
+
+                </c:if>
 
             </aside>
 

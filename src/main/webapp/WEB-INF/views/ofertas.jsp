@@ -516,9 +516,25 @@
                     Practicar entrevistas
                 </a>
 
-                <a href="#">
-                    Crear perfil
-                </a>
+                <c:choose>
+
+                    <c:when test="${not empty sessionScope.postulanteLogueado}">
+
+                        <a href="${pageContext.request.contextPath}/perfil">
+                            Mi perfil
+                        </a>
+
+                    </c:when>
+
+                    <c:otherwise>
+
+                        <a href="#">
+                            Crear perfil
+                        </a>
+
+                    </c:otherwise>
+
+                </c:choose>
 
             </div>
 

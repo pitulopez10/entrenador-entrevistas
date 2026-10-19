@@ -56,7 +56,7 @@
             Mis postulaciones
         </a>
 
-        <a href="#">
+        <a href="${pageContext.request.contextPath}/perfil">
             Mi perfil
         </a>
 

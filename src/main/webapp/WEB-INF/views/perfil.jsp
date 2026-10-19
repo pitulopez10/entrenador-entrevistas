@@ -24,6 +24,7 @@
 
 <body>
 
+
 <header class="topbar">
 
     <a href="${pageContext.request.contextPath}/ofertas"
@@ -94,15 +95,34 @@
 
         </div>
 
-        <a href="#"
+
+        <a href="${pageContext.request.contextPath}/editar-perfil"
            class="btn-primary">
+
             Editar perfil
+
         </a>
 
     </section>
 
 
+    <!-- MENSAJE DE ACTUALIZACIÓN -->
+
+    <c:if test="${param.actualizado == 'ok'}">
+
+        <div class="mensaje-perfil-exito">
+            Perfil actualizado correctamente.
+        </div>
+
+    </c:if>
+
+
     <section class="perfil-grid">
+
+
+        <!-- =========================
+             PERFIL PRINCIPAL
+             ========================= -->
 
         <article class="perfil-card perfil-principal">
 
@@ -112,7 +132,7 @@
 
                     <c:when test="${not empty postulante.fotoPerfil}">
 
-                        <img src="${pageContext.request.contextPath}/img/${postulante.fotoPerfil}"
+                        <img src="${postulante.fotoPerfil}"
                              alt="Foto de perfil">
 
                     </c:when>
@@ -120,7 +140,9 @@
                     <c:otherwise>
 
                         <div class="avatar-placeholder">
+
                                 ${postulante.nombre.substring(0,1)}
+
                         </div>
 
                     </c:otherwise>
@@ -149,6 +171,10 @@
         </article>
 
 
+        <!-- =========================
+             INFORMACIÓN PERSONAL
+             ========================= -->
+
         <article class="perfil-card">
 
             <h3>
@@ -156,6 +182,7 @@
             </h3>
 
             <div class="perfil-datos">
+
 
                 <div class="perfil-dato">
 
@@ -177,7 +204,19 @@
                     </span>
 
                     <strong>
-                        ${postulante.telefono}
+
+                        <c:choose>
+
+                            <c:when test="${postulante.telefono != 0}">
+                                ${postulante.telefono}
+                            </c:when>
+
+                            <c:otherwise>
+                                Sin especificar
+                            </c:otherwise>
+
+                        </c:choose>
+
                     </strong>
 
                 </div>
@@ -190,7 +229,19 @@
                     </span>
 
                     <strong>
-                        ${postulante.fechaNacimiento}
+
+                        <c:choose>
+
+                            <c:when test="${not empty postulante.fechaNacimiento}">
+                                ${postulante.fechaNacimiento}
+                            </c:when>
+
+                            <c:otherwise>
+                                Sin especificar
+                            </c:otherwise>
+
+                        </c:choose>
+
                     </strong>
 
                 </div>
@@ -203,7 +254,19 @@
                     </span>
 
                     <strong>
-                        ${postulante.genero}
+
+                        <c:choose>
+
+                            <c:when test="${not empty postulante.genero}">
+                                ${postulante.genero}
+                            </c:when>
+
+                            <c:otherwise>
+                                Sin especificar
+                            </c:otherwise>
+
+                        </c:choose>
+
                     </strong>
 
                 </div>
@@ -216,7 +279,9 @@
                     </span>
 
                     <strong>
+
                         <c:choose>
+
                             <c:when test="${not empty postulante.localidad}">
                                 ${postulante.localidad}
                             </c:when>
@@ -224,7 +289,9 @@
                             <c:otherwise>
                                 Sin especificar
                             </c:otherwise>
+
                         </c:choose>
+
                     </strong>
 
                 </div>
@@ -246,6 +313,10 @@
 
         </article>
 
+
+        <!-- =========================
+             SOBRE MÍ
+             ========================= -->
 
         <article class="perfil-card">
 
@@ -272,6 +343,10 @@
         </article>
 
 
+        <!-- =========================
+             FORMACIÓN
+             ========================= -->
+
         <article class="perfil-card">
 
             <h3>
@@ -296,6 +371,10 @@
 
         </article>
 
+
+        <!-- =========================
+             EXPERIENCIA
+             ========================= -->
 
         <article class="perfil-card">
 
@@ -322,6 +401,10 @@
         </article>
 
 
+        <!-- =========================
+             CURRÍCULUM
+             ========================= -->
+
         <article class="perfil-card">
 
             <h3>
@@ -333,9 +416,17 @@
                 <c:when test="${not empty postulante.cv}">
 
                     <p class="perfil-texto">
-                        Archivo registrado:
-                        <strong>${postulante.cv}</strong>
+                        Tenés un currículum cargado.
                     </p>
+
+                    <a href="${postulante.cv}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn-outline">
+
+                        Ver currículum
+
+                    </a>
 
                 </c:when>
 
