@@ -1,0 +1,238 @@
+/* ==================================================
+   PERFIL
+   ================================================== */
+
+.perfil-page {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 48px 0 70px;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* ==================================================
+   CABECERA
+   ================================================== */
+
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+
+    margin-bottom: 32px;
+}
+
+.perfil-kicker {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: #1f6feb;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.perfil-header h1 {
+    margin: 0 0 8px;
+
+    color: #16315f;
+
+    font-size: 34px;
+}
+
+.perfil-header p {
+    margin: 0;
+
+    color: #65748b;
+
+    font-size: 15px;
+}
+
+
+/* ==================================================
+   GRID
+   ================================================== */
+
+.perfil-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+
+/* ==================================================
+   CARDS
+   ================================================== */
+
+.perfil-card {
+    padding: 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    box-shadow: 0 4px 18px rgba(23, 49, 95, 0.05);
+}
+
+.perfil-card h3 {
+    margin: 0 0 20px;
+
+    color: #16315f;
+
+    font-size: 18px;
+}
+
+
+/* ==================================================
+   TARJETA PRINCIPAL
+   ================================================== */
+
+.perfil-principal {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.perfil-avatar {
+    width: 90px;
+    height: 90px;
+
+    flex-shrink: 0;
+}
+
+.perfil-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 3px solid #e7eef8;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eaf2ff;
+    color: #1f6feb;
+
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.perfil-identidad h2 {
+    margin: 0 0 5px;
+
+    color: #16315f;
+
+    font-size: 25px;
+}
+
+.perfil-identidad p {
+    margin: 0 0 10px;
+
+    color: #65748b;
+}
+
+.perfil-estado {
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: #eaf8ef;
+    color: #18763a;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   DATOS
+   ================================================== */
+
+.perfil-datos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.perfil-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.perfil-label {
+    color: #8794a8;
+
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.perfil-dato strong {
+    color: #34435a;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   TEXTO
+   ================================================== */
+
+.perfil-texto {
+    margin: 0;
+
+    color: #4d5d73;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+   ================================================== */
+
+@media (max-width: 800px) {
+
+    .perfil-page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 30px;
+    }
+
+    .perfil-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-principal {
+        grid-column: auto;
+    }
+
+    .perfil-datos {
+        grid-template-columns: 1fr;
+    }
+}

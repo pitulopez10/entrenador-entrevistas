@@ -43,13 +43,38 @@
             Entrevistas
         </a>
 
-        <a href="#">
-            Empresas
-        </a>
 
-        <a href="#">
-            Preguntas frecuentes
-        </a>
+        <!-- =========================================
+             MENÚ SEGÚN SI HAY USUARIO LOGUEADO
+             ========================================= -->
+
+        <c:choose>
+
+            <c:when test="${not empty sessionScope.postulanteLogueado}">
+
+                <a href="${pageContext.request.contextPath}/mis-postulaciones">
+                    Mis postulaciones
+                </a>
+
+                <a href="${pageContext.request.contextPath}/perfil">
+                    Mi perfil
+                </a>
+
+            </c:when>
+
+            <c:otherwise>
+
+                <a href="#">
+                    Empresas
+                </a>
+
+                <a href="#">
+                    Preguntas frecuentes
+                </a>
+
+            </c:otherwise>
+
+        </c:choose>
 
     </nav>
 
@@ -60,9 +85,9 @@
 
             <c:when test="${not empty sessionScope.postulanteLogueado}">
 
-            <span class="usuario-logueado">
-                Hola, ${sessionScope.postulanteLogueado.nombre}
-            </span>
+                <span class="usuario-logueado">
+                    Hola, ${sessionScope.postulanteLogueado.nombre}
+                </span>
 
                 <a href="${pageContext.request.contextPath}/logout"
                    class="btn-outline">
