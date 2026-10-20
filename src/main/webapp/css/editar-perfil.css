@@ -408,3 +408,99 @@
         width: 100%;
     }
 }
+/* ==================================================
+   CURRÍCULUM
+   ================================================== */
+
+.cv-edicion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.cv-info {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.cv-icono {
+    width: 64px;
+    height: 64px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.cv-info strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #172033;
+
+    font-size: 15px;
+}
+
+.cv-info p {
+    margin: 0;
+
+    color: #7b8494;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.cv-ver-actual {
+    display: inline-block;
+
+    margin-top: 9px;
+
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+.cv-ver-actual:hover {
+    text-decoration: underline;
+}
+
+.cv-controles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+.cv-controles input[type="file"] {
+    display: none;
+}
+
+
+@media (max-width: 760px) {
+
+    .cv-edicion {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}

@@ -15,6 +15,11 @@ public class CloudinaryService {
         this.cloudinary = CloudinaryConfig.getCloudinary();
     }
 
+
+    // ==================================================
+    // SUBIR IMAGEN DE PERFIL
+    // ==================================================
+
     public Map<String, String> subirImagen(byte[] contenido)
             throws IOException {
 
@@ -33,6 +38,100 @@ public class CloudinaryService {
                         )
                 );
 
+        return obtenerDatos(resultado);
+    }
+
+
+    // ==================================================
+    // SUBIR CV PDF
+    // ==================================================
+
+    public Map<String, String> subirCv(
+            byte[] contenido,
+            String nombreArchivo
+    ) throws IOException {
+
+        Map<?, ?> resultado =
+                cloudinary.uploader().upload(
+                        contenido,
+                        ObjectUtils.asMap(
+                                "folder",
+                                "entrenador-entrevista/cv",
+
+                                "resource_type",
+                                "image",
+
+                                "use_filename",
+                                true,
+
+                                "unique_filename",
+                                true,
+
+                                "filename_override",
+                                nombreArchivo
+                        )
+                );
+
+        return obtenerDatos(resultado);
+    }
+
+
+    // ==================================================
+    // ELIMINAR IMAGEN
+    // ==================================================
+
+    public void eliminarImagen(
+            String publicId
+    ) throws IOException {
+
+        if (publicId == null ||
+                publicId.isBlank()) {
+
+            return;
+        }
+
+        cloudinary.uploader().destroy(
+                publicId,
+                ObjectUtils.asMap(
+                        "resource_type",
+                        "image"
+                )
+        );
+    }
+
+
+    // ==================================================
+    // ELIMINAR CV
+    // ==================================================
+
+    public void eliminarCv(
+            String publicId
+    ) throws IOException {
+
+        if (publicId == null ||
+                publicId.isBlank()) {
+
+            return;
+        }
+
+        cloudinary.uploader().destroy(
+                publicId,
+                ObjectUtils.asMap(
+                        "resource_type",
+                        "image"
+                )
+        );
+    }
+
+
+    // ==================================================
+    // MÉTODO AUXILIAR
+    // ==================================================
+
+    private Map<String, String> obtenerDatos(
+            Map<?, ?> resultado
+    ) {
+
         Map<String, String> datos =
                 new HashMap<>();
 
@@ -47,22 +146,5 @@ public class CloudinaryService {
         );
 
         return datos;
-    }
-
-
-    public void eliminarImagen(
-            String publicId
-    ) throws IOException {
-
-        if (publicId == null ||
-                publicId.isBlank()) {
-
-            return;
-        }
-
-        cloudinary.uploader().destroy(
-                publicId,
-                ObjectUtils.emptyMap()
-        );
     }
 }

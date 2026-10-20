@@ -22,7 +22,7 @@ import java.util.Map;
 @WebServlet("/editar-perfil")
 @MultipartConfig(
         maxFileSize = 5 * 1024 * 1024,
-        maxRequestSize = 7 * 1024 * 1024
+        maxRequestSize = 12 * 1024 * 1024
 )
 public class EditarPerfilServlet extends HttpServlet {
 
@@ -32,6 +32,10 @@ public class EditarPerfilServlet extends HttpServlet {
     private final CloudinaryService cloudinaryService =
             new CloudinaryService();
 
+
+    // ==================================================
+    // GET
+    // ==================================================
 
     @Override
     protected void doGet(
@@ -52,6 +56,7 @@ public class EditarPerfilServlet extends HttpServlet {
             return;
         }
 
+
         Postulante postulanteSesion =
                 (Postulante) session.getAttribute(
                         "postulanteLogueado"
@@ -75,10 +80,12 @@ public class EditarPerfilServlet extends HttpServlet {
                 return;
             }
 
+
             request.setAttribute(
                     "postulante",
                     postulante
             );
+
 
             request.getRequestDispatcher(
                     "/WEB-INF/views/editar-perfil.jsp"
@@ -86,6 +93,7 @@ public class EditarPerfilServlet extends HttpServlet {
                     request,
                     response
             );
+
 
         } catch (SQLException e) {
 
@@ -97,6 +105,10 @@ public class EditarPerfilServlet extends HttpServlet {
     }
 
 
+    // ==================================================
+    // POST
+    // ==================================================
+
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -104,6 +116,7 @@ public class EditarPerfilServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+
 
         HttpSession session =
                 request.getSession(false);
@@ -118,10 +131,20 @@ public class EditarPerfilServlet extends HttpServlet {
             return;
         }
 
+
         Postulante postulanteSesion =
                 (Postulante) session.getAttribute(
                         "postulanteLogueado"
                 );
+
+
+        /*
+         * Guardamos los IDs de los nuevos archivos
+         * por si ocurre un error después de subirlos.
+         */
+        String nuevaFotoPublicId = null;
+        String nuevoCvPublicId = null;
+
 
         try {
 
@@ -129,6 +152,7 @@ public class EditarPerfilServlet extends HttpServlet {
                     postulanteDAO.buscarPorId(
                             postulanteSesion.getCi()
                     );
+
 
             if (postulante == null) {
 
@@ -142,9 +166,9 @@ public class EditarPerfilServlet extends HttpServlet {
             }
 
 
-            // =========================
+            // ==================================================
             // DATOS DEL FORMULARIO
-            // =========================
+            // ==================================================
 
             String nombre =
                     request.getParameter("nombre");
@@ -174,9 +198,9 @@ public class EditarPerfilServlet extends HttpServlet {
                     request.getParameter("datosExperiencia");
 
 
-            // =========================
-            // VALIDACIONES BÁSICAS
-            // =========================
+            // ==================================================
+            // VALIDACIÓN NOMBRE
+            // ==================================================
 
             if (nombre == null ||
                     nombre.trim().isEmpty()) {
@@ -191,6 +215,11 @@ public class EditarPerfilServlet extends HttpServlet {
                 return;
             }
 
+
+            // ==================================================
+            // VALIDACIÓN CORREO
+            // ==================================================
+
             if (mail == null ||
                     mail.trim().isEmpty()) {
 
@@ -204,6 +233,23 @@ public class EditarPerfilServlet extends HttpServlet {
                 return;
             }
 
+
+            if (!mail.contains("@")) {
+
+                volverConError(
+                        request,
+                        response,
+                        postulante,
+                        "El correo ingresado no es válido."
+                );
+
+                return;
+            }
+
+
+            // ==================================================
+            // TELÉFONO
+            // ==================================================
 
             int telefono = 0;
 
@@ -231,6 +277,10 @@ public class EditarPerfilServlet extends HttpServlet {
             }
 
 
+            // ==================================================
+            // FECHA DE NACIMIENTO
+            // ==================================================
+
             LocalDate fechaNacimiento = null;
 
             if (fechaNacimientoTexto != null &&
@@ -255,6 +305,7 @@ public class EditarPerfilServlet extends HttpServlet {
                     return;
                 }
 
+
                 if (fechaNacimiento.isAfter(
                         LocalDate.now()
                 )) {
@@ -270,6 +321,10 @@ public class EditarPerfilServlet extends HttpServlet {
                 }
             }
 
+
+            // ==================================================
+            // GÉNERO
+            // ==================================================
 
             DTGenero genero = null;
 
@@ -297,14 +352,26 @@ public class EditarPerfilServlet extends HttpServlet {
             }
 
 
-            // =========================
+            // ==================================================
+            // GUARDAMOS LOS ARCHIVOS ANTERIORES
+            // ==================================================
+
+            String fotoPublicIdAnterior =
+                    postulante.getFotoPerfilPublicId();
+
+            String cvPublicIdAnterior =
+                    postulante.getCvPublicId();
+
+
+            // ==================================================
             // FOTO DE PERFIL
-            // =========================
+            // ==================================================
 
             Part foto =
                     request.getPart(
                             "fotoPerfil"
                     );
+
 
             if (foto != null &&
                     foto.getSize() > 0) {
@@ -312,70 +379,141 @@ public class EditarPerfilServlet extends HttpServlet {
                 String contentType =
                         foto.getContentType();
 
+
                 if (contentType == null ||
-                        !contentType.startsWith(
-                                "image/"
-                        )) {
+                        !contentType.startsWith("image/")) {
 
                     volverConError(
                             request,
                             response,
                             postulante,
-                            "El archivo seleccionado debe ser una imagen."
+                            "El archivo seleccionado como foto debe ser una imagen."
                     );
 
                     return;
                 }
 
-                byte[] contenido =
+
+                byte[] contenidoFoto =
                         foto.getInputStream()
                                 .readAllBytes();
 
-                Map<String, String> resultado =
+
+                Map<String, String> resultadoFoto =
                         cloudinaryService.subirImagen(
-                                contenido
+                                contenidoFoto
                         );
 
-                String nuevaUrl =
-                        resultado.get("url");
 
-                String nuevoPublicId =
-                        resultado.get("publicId");
+                String nuevaFotoUrl =
+                        resultadoFoto.get("url");
 
-
-                String publicIdAnterior =
-                        postulante.getFotoPerfilPublicId();
+                nuevaFotoPublicId =
+                        resultadoFoto.get("publicId");
 
 
                 postulante.setFotoPerfil(
-                        nuevaUrl
+                        nuevaFotoUrl
                 );
 
                 postulante.setFotoPerfilPublicId(
-                        nuevoPublicId
+                        nuevaFotoPublicId
                 );
-
-
-                if (publicIdAnterior != null &&
-                        !publicIdAnterior.isBlank()) {
-
-                    try {
-
-                        cloudinaryService.eliminarImagen(
-                                publicIdAnterior
-                        );
-
-                    } catch (Exception e) {
-
-                        e.printStackTrace();
-                    }
-                }
             }
 
 
-            // =========================
-            // ACTUALIZAR OBJETO
-            // =========================
+            // ==================================================
+            // CURRÍCULUM PDF
+            // ==================================================
+
+            Part cv =
+                    request.getPart(
+                            "cv"
+                    );
+
+
+            if (cv != null &&
+                    cv.getSize() > 0) {
+
+                String contentTypeCv =
+                        cv.getContentType();
+
+                String nombreArchivo =
+                        cv.getSubmittedFileName();
+
+
+                if (nombreArchivo == null ||
+                        !nombreArchivo
+                                .toLowerCase()
+                                .endsWith(".pdf")) {
+
+                    limpiarNuevaFoto(
+                            nuevaFotoPublicId
+                    );
+
+                    volverConError(
+                            request,
+                            response,
+                            postulante,
+                            "El currículum debe ser un archivo PDF."
+                    );
+
+                    return;
+                }
+
+
+                if (contentTypeCv == null ||
+                        !contentTypeCv.equalsIgnoreCase(
+                                "application/pdf"
+                        )) {
+
+                    limpiarNuevaFoto(
+                            nuevaFotoPublicId
+                    );
+
+                    volverConError(
+                            request,
+                            response,
+                            postulante,
+                            "El archivo seleccionado como currículum no es un PDF válido."
+                    );
+
+                    return;
+                }
+
+
+                byte[] contenidoCv =
+                        cv.getInputStream()
+                                .readAllBytes();
+
+
+                Map<String, String> resultadoCv =
+                        cloudinaryService.subirCv(
+                                contenidoCv,
+                                nombreArchivo
+                        );
+
+
+                String nuevaCvUrl =
+                        resultadoCv.get("url");
+
+                nuevoCvPublicId =
+                        resultadoCv.get("publicId");
+
+
+                postulante.setCv(
+                        nuevaCvUrl
+                );
+
+                postulante.setCvPublicId(
+                        nuevoCvPublicId
+                );
+            }
+
+
+            // ==================================================
+            // ACTUALIZAR DATOS DEL OBJETO
+            // ==================================================
 
             postulante.setNombre(
                     nombre.trim()
@@ -414,44 +552,119 @@ public class EditarPerfilServlet extends HttpServlet {
             );
 
 
-            // =========================
-            // GUARDAR EN BD
-            // =========================
+            // ==================================================
+            // GUARDAR EN BASE DE DATOS
+            // ==================================================
 
             postulanteDAO.modificar(
                     postulante
             );
 
 
-            // Actualizamos la sesión
+            // ==================================================
+            // ELIMINAR ARCHIVOS ANTERIORES
+            // SOLO DESPUÉS DE ACTUALIZAR LA BD
+            // ==================================================
+
+            if (nuevaFotoPublicId != null &&
+                    fotoPublicIdAnterior != null &&
+                    !fotoPublicIdAnterior.isBlank()) {
+
+                try {
+
+                    cloudinaryService.eliminarImagen(
+                            fotoPublicIdAnterior
+                    );
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (nuevoCvPublicId != null &&
+                    cvPublicIdAnterior != null &&
+                    !cvPublicIdAnterior.isBlank()) {
+
+                try {
+
+                    cloudinaryService.eliminarCv(
+                            cvPublicIdAnterior
+                    );
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                }
+            }
+
+
+            // ==================================================
+            // ACTUALIZAR SESIÓN
+            // ==================================================
+
             session.setAttribute(
                     "postulanteLogueado",
                     postulante
             );
 
 
+            // ==================================================
             // PRG
+            // ==================================================
+
             response.sendRedirect(
                     request.getContextPath()
                             + "/perfil?actualizado=ok"
             );
 
+
         } catch (SQLException e) {
+
+            /*
+             * Si se subieron archivos nuevos pero falló
+             * la actualización de la base de datos,
+             * eliminamos esos archivos nuevos.
+             */
+
+            limpiarNuevaFoto(
+                    nuevaFotoPublicId
+            );
+
+            limpiarNuevoCv(
+                    nuevoCvPublicId
+            );
+
 
             throw new ServletException(
                     "Error al actualizar el perfil.",
                     e
             );
 
+
         } catch (Exception e) {
 
+            limpiarNuevaFoto(
+                    nuevaFotoPublicId
+            );
+
+            limpiarNuevoCv(
+                    nuevoCvPublicId
+            );
+
+
             throw new ServletException(
-                    "Error al subir la imagen.",
+                    "Error al actualizar los archivos del perfil.",
                     e
             );
         }
     }
 
+
+    // ==================================================
+    // VOLVER AL FORMULARIO CON ERROR
+    // ==================================================
 
     private void volverConError(
             HttpServletRequest request,
@@ -470,11 +683,68 @@ public class EditarPerfilServlet extends HttpServlet {
                 postulante
         );
 
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/editar-perfil.jsp"
         ).forward(
                 request,
                 response
         );
+    }
+
+
+    // ==================================================
+    // LIMPIAR FOTO NUEVA SI HUBO ERROR
+    // ==================================================
+
+    private void limpiarNuevaFoto(
+            String publicId
+    ) {
+
+        if (publicId == null ||
+                publicId.isBlank()) {
+
+            return;
+        }
+
+
+        try {
+
+            cloudinaryService.eliminarImagen(
+                    publicId
+            );
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+
+    // ==================================================
+    // LIMPIAR CV NUEVO SI HUBO ERROR
+    // ==================================================
+
+    private void limpiarNuevoCv(
+            String publicId
+    ) {
+
+        if (publicId == null ||
+                publicId.isBlank()) {
+
+            return;
+        }
+
+
+        try {
+
+            cloudinaryService.eliminarCv(
+                    publicId
+            );
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }

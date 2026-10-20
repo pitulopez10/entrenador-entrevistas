@@ -19,7 +19,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/editar-perfil.css?v=2">
+          href="${pageContext.request.contextPath}/css/editar-perfil.css?v=3">
 </head>
 
 <body>
@@ -99,7 +99,7 @@
 
             <p>
                 Actualizá tu información personal,
-                profesional y tu foto de perfil.
+                profesional y tus archivos.
             </p>
 
         </div>
@@ -165,7 +165,7 @@
                     <c:choose>
 
                         <c:when test="${not empty postulante.fotoPerfil
-                      and fn:startsWith(postulante.fotoPerfil, 'http')}">
+                                      and fn:startsWith(postulante.fotoPerfil, 'http')}">
 
                             <img src="${postulante.fotoPerfil}"
                                  alt="Foto de perfil"
@@ -433,6 +433,111 @@
 
 
         <!-- ==================================================
+             CURRÍCULUM
+             ================================================== -->
+
+        <section class="editar-card">
+
+            <div class="editar-card-header">
+
+                <div>
+
+                    <h2>
+                        Currículum
+                    </h2>
+
+                    <p>
+                        Podés cargar o reemplazar tu currículum en formato PDF.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="cv-edicion">
+
+                <div class="cv-info">
+
+                    <div class="cv-icono">
+                        PDF
+                    </div>
+
+
+                    <div>
+
+                        <c:choose>
+
+                            <c:when test="${not empty postulante.cv}">
+
+                                <strong>
+                                    Currículum cargado
+                                </strong>
+
+                                <p>
+                                    Si seleccionás un nuevo archivo,
+                                    el currículum actual será reemplazado.
+                                </p>
+
+                                <a href="${postulante.cv}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="cv-ver-actual">
+
+                                    Ver currículum actual
+
+                                </a>
+
+                            </c:when>
+
+                            <c:otherwise>
+
+                                <strong>
+                                    No hay currículum cargado
+                                </strong>
+
+                                <p>
+                                    Seleccioná un archivo PDF para agregarlo a tu perfil.
+                                </p>
+
+                            </c:otherwise>
+
+                        </c:choose>
+
+                    </div>
+
+                </div>
+
+
+                <div class="cv-controles">
+
+                    <label for="cv"
+                           class="btn-seleccionar">
+
+                        Seleccionar PDF
+
+                    </label>
+
+                    <input type="file"
+                           name="cv"
+                           id="cv"
+                           accept="application/pdf">
+
+                    <span class="archivo-ayuda"
+                          id="nombreCvSeleccionado">
+
+                        PDF. Máximo 5 MB.
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
              BOTONES
              ================================================== -->
 
@@ -459,7 +564,7 @@
 </main>
 
 
-<script src="${pageContext.request.contextPath}/js/editar-perfil.js?v=2">
+<script src="${pageContext.request.contextPath}/js/editar-perfil.js?v=3">
 </script>
 
 </body>
