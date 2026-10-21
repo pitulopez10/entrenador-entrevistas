@@ -75,6 +75,10 @@
            class="btn-primary">
             Crear perfil
         </a>
+        <a href="${pageContext.request.contextPath}/login-empresa"
+           class="btn-outline">
+            Soy empresa
+        </a>
 
     </div>
 

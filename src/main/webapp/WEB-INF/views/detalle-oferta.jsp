@@ -74,35 +74,61 @@
     <div class="nav-actions">
 
         <c:choose>
+<%-- Postulante con sesión iniciada (sin cambios) --%>
+    <c:when test="${not empty sessionScope.postulanteLogueado}">
 
-            <c:when test="${not empty sessionScope.postulanteLogueado}">
+        <span class="usuario-logueado">
+            Hola, ${sessionScope.postulanteLogueado.nombre}
+        </span>
 
-                <span class="usuario-logueado">
-                    Hola, ${sessionScope.postulanteLogueado.nombre}
-                </span>
+        <a href="${pageContext.request.contextPath}/logout"
+           class="btn-outline">
+            Cerrar sesión
+        </a>
 
-                <a href="${pageContext.request.contextPath}/logout"
-                   class="btn-outline">
-                    Cerrar sesión
-                </a>
+    </c:when>
 
-            </c:when>
+    <%-- NUEVO: empresa con sesión iniciada --%>
+    <c:when test="${not empty sessionScope.empresaLogueada}">
 
-            <c:otherwise>
+        <span class="usuario-logueado">
+            Hola, <c:out value="${sessionScope.empresaLogueada.nombre}" />
+        </span>
 
-                <a href="${pageContext.request.contextPath}/login"
-                   class="btn-outline">
-                    Iniciar sesión
-                </a>
+        <a href="${pageContext.request.contextPath}/empresa"
+           class="btn-outline">
+            Mi panel
+        </a>
 
-                <a href="${pageContext.request.contextPath}/registro"
-                   class="btn-primary">
-                    Crear perfil
-                </a>
+        <a href="${pageContext.request.contextPath}/logout"
+           class="btn-outline">
+            Cerrar sesión
+        </a>
 
-            </c:otherwise>
+    </c:when>
 
-        </c:choose>
+    <%-- Sin sesión --%>
+    <c:otherwise>
+
+        <a href="${pageContext.request.contextPath}/login"
+           class="btn-outline">
+            Iniciar sesión
+        </a>
+
+        <a href="${pageContext.request.contextPath}/registro"
+           class="btn-primary">
+            Crear perfil
+        </a>
+
+        <%-- NUEVO: acceso para empresas --%>
+        <a href="${pageContext.request.contextPath}/login-empresa"
+           class="btn-outline">
+            Soy empresa
+        </a>
+
+    </c:otherwise>
+
+     </c:choose>
 
     </div>
 

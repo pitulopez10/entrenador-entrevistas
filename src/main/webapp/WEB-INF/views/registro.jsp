@@ -131,6 +131,10 @@
                 ¿Ya tenés cuenta?
                 <a href="${pageContext.request.contextPath}/login">Iniciar sesión</a>
             </p>
+            <p class="login-back">
+                ¿Querés publicar ofertas?
+                <a href="${pageContext.request.contextPath}/registro-empresa">Registrar una empresa</a>
+            </p>
         </div>
 
     </section>
