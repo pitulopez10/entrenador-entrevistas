@@ -103,7 +103,7 @@
                     Iniciar sesión
                 </a>
 
-                <a href="#"
+                <a href="${pageContext.request.contextPath}/registro"
                    class="btn-primary">
                     Crear perfil
                 </a>
@@ -528,7 +528,7 @@
 
                     <c:otherwise>
 
-                        <a href="#">
+                        <a href="${pageContext.request.contextPath}/registro">
                             Crear perfil
                         </a>
 

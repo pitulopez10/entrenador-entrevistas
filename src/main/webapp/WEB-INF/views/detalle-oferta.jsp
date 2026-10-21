@@ -95,7 +95,7 @@
                     Iniciar sesión
                 </a>
 
-                <a href="#"
+                <a href="${pageContext.request.contextPath}/registro"
                    class="btn-primary">
                     Crear perfil
                 </a>
