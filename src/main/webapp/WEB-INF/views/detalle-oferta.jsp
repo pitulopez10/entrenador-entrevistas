@@ -429,6 +429,13 @@
                 </form>
 
 
+                <a href="${pageContext.request.contextPath}/entrevista?ofertaId=${oferta.id}"
+                   class="boton-practicar-entrevista">
+
+                    Practicar entrevista
+
+                </a>
+
                 <!-- =========================
                      AVISO SOLO SI NO HAY LOGIN
                      ========================= -->
