@@ -53,7 +53,7 @@
             Entrevistas
         </a>
 
-        <a href="#">
+        <a href=""${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}"">
             Empresas
         </a>
 
@@ -75,10 +75,7 @@
            class="btn-primary">
             Crear perfil
         </a>
-        <a href="${pageContext.request.contextPath}/login-empresa"
-           class="btn-outline">
-            Soy empresa
-        </a>
+
 
     </div>
 

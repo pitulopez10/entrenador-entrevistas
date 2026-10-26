@@ -56,7 +56,7 @@
 
             <c:otherwise>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}">
                     Empresas
                 </a>
 
@@ -118,12 +118,6 @@
         <a href="${pageContext.request.contextPath}/registro"
            class="btn-primary">
             Crear perfil
-        </a>
-
-        <%-- NUEVO: acceso para empresas --%>
-        <a href="${pageContext.request.contextPath}/login-empresa"
-           class="btn-outline">
-            Soy empresa
         </a>
 
     </c:otherwise>
