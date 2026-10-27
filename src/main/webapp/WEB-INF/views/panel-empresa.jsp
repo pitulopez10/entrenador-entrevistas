@@ -10,23 +10,9 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
 
-    <style>
-        .panel { max-width: 1000px; margin: 32px auto; padding: 0 20px; }
-        .panel h1 { margin: 0 0 4px; }
-        .panel .subtitulo { margin: 0 0 24px; color: #6b7280; }
-        .panel-card { background: #fff; border: 1px solid #e5e7eb;
-                      border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        .panel-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
-        .datos { display: grid; grid-template-columns: 180px 1fr;
-                 gap: 10px 16px; margin: 0; }
-        .datos dt { font-weight: 600; color: #374151; }
-        .datos dd { margin: 0; }
-        .tabla-ofertas { width: 100%; border-collapse: collapse; }
-        .tabla-ofertas th, .tabla-ofertas td { text-align: left;
-                      padding: 10px 12px; border-bottom: 1px solid #e5e7eb; }
-        .tabla-ofertas th { color: #374151; font-size: .9rem; }
-        .nota { color: #6b7280; margin: 16px 0 0; }
-    </style>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/empresa.css?v=2">
+
 </head>
 <body>
 
@@ -52,6 +38,9 @@
 <main class="panel">
     <h1>Hola, <c:out value="${sessionScope.empresaLogueada.nombre}" /></h1>
     <p class="subtitulo">Este es el panel de tu empresa.</p>
+    <c:if test="${param.creada == '1'}">
+        <div class="mensaje-exito">La oferta se publicó correctamente.</div>
+    </c:if>
 
     <section class="panel-card">
         <h2>Datos de la empresa</h2>
@@ -77,7 +66,13 @@
     </section>
 
     <section class="panel-card">
-        <h2>Mis ofertas laborales</h2>
+        <div class="panel-encabezado">
+            <h2>Mis ofertas laborales</h2>
+            <a href="${pageContext.request.contextPath}/crear-oferta"
+               class="btn-primary">
+                Publicar oferta
+            </a>
+        </div>
 
         <c:choose>
             <c:when test="${empty ofertas}">
@@ -109,7 +104,7 @@
             </c:otherwise>
         </c:choose>
 
-        <p class="nota">Publicar nuevas ofertas desde la web estará disponible próximamente.</p>
+       
     </section>
 </main>
 

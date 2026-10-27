@@ -53,7 +53,7 @@
             Entrevistas
         </a>
 
-        <a href=""${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}"">
+        <a href="${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}">
             Empresas
         </a>
 

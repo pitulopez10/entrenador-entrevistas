@@ -1,0 +1,89 @@
+.panel { max-width: 1000px; margin: 32px auto; padding: 0 20px; }
+.panel h1 { margin: 0 0 4px; }
+.panel .subtitulo { margin: 0 0 24px; color: #6b7280; }
+
+.panel-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+.panel-card h2 { margin: 0 0 16px; font-size: 1.15rem; }
+
+.datos {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 10px 16px;
+    margin: 0;
+}
+.datos dt { font-weight: 600; color: #374151; }
+.datos dd { margin: 0; }
+
+.tabla-ofertas { width: 100%; border-collapse: collapse; }
+.tabla-ofertas th,
+.tabla-ofertas td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.tabla-ofertas th { color: #374151; font-size: .9rem; }
+
+.nota { color: #6b7280; margin: 16px 0 0; }
+/* Selects y textareas de los formularios (login.css solo estiliza <input>) */
+.login-field select,
+.login-field textarea {
+    width: 100%;
+    border: 1px solid #cfdced;
+    border-radius: 14px;
+    outline: none;
+    background: #ffffff;
+    color: #173561;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+.login-field select {
+    min-height: 52px;
+    padding: 0 17px;
+}
+
+.login-field textarea {
+    min-height: 110px;
+    padding: 14px 17px;
+    resize: vertical;
+}
+
+.login-field select:hover,
+.login-field textarea:hover {
+    border-color: #a9c5e9;
+}
+
+.login-field select:focus,
+.login-field textarea:focus {
+    border-color: #1475f7;
+    box-shadow: 0 0 0 3px rgba(20, 117, 247, 0.15);
+}
+
+/* Panel de empresa */
+.mensaje-exito {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+}
+
+.panel-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.panel-encabezado h2 {
+    margin: 0;
+}
