@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
@@ -19,7 +20,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/editar-perfil.css?v=3">
+          href="${pageContext.request.contextPath}/css/editar-perfil.css?v=4">
 </head>
 
 <body>
@@ -132,7 +133,8 @@
           action="${pageContext.request.contextPath}/editar-perfil"
           enctype="multipart/form-data"
           class="editar-form"
-          id="formEditarPerfil">
+          id="formEditarPerfil"
+          novalidate>
 
 
         <!-- ==================================================
@@ -268,7 +270,6 @@
 
                 </div>
 
-
                 <div class="editar-campo">
 
                     <label for="mail">
@@ -281,6 +282,12 @@
                            value="${postulante.mail}"
                            maxlength="150"
                            required>
+
+                    <span id="errorMail"
+                          class="campo-error"
+                          style="display:none;">
+        Ingresá un correo electrónico válido.
+    </span>
 
                 </div>
 
@@ -308,7 +315,8 @@
                     <input type="date"
                            id="fechaNacimiento"
                            name="fechaNacimiento"
-                           value="${postulante.fechaNacimiento}">
+                           value="${postulante.fechaNacimiento}"
+                           max="<%= java.time.LocalDate.now() %>">
 
                 </div>
 
@@ -564,7 +572,7 @@
 </main>
 
 
-<script src="${pageContext.request.contextPath}/js/editar-perfil.js?v=3">
+<script src="${pageContext.request.contextPath}/js/editar-perfil.js?v=5">
 </script>
 
 </body>

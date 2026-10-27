@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const nombreCvSeleccionado =
         document.getElementById("nombreCvSeleccionado");
 
+    const inputMail =
+        document.getElementById("mail");
+
 
     const MAX_BYTES =
         5 * 1024 * 1024;
@@ -31,6 +34,229 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     let previewUrl = null;
+
+
+    // ==================================================
+    // FUNCIONES PARA MOSTRAR ERRORES EN CAMPOS
+    // ==================================================
+
+    function obtenerErrorCampo(input, idError) {
+
+        let error =
+            document.getElementById(idError);
+
+
+        if (!error && input) {
+
+            error =
+                document.createElement("span");
+
+            error.id =
+                idError;
+
+            error.className =
+                "campo-error";
+
+            error.style.display =
+                "none";
+
+
+            input.insertAdjacentElement(
+                "afterend",
+                error
+            );
+        }
+
+
+        return error;
+    }
+
+
+    function mostrarErrorCampo(
+        input,
+        elementoError,
+        mensaje
+    ) {
+
+        if (!input || !elementoError) {
+            return;
+        }
+
+
+        elementoError.textContent =
+            mensaje;
+
+        elementoError.style.display =
+            "block";
+
+        input.classList.add(
+            "input-error"
+        );
+    }
+
+
+    function ocultarErrorCampo(
+        input,
+        elementoError
+    ) {
+
+        if (!input || !elementoError) {
+            return;
+        }
+
+
+        elementoError.textContent =
+            "";
+
+        elementoError.style.display =
+            "none";
+
+        input.classList.remove(
+            "input-error"
+        );
+    }
+
+
+    // ==================================================
+    // ERROR DEL CORREO
+    // ==================================================
+
+    const errorMail =
+        obtenerErrorCampo(
+            inputMail,
+            "errorMail"
+        );
+
+
+    // ==================================================
+    // VALIDAR CORREO
+    // ==================================================
+
+    function correoValido(correo) {
+
+        const expresion =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        return expresion.test(
+            correo
+        );
+    }
+
+
+    if (inputMail) {
+
+        // Mientras escribe
+        inputMail.addEventListener(
+            "input",
+            function () {
+
+                const mail =
+                    inputMail.value.trim();
+
+
+                if (mail === "") {
+
+                    ocultarErrorCampo(
+                        inputMail,
+                        errorMail
+                    );
+
+                    return;
+                }
+
+
+                if (!correoValido(mail)) {
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "Ingresá un correo electrónico válido."
+                    );
+
+                } else {
+
+                    ocultarErrorCampo(
+                        inputMail,
+                        errorMail
+                    );
+                }
+            }
+        );
+
+
+        // Cuando sale del campo
+        inputMail.addEventListener(
+            "blur",
+            function () {
+
+                const mail =
+                    inputMail.value.trim();
+
+
+                if (mail === "") {
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "El correo electrónico es obligatorio."
+                    );
+
+                    return;
+                }
+
+
+                if (!correoValido(mail)) {
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "Ingresá un correo electrónico válido."
+                    );
+
+                    return;
+                }
+
+
+                ocultarErrorCampo(
+                    inputMail,
+                    errorMail
+                );
+            }
+        );
+
+
+        // Evita el mensaje automático del navegador
+        inputMail.addEventListener(
+            "invalid",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const mail =
+                    inputMail.value.trim();
+
+
+                if (mail === "") {
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "El correo electrónico es obligatorio."
+                    );
+
+                } else {
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "Ingresá un correo electrónico válido."
+                    );
+                }
+            }
+        );
+    }
 
 
     // ==================================================
@@ -185,8 +411,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 // VALIDAR TIPO MIME
                 // =========================
 
-                if (archivo.type &&
-                    archivo.type !== "application/pdf") {
+                if (
+                    archivo.type &&
+                    archivo.type !== "application/pdf"
+                ) {
 
                     alert(
                         "El archivo seleccionado no es un PDF válido."
@@ -292,16 +520,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 // CORREO
                 // =========================
 
-                if (!mail.includes("@")) {
+                if (mail === "") {
 
                     event.preventDefault();
 
-                    alert(
-                        "Ingresá un correo electrónico válido."
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "El correo electrónico es obligatorio."
                     );
+
+                    inputMail.focus();
 
                     return;
                 }
+
+
+                if (!correoValido(mail)) {
+
+                    event.preventDefault();
+
+                    mostrarErrorCampo(
+                        inputMail,
+                        errorMail,
+                        "Ingresá un correo electrónico válido."
+                    );
+
+                    inputMail.focus();
+
+                    return;
+                }
+
+
+                ocultarErrorCampo(
+                    inputMail,
+                    errorMail
+                );
 
 
                 // =========================

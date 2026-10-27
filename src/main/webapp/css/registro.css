@@ -378,3 +378,41 @@
         padding: 32px 24px;
     }
 }
+
+.registro-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 18px;
+    padding: 12px 14px;
+
+    border: 1px solid #f5b5b5;
+    border-radius: 10px;
+
+    background: #fff1f1;
+
+    color: #c62828;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.registro-error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #c62828;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 800;
+}
