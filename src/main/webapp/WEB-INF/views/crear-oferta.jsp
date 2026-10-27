@@ -15,28 +15,11 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/login.css?v=1">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=2">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=3">
 </head>
 <body>
-
-<header class="topbar">
-    <a href="${pageContext.request.contextPath}/ofertas" class="logo">
-        <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista" class="logo-img">
-    </a>
-
-    <nav class="main-nav">
-        <a href="${pageContext.request.contextPath}/empresa">Mi panel</a>
-        <a href="${pageContext.request.contextPath}/ofertas">Ver ofertas</a>
-    </nav>
-
-    <div class="nav-actions">
-        <span><c:out value="${sessionScope.empresaLogueada.nombre}" /></span>
-        <a href="${pageContext.request.contextPath}/logout" class="btn-outline">
-            Cerrar sesión
-        </a>
-    </div>
-</header>
+<c:set var="menuActivo" value="ofertas" />
+<%@ include file="empresa-menu.jsp" %>
 
 <main class="login-page">
     <section class="login-card">

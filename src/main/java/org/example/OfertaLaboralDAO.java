@@ -408,4 +408,26 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
             stmt.executeUpdate();
         }
     }
+    // Cambia el estado SOLO si la oferta es de esa empresa
+    public boolean cambiarEstadoDeOferta(int ofertaId,
+                                         String rutEmpresa,
+                                         EstadoEntrevista nuevoEstado)
+            throws SQLException {
+
+        String sql = """
+                UPDATE ofertalaboral
+                SET estado = ?
+                WHERE id = ? AND empresa_rut = ?
+                """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setString(1, nuevoEstado.name());
+            stmt.setInt(2, ofertaId);
+            stmt.setString(3, rutEmpresa);
+
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }

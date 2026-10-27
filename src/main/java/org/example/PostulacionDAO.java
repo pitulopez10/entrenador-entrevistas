@@ -468,6 +468,29 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
             stmt.executeUpdate();
         }
     }
+    // Cambia el estado SOLO si la postulación es de una oferta de esa empresa
+    public boolean cambiarEstadoDePostulacion(int postulacionId,
+                                              String rutEmpresa,
+                                              EstadoPostulacion nuevoEstado)
+            throws SQLException {
+
+        String sql = """
+                UPDATE postulacion p
+                JOIN ofertalaboral o ON p.ofertalaboral_id = o.id
+                SET p.estado = ?
+                WHERE p.id = ? AND o.empresa_rut = ?
+                """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setString(1, nuevoEstado.name());
+            stmt.setInt(2, postulacionId);
+            stmt.setString(3, rutEmpresa);
+
+            return stmt.executeUpdate() > 0;
+        }
+    }
 
     public boolean existePostulacion(
             int ciPostulante,
