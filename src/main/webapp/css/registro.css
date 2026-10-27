@@ -1,0 +1,380 @@
+/* ==================================================
+   PÁGINA DE REGISTRO
+   ================================================== */
+
+.registro-page {
+    min-height: calc(100vh - 90px);
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    padding: 45px 20px 60px;
+
+    background: #f4f8ff;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* ==================================================
+   TARJETA PRINCIPAL
+   ================================================== */
+
+.registro-card {
+    width: min(1050px, 100%);
+
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+
+    overflow: hidden;
+
+    border: 1px solid #dce5f1;
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    box-shadow:
+            0 14px 38px rgba(20, 64, 130, 0.12);
+}
+
+
+/* ==================================================
+   PANEL IZQUIERDO
+   ================================================== */
+
+.registro-info {
+    position: relative;
+
+    min-height: 610px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 50px;
+
+    overflow: hidden;
+
+    background: linear-gradient(
+            145deg,
+            #174a8b 0%,
+            #1874e8 100%
+    );
+
+    color: #ffffff;
+}
+
+
+/* DECORACIONES */
+
+.registro-info::before {
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    top: -120px;
+    right: -110px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.registro-info::after {
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    left: -65px;
+    bottom: -75px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+}
+
+
+.registro-info-content {
+    position: relative;
+
+    z-index: 1;
+
+    max-width: 380px;
+}
+
+
+/* ==================================================
+   BADGE
+   ================================================== */
+
+.registro-badge {
+    display: inline-flex;
+
+    margin-bottom: 24px;
+
+    padding: 8px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ==================================================
+   TEXTO IZQUIERDO
+   ================================================== */
+
+.registro-info h1 {
+    margin: 0 0 18px;
+
+    color: #ffffff;
+
+    font-size: 36px;
+    line-height: 1.15;
+}
+
+.registro-info p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.94);
+
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+
+/* ==================================================
+   CONTENEDOR FORMULARIO
+   ================================================== */
+
+.registro-form-container {
+    padding: 48px 54px;
+}
+
+
+/* ==================================================
+   CABECERA FORMULARIO
+   ================================================== */
+
+.registro-form-header {
+    margin-bottom: 26px;
+}
+
+.registro-form-kicker {
+    display: inline-block;
+
+    margin-bottom: 9px;
+
+    color: #1473f3;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.registro-form-header h2 {
+    margin: 0 0 8px;
+
+    color: #16315f;
+
+    font-size: 30px;
+}
+
+.registro-form-header p {
+    margin: 0;
+
+    color: #718096;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   FORMULARIO
+   ================================================== */
+
+.registro-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+/* ==================================================
+   CAMPOS
+   ================================================== */
+
+.registro-field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.registro-field label {
+    color: #16315f;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+.registro-field input,
+.registro-field select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    height: 48px;
+
+    padding: 0 15px;
+
+    border: 1px solid #cad7ea;
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #263750;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+
+.registro-field input::placeholder {
+    color: #9eacc0;
+}
+
+
+.registro-field input:focus,
+.registro-field select:focus {
+    border-color: #1675f2;
+
+    box-shadow:
+            0 0 0 3px rgba(22, 117, 242, 0.10);
+}
+
+
+/* ==================================================
+   BOTÓN
+   ================================================== */
+
+.registro-button {
+    width: 100%;
+
+    margin-top: 5px;
+
+    padding: 13px 20px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: #1675f2;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.registro-button:hover {
+    background: #0f66d8;
+}
+
+
+/* ==================================================
+   LINKS
+   ================================================== */
+
+.registro-links {
+    margin-top: 22px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #edf1f6;
+
+    text-align: center;
+}
+
+.registro-links p {
+    margin: 6px 0;
+
+    color: #718096;
+
+    font-size: 12px;
+}
+
+.registro-links a {
+    color: #1473f3;
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.registro-links a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+   ================================================== */
+
+@media (max-width: 950px) {
+
+    .registro-card {
+        grid-template-columns: 1fr;
+    }
+
+    .registro-info {
+        min-height: auto;
+
+        padding: 40px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .registro-page {
+        padding: 25px 12px 45px;
+    }
+
+    .registro-card {
+        border-radius: 18px;
+    }
+
+    .registro-info {
+        padding: 32px 24px;
+    }
+
+    .registro-info h1 {
+        font-size: 29px;
+    }
+
+    .registro-form-container {
+        padding: 32px 24px;
+    }
+}
