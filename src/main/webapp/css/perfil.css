@@ -1,6 +1,6 @@
 /* ==================================================
-   PERFIL
-   ================================================== */
+       PERFIL
+       ================================================== */
 
 .perfil-page {
     width: min(1180px, calc(100% - 40px));
@@ -96,12 +96,22 @@
 
     display: flex;
     align-items: center;
-    gap: 20px;
+
+    gap: 42px;
+
+    padding: 32px 38px;
+
+    min-height: 175px;
 }
 
+
+/* ==================================================
+   AVATAR
+   ================================================== */
+
 .perfil-avatar {
-    width: 90px;
-    height: 90px;
+    width: 150px;
+    height: 150px;
 
     flex-shrink: 0;
 }
@@ -110,11 +120,15 @@
     width: 100%;
     height: 100%;
 
+    display: block;
+
     object-fit: cover;
 
     border-radius: 50%;
 
     border: 3px solid #e7eef8;
+
+    box-shadow: 0 4px 14px rgba(23, 49, 95, 0.10);
 }
 
 .avatar-placeholder {
@@ -130,22 +144,36 @@
     background: #eaf2ff;
     color: #1f6feb;
 
-    font-size: 34px;
+    border: 3px solid #e7eef8;
+
+    font-size: 42px;
     font-weight: 700;
 }
 
+
+/* ==================================================
+   IDENTIDAD
+   ================================================== */
+
+.perfil-identidad {
+    margin-left: 8px;
+    min-width: 0;
+}
+
 .perfil-identidad h2 {
-    margin: 0 0 5px;
+    margin: 0 0 6px;
 
     color: #16315f;
 
-    font-size: 25px;
+    font-size: 26px;
 }
 
 .perfil-identidad p {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 
     color: #65748b;
+
+    font-size: 15px;
 }
 
 .perfil-estado {
@@ -230,21 +258,33 @@
 
     .perfil-principal {
         grid-column: auto;
+
+        gap: 28px;
+
+        padding: 28px;
     }
 
     .perfil-datos {
         grid-template-columns: 1fr;
     }
 }
-.perfil-header img.foto-perfil,
-img.foto-perfil {
-    width: 160px !important;
-    height: 160px !important;
-    min-width: 160px !important;
-    min-height: 160px !important;
-    max-width: 160px !important;
-    max-height: 160px !important;
 
-    object-fit: cover;
-    border-radius: 50%;
+
+@media (max-width: 600px) {
+
+    .perfil-principal {
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 20px;
+    }
+
+    .perfil-avatar {
+        width: 130px;
+        height: 130px;
+    }
+
+    .perfil-identidad {
+        margin-left: 0;
+    }
 }
