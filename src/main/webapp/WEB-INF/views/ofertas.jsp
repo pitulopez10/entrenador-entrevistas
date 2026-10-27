@@ -9,6 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Entrenador Entrevista | Ofertas laborales</title>
+    <link rel="icon"
+          type="image/png"
+          href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css">

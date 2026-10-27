@@ -13,6 +13,9 @@
     <title>
         Iniciar sesión | Entrenador Entrevista
     </title>
+    <link rel="icon"
+          type="image/png"
+          href="${pageContext.request.contextPath}/img/logo.png">
 
     <!-- CSS GENERAL DE LA WEB -->
     <link rel="stylesheet"
