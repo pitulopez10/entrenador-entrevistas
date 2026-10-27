@@ -1,3 +1,4 @@
+```jsp
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
@@ -18,7 +19,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/entrevista.css?v=2">
+          href="${pageContext.request.contextPath}/css/entrevista.css?v=5">
 </head>
 
 <body>
@@ -42,9 +43,9 @@
             Buscar ofertas
         </a>
 
-        <a href="#"
+        <a href="${pageContext.request.contextPath}/mis-entrevistas"
            class="active">
-            Entrevista
+            Entrevistas
         </a>
 
         <a href="${pageContext.request.contextPath}/mis-postulaciones">
@@ -76,6 +77,10 @@
 
 <main class="entrevista-page">
 
+
+    <!-- ==================================================
+         ENCABEZADO
+         ================================================== -->
 
     <section class="pregunta-encabezado">
 
@@ -111,6 +116,10 @@
     </section>
 
 
+    <!-- ==================================================
+         PROGRESO
+         ================================================== -->
+
     <section class="progreso-entrevista">
 
         <div class="progreso-info">
@@ -125,6 +134,7 @@
 
         </div>
 
+
         <div class="progreso-barra">
 
             <div class="progreso-barra-completado"
@@ -135,6 +145,10 @@
 
     </section>
 
+
+    <!-- ==================================================
+         PREGUNTA
+         ================================================== -->
 
     <section class="pregunta-card">
 
@@ -153,17 +167,13 @@
 
 
         <h2>
-            ${preguntaActual.texto}
+            <c:out value="${preguntaActual.texto}" />
         </h2>
 
 
         <form method="post"
-              action="${pageContext.request.contextPath}/entrevista">
-
-
-            <input type="hidden"
-                   name="accion"
-                   value="responder">
+              action="${pageContext.request.contextPath}/entrevista"
+              id="formRespuesta">
 
 
             <input type="hidden"
@@ -175,6 +185,10 @@
                    name="preguntaId"
                    value="${preguntaActual.id}">
 
+
+            <!-- ==================================================
+                 RESPUESTA
+                 ================================================== -->
 
             <div class="respuesta-grupo">
 
@@ -188,7 +202,8 @@
                         rows="9"
                         maxlength="4000"
                         required
-                        placeholder="Escribí tu respuesta acá..."></textarea>
+                        placeholder="Escribí tu respuesta acá..."><c:if test="${not empty respuestaActual}"><c:out value="${respuestaActual.texto}" /></c:if></textarea>
+
 
                 <div class="respuesta-ayuda">
 
@@ -201,9 +216,30 @@
             </div>
 
 
-            <div class="pregunta-acciones">
+            <!-- ==================================================
+                 ACCIONES
+                 ================================================== -->
+
+            <div class="pregunta-acciones pregunta-acciones-dobles">
+
+
+                <!-- GUARDAR Y SALIR -->
 
                 <button type="submit"
+                        name="accion"
+                        value="guardarSalir"
+                        class="btn-guardar-salir">
+
+                    Guardar y salir
+
+                </button>
+
+
+                <!-- GUARDAR Y CONTINUAR / FINALIZAR -->
+
+                <button type="submit"
+                        name="accion"
+                        value="responder"
                         class="btn-comenzar-entrevista">
 
                     <c:choose>
@@ -220,12 +256,17 @@
 
                 </button>
 
+
             </div>
 
         </form>
 
     </section>
 
+
+    <!-- ==================================================
+         CONSEJO
+         ================================================== -->
 
     <section class="entrevista-consejo">
 
@@ -244,6 +285,85 @@
 
 </main>
 
+
+<!-- ==================================================
+     CARGA DE RETROALIMENTACIÓN
+     ================================================== -->
+
+<div id="cargaRetroalimentacion"
+     class="carga-ia">
+
+    <div class="carga-ia-contenido">
+
+        <div class="carga-ia-spinner"></div>
+
+        <h2>
+            Estamos analizando tu entrevista
+            <span class="carga-ia-puntos"></span>
+        </h2>
+
+        <p>
+            Gemini está revisando tus respuestas para preparar
+            una devolución personalizada.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     JAVASCRIPT
+     ================================================== -->
+
+<script>
+
+    const formRespuesta =
+        document.getElementById("formRespuesta");
+
+    const cargaRetroalimentacion =
+        document.getElementById("cargaRetroalimentacion");
+
+    const numeroPregunta =
+        ${numeroPregunta};
+
+    const totalPreguntas =
+        ${totalPreguntas};
+
+
+    formRespuesta.addEventListener(
+        "submit",
+        function (event) {
+
+            /*
+             * Solo mostramos la pantalla de análisis cuando:
+             *
+             * 1. Estamos en la última pregunta.
+             * 2. El usuario pulsó "Finalizar entrevista".
+             *
+             * Si pulsa "Guardar y salir", NO mostramos
+             * la pantalla de Gemini.
+             */
+
+            const botonPresionado =
+                event.submitter;
+
+
+            if (botonPresionado != null &&
+                botonPresionado.value === "responder" &&
+                numeroPregunta === totalPreguntas) {
+
+                cargaRetroalimentacion.classList.add(
+                    "activa"
+                );
+            }
+        }
+    );
+
+</script>
+
+
 </body>
 
 </html>
+```

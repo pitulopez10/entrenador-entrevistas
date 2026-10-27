@@ -935,3 +935,434 @@
         box-sizing: border-box;
     }
 }
+
+/* ==================================================
+   HISTORIAL DE ENTREVISTAS
+   ================================================== */
+
+.historial-entrevistas {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+.historial-entrevista-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 30px;
+
+    padding: 24px 26px;
+
+    border: 1px solid #e4e8ef;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    box-shadow:
+            0 3px 10px rgba(16, 24, 40, 0.04);
+}
+
+
+.historial-entrevista-info {
+    flex: 1;
+}
+
+
+.historial-entrevista-superior {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+
+.historial-entrevista-card h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 20px;
+}
+
+
+.historial-empresa {
+    margin: 6px 0 0;
+
+    color: #667085;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.historial-datos {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 22px;
+
+    margin-top: 17px;
+}
+
+
+.historial-datos span {
+    color: #667085;
+
+    font-size: 12px;
+}
+
+
+.historial-datos strong {
+    color: #344054;
+}
+
+
+/* ==================================================
+   ESTADOS
+   ================================================== */
+
+.estado-entrevista {
+    display: inline-flex;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+.estado-terminada {
+    background: #ecfdf3;
+
+    color: #027a48;
+}
+
+
+.estado-activa {
+    background: #eff6ff;
+
+    color: #2563eb;
+}
+
+
+/* ==================================================
+   ACCIONES
+   ================================================== */
+
+.historial-entrevista-acciones {
+    min-width: 190px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+.btn-historial-principal,
+.btn-historial-secundario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 11px 16px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.btn-historial-principal {
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+
+.btn-historial-principal:hover {
+    background: #1d4ed8;
+}
+
+
+.btn-historial-secundario {
+    border: 1px solid #d0d5dd;
+
+    background: #ffffff;
+
+    color: #475467;
+}
+
+
+.btn-historial-secundario:hover {
+    background: #f8fafc;
+}
+
+
+/* ==================================================
+   SIN ENTREVISTAS
+   ================================================== */
+
+.entrevista-vacio {
+    padding: 55px 30px;
+
+    border: 1px solid #e4e8ef;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    text-align: center;
+}
+
+
+.entrevista-vacio-icono {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+
+.entrevista-vacio h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 20px;
+}
+
+
+.entrevista-vacio p {
+    max-width: 500px;
+
+    margin: 9px auto 22px;
+
+    color: #667085;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+   ================================================== */
+
+@media (max-width: 750px) {
+
+    .historial-entrevista-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .historial-entrevista-acciones {
+        min-width: 0;
+    }
+
+}
+/* ==================================================
+   PANTALLA DE CARGA IA
+   ================================================== */
+
+.carga-ia {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(15, 23, 42, 0.78);
+
+    backdrop-filter: blur(4px);
+}
+
+
+.carga-ia.activa {
+    display: flex;
+}
+
+
+.carga-ia-contenido {
+    width: min(420px, 90%);
+
+    padding: 42px 32px;
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    box-shadow:
+            0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+
+.carga-ia-spinner {
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 24px;
+
+    border: 6px solid #dbeafe;
+    border-top-color: #2563eb;
+
+    border-radius: 50%;
+
+    animation: girarCargaIa 0.8s linear infinite;
+}
+
+
+@keyframes girarCargaIa {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.carga-ia-contenido h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 23px;
+}
+
+
+.carga-ia-contenido p {
+    margin: 10px 0 0;
+
+    color: #667085;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+.carga-ia-puntos::after {
+    content: "";
+
+    animation: puntosCarga 1.5s steps(4, end) infinite;
+}
+
+
+@keyframes puntosCarga {
+
+    0% {
+        content: "";
+    }
+
+    25% {
+        content: ".";
+    }
+
+    50% {
+        content: "..";
+    }
+
+    75% {
+        content: "...";
+    }
+
+    100% {
+        content: "";
+    }
+
+}
+/* ==================================================
+   ACCIONES DOBLES DE ENTREVISTA
+   ================================================== */
+
+.pregunta-acciones-dobles {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.pregunta-acciones-dobles .btn-comenzar-entrevista {
+    width: auto;
+
+    min-width: 190px;
+}
+
+
+.btn-guardar-salir {
+    min-width: 160px;
+
+    padding: 13px 20px;
+
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #475467;
+
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease;
+}
+
+
+.btn-guardar-salir:hover {
+    border-color: #98a2b3;
+
+    background: #f8fafc;
+
+    color: #344054;
+}
+
+
+@media (max-width: 600px) {
+
+    .pregunta-acciones-dobles {
+        flex-direction: column-reverse;
+    }
+
+    .pregunta-acciones-dobles .btn-comenzar-entrevista,
+    .btn-guardar-salir {
+        width: 100%;
+    }
+
+}

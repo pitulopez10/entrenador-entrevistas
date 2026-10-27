@@ -246,7 +246,8 @@
 
 
             <form method="post"
-                  action="${pageContext.request.contextPath}/entrevista">
+                  action="${pageContext.request.contextPath}/entrevista"
+                  id="formComenzarEntrevista">
 
                 <input type="hidden"
                        name="accion"
@@ -279,7 +280,44 @@
     </section>
 
 </main>
+<div id="cargaPreguntas"
+     class="carga-ia">
 
+    <div class="carga-ia-contenido">
+
+        <div class="carga-ia-spinner"></div>
+
+        <h2>
+            Estamos generando tus preguntas
+            <span class="carga-ia-puntos"></span>
+        </h2>
+
+        <p>
+            Prepará tus respuestas.
+            Estamos creando una entrevista adaptada a la oferta laboral.
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+    const formComenzarEntrevista =
+        document.getElementById("formComenzarEntrevista");
+
+    const cargaPreguntas =
+        document.getElementById("cargaPreguntas");
+
+
+    formComenzarEntrevista.addEventListener(
+        "submit",
+        function () {
+
+            cargaPreguntas.classList.add("activa");
+
+        }
+    );
+</script>
 </body>
 
 </html>

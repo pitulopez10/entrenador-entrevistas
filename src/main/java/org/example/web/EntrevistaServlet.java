@@ -59,12 +59,6 @@ public class EntrevistaServlet extends HttpServlet {
     // SERVICIO IA
     // ==================================================
 
-    /*
-     * Por ahora usamos el modo DEMO.
-     *
-     * Más adelante cambiaremos esta implementación
-     * por GeminiIaService.
-     */
     private final IaService iaService =
             new GeminiIaService();
 
@@ -102,10 +96,10 @@ public class EntrevistaServlet extends HttpServlet {
                 request.getParameter("entrevistaId");
 
 
-        /*
-         * Si viene entrevistaId significa que la entrevista
-         * ya fue creada.
-         */
+        // ==================================================
+        // MOSTRAR ENTREVISTA EXISTENTE
+        // ==================================================
+
         if (entrevistaIdTexto != null &&
                 !entrevistaIdTexto.isBlank()) {
 
@@ -119,10 +113,10 @@ public class EntrevistaServlet extends HttpServlet {
         }
 
 
-        /*
-         * Si todavía no existe entrevista,
-         * esperamos recibir una oferta.
-         */
+        // ==================================================
+        // MOSTRAR INICIO PARA UNA OFERTA
+        // ==================================================
+
         String ofertaIdTexto =
                 request.getParameter("ofertaId");
 
@@ -214,10 +208,6 @@ public class EntrevistaServlet extends HttpServlet {
                 request.getSession(false);
 
 
-        // ==================================================
-        // VALIDAR LOGIN
-        // ==================================================
-
         if (session == null ||
                 session.getAttribute("postulanteLogueado") == null) {
 
@@ -270,10 +260,23 @@ public class EntrevistaServlet extends HttpServlet {
 
             case "responder":
 
-                responderPregunta(
+                procesarRespuesta(
                         request,
                         response,
-                        postulante
+                        postulante,
+                        false
+                );
+
+                break;
+
+
+            case "guardarSalir":
+
+                procesarRespuesta(
+                        request,
+                        response,
+                        postulante,
+                        true
                 );
 
                 break;
@@ -359,10 +362,6 @@ public class EntrevistaServlet extends HttpServlet {
             );
 
 
-            /*
-             * Duración estimada de una práctica
-             * de 15 preguntas.
-             */
             entrevista.setDuracionMin(
                     30
             );
@@ -408,10 +407,6 @@ public class EntrevistaServlet extends HttpServlet {
                     );
 
 
-            // ==================================================
-            // VALIDAR QUE SEAN 15
-            // ==================================================
-
             if (preguntas == null ||
                     preguntas.size() != 15) {
 
@@ -426,7 +421,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // ASOCIAR PREGUNTAS CON ENTREVISTA
+            // ASOCIAR PREGUNTAS
             // ==================================================
 
             for (Pregunta pregunta : preguntas) {
@@ -438,7 +433,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // GUARDAR LAS 15 PREGUNTAS
+            // GUARDAR PREGUNTAS
             // ==================================================
 
             preguntaDAO.agregarTodas(
@@ -453,7 +448,20 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // POST - REDIRECT - GET
+            // GUARDAR PRIMERA PREGUNTA COMO ACTUAL
+            // ==================================================
+
+            if (!preguntas.isEmpty()) {
+
+                entrevistaDAO.actualizarPreguntaActual(
+                        entrevistaId,
+                        preguntas.get(0).getId()
+                );
+            }
+
+
+            // ==================================================
+            // REDIRECT
             // ==================================================
 
             response.sendRedirect(
@@ -490,13 +498,21 @@ public class EntrevistaServlet extends HttpServlet {
 
 
     // ==================================================
-    // RESPONDER PREGUNTA
+    // PROCESAR RESPUESTA
+    // ==================================================
+    //
+    // salir = false
+    //      Guardar y continuar
+    //
+    // salir = true
+    //      Guardar y salir
     // ==================================================
 
-    private void responderPregunta(
+    private void procesarRespuesta(
             HttpServletRequest request,
             HttpServletResponse response,
-            Postulante postulante
+            Postulante postulante,
+            boolean salir
     ) throws ServletException, IOException {
 
         String entrevistaIdTexto =
@@ -607,7 +623,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // VALIDAR QUE SIGA ACTIVA
+            // VALIDAR ESTADO
             // ==================================================
 
             if (entrevista.getEstado()
@@ -623,7 +639,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // CARGAR PREGUNTAS DE ESTA ENTREVISTA
+            // CARGAR PREGUNTAS
             // ==================================================
 
             List<Pregunta> preguntas =
@@ -633,27 +649,29 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // VALIDAR QUE LA PREGUNTA PERTENEZCA
-            // A ESTA ENTREVISTA
+            // VALIDAR PREGUNTA
             // ==================================================
 
-            boolean preguntaValida =
-                    false;
+            int indicePreguntaActual =
+                    -1;
 
 
-            for (Pregunta pregunta : preguntas) {
+            for (int i = 0;
+                 i < preguntas.size();
+                 i++) {
 
-                if (pregunta.getId() == preguntaId) {
+                if (preguntas.get(i).getId()
+                        == preguntaId) {
 
-                    preguntaValida =
-                            true;
+                    indicePreguntaActual =
+                            i;
 
                     break;
                 }
             }
 
 
-            if (!preguntaValida) {
+            if (indicePreguntaActual == -1) {
 
                 response.sendError(
                         HttpServletResponse.SC_FORBIDDEN,
@@ -665,7 +683,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // GUARDAR RESPUESTA
+            // GUARDAR O ACTUALIZAR RESPUESTA
             // ==================================================
 
             respuestaDAO.guardarOActualizar(
@@ -675,7 +693,32 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // CONTAR CUÁNTAS RESPONDIÓ
+            // GUARDAR Y SALIR
+            // ==================================================
+            //
+            // Conservamos la MISMA pregunta como actual.
+            // ==================================================
+
+            if (salir) {
+
+                entrevistaDAO.actualizarPreguntaActual(
+                        entrevistaId,
+                        preguntaId
+                );
+
+
+                response.sendRedirect(
+                        request.getContextPath()
+                                + "/mis-entrevistas"
+                );
+
+
+                return;
+            }
+
+
+            // ==================================================
+            // CONTAR RESPUESTAS
             // ==================================================
 
             int cantidadRespondidas =
@@ -697,7 +740,7 @@ public class EntrevistaServlet extends HttpServlet {
 
 
                 // ==================================================
-                // GENERAR RETROALIMENTACIÓN
+                // GENERAR DEVOLUCIÓN
                 // ==================================================
 
                 String devolucion =
@@ -722,27 +765,19 @@ public class EntrevistaServlet extends HttpServlet {
                 );
 
 
-                // ==================================================
-                // GUARDAR RETROALIMENTACIÓN
-                // ==================================================
-
                 retroAlimentacionDAO.guardarOActualizar(
                         retro
                 );
 
 
                 // ==================================================
-                // FINALIZAR ENTREVISTA
+                // TERMINAR
                 // ==================================================
 
                 entrevistaDAO.terminar(
                         entrevistaId
                 );
 
-
-                // ==================================================
-                // REDIRECT AL RESULTADO
-                // ==================================================
 
                 response.sendRedirect(
                         request.getContextPath()
@@ -756,7 +791,88 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // TODAVÍA QUEDAN PREGUNTAS
+            // BUSCAR SIGUIENTE PREGUNTA
+            // ==================================================
+
+            List<Respuesta> respuestas =
+                    respuestaDAO.listarPorEntrevista(
+                            entrevistaId
+                    );
+
+
+            Set<Integer> preguntasRespondidas =
+                    new HashSet<>();
+
+
+            for (Respuesta respuesta : respuestas) {
+
+                if (respuesta.getPregunta() != null) {
+
+                    preguntasRespondidas.add(
+                            respuesta.getPregunta().getId()
+                    );
+                }
+            }
+
+
+            Pregunta siguientePregunta =
+                    null;
+
+
+            // Primero buscamos hacia adelante
+            for (int i = indicePreguntaActual + 1;
+                 i < preguntas.size();
+                 i++) {
+
+                Pregunta pregunta =
+                        preguntas.get(i);
+
+
+                if (!preguntasRespondidas.contains(
+                        pregunta.getId()
+                )) {
+
+                    siguientePregunta =
+                            pregunta;
+
+                    break;
+                }
+            }
+
+
+            // Fallback por si existiera algún hueco anterior
+            if (siguientePregunta == null) {
+
+                for (Pregunta pregunta : preguntas) {
+
+                    if (!preguntasRespondidas.contains(
+                            pregunta.getId()
+                    )) {
+
+                        siguientePregunta =
+                                pregunta;
+
+                        break;
+                    }
+                }
+            }
+
+
+            // ==================================================
+            // ACTUALIZAR POSICIÓN
+            // ==================================================
+
+            if (siguientePregunta != null) {
+
+                entrevistaDAO.actualizarPreguntaActual(
+                        entrevistaId,
+                        siguientePregunta.getId()
+                );
+            }
+
+
+            // ==================================================
+            // REDIRECT
             // ==================================================
 
             response.sendRedirect(
@@ -873,6 +989,27 @@ public class EntrevistaServlet extends HttpServlet {
             );
 
 
+            if (preguntas.isEmpty()) {
+
+                response.sendError(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "La entrevista no contiene preguntas."
+                );
+
+                return;
+            }
+
+
+            // ==================================================
+            // CARGAR RESPUESTAS
+            // ==================================================
+
+            List<Respuesta> respuestas =
+                    respuestaDAO.listarPorEntrevista(
+                            entrevistaId
+                    );
+
+
             request.setAttribute(
                     "entrevista",
                     entrevista
@@ -886,73 +1023,11 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // CARGAR RESPUESTAS YA REALIZADAS
+            // ENTREVISTA TERMINADA
             // ==================================================
 
-            List<Respuesta> respuestas =
-                    respuestaDAO.listarPorEntrevista(
-                            entrevistaId
-                    );
-
-
-            Set<Integer> preguntasRespondidas =
-                    new HashSet<>();
-
-
-            for (Respuesta respuesta : respuestas) {
-
-                if (respuesta.getPregunta() != null) {
-
-                    preguntasRespondidas.add(
-                            respuesta.getPregunta().getId()
-                    );
-                }
-            }
-
-
-            // ==================================================
-            // BUSCAR PRIMERA PREGUNTA SIN RESPONDER
-            // ==================================================
-
-            Pregunta preguntaActual =
-                    null;
-
-
-            int numeroPregunta =
-                    0;
-
-
-            for (int i = 0;
-                 i < preguntas.size();
-                 i++) {
-
-                Pregunta pregunta =
-                        preguntas.get(i);
-
-
-                if (!preguntasRespondidas.contains(
-                        pregunta.getId()
-                )) {
-
-                    preguntaActual =
-                            pregunta;
-
-
-                    numeroPregunta =
-                            i + 1;
-
-
-                    break;
-                }
-            }
-
-
-            // ==================================================
-            // YA RESPONDIÓ TODAS
-            // ==================================================
-
-            if (preguntaActual == null &&
-                    !preguntas.isEmpty()) {
+            if (entrevista.getEstado()
+                    == EstadoEntrevista.TERMINADA) {
 
                 RetroAlimentacion retro =
                         retroAlimentacionDAO.buscarPorEntrevista(
@@ -991,14 +1066,119 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // NO HAY PREGUNTAS
+            // OBTENER PREGUNTA ACTUAL GUARDADA
             // ==================================================
 
-            if (preguntas.isEmpty()) {
+            Integer preguntaActualId =
+                    entrevistaDAO.obtenerPreguntaActualId(
+                            entrevistaId
+                    );
+
+
+            Pregunta preguntaActual =
+                    null;
+
+
+            int numeroPregunta =
+                    0;
+
+
+            // ==================================================
+            // BUSCAR PREGUNTA ACTUAL POR ID
+            // ==================================================
+
+            if (preguntaActualId != null) {
+
+                for (int i = 0;
+                     i < preguntas.size();
+                     i++) {
+
+                    Pregunta pregunta =
+                            preguntas.get(i);
+
+
+                    if (pregunta.getId()
+                            == preguntaActualId) {
+
+                        preguntaActual =
+                                pregunta;
+
+                        numeroPregunta =
+                                i + 1;
+
+                        break;
+                    }
+                }
+            }
+
+
+            // ==================================================
+            // FALLBACK PARA ENTREVISTAS ANTIGUAS
+            // ==================================================
+            //
+            // Si pregunta_actual_id estaba NULL,
+            // buscamos la primera sin responder.
+            // ==================================================
+
+            if (preguntaActual == null) {
+
+                Set<Integer> preguntasRespondidas =
+                        new HashSet<>();
+
+
+                for (Respuesta respuesta : respuestas) {
+
+                    if (respuesta.getPregunta() != null) {
+
+                        preguntasRespondidas.add(
+                                respuesta.getPregunta().getId()
+                        );
+                    }
+                }
+
+
+                for (int i = 0;
+                     i < preguntas.size();
+                     i++) {
+
+                    Pregunta pregunta =
+                            preguntas.get(i);
+
+
+                    if (!preguntasRespondidas.contains(
+                            pregunta.getId()
+                    )) {
+
+                        preguntaActual =
+                                pregunta;
+
+                        numeroPregunta =
+                                i + 1;
+
+                        break;
+                    }
+                }
+
+
+                if (preguntaActual != null) {
+
+                    entrevistaDAO.actualizarPreguntaActual(
+                            entrevistaId,
+                            preguntaActual.getId()
+                    );
+                }
+            }
+
+
+            // ==================================================
+            // SI NO ENCONTRAMOS PREGUNTA
+            // ==================================================
+
+            if (preguntaActual == null) {
 
                 response.sendError(
                         HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "La entrevista no contiene preguntas."
+                        "No se pudo determinar la pregunta actual."
                 );
 
                 return;
@@ -1006,7 +1186,21 @@ public class EntrevistaServlet extends HttpServlet {
 
 
             // ==================================================
-            // MOSTRAR PREGUNTA ACTUAL
+            // BUSCAR RESPUESTA YA GUARDADA
+            // ==================================================
+            //
+            // Esto es importante cuando hizo
+            // "Guardar y salir".
+            // ==================================================
+
+            Respuesta respuestaActual =
+                    respuestaDAO.buscarPorPregunta(
+                            preguntaActual.getId()
+                    );
+
+
+            // ==================================================
+            // ATRIBUTOS DE LA VISTA
             // ==================================================
 
             request.setAttribute(
@@ -1024,6 +1218,12 @@ public class EntrevistaServlet extends HttpServlet {
             request.setAttribute(
                     "totalPreguntas",
                     preguntas.size()
+            );
+
+
+            request.setAttribute(
+                    "respuestaActual",
+                    respuestaActual
             );
 
 
