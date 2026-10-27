@@ -39,7 +39,7 @@
             Buscar ofertas
         </a>
 
-        <a href="#">
+        <a href="${pageContext.request.contextPath}/mis-entrevistas">
             Entrevistas
         </a>
 

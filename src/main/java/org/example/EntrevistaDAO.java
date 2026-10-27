@@ -5,6 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntrevistaDAO {
 
@@ -19,9 +23,9 @@ public class EntrevistaDAO {
     // AGREGAR ENTREVISTA
     // ==================================================
 
-    // Devuelve el id generado de la entrevista
-    public int agregar(Entrevista entrevista)
-            throws SQLException {
+    public int agregar(
+            Entrevista entrevista
+    ) throws SQLException {
 
         String sql = """
                 INSERT INTO entrevista
@@ -30,9 +34,10 @@ public class EntrevistaDAO {
                     duracionMin,
                     estado,
                     postulante_ci,
-                    ofertalaboral_id
+                    ofertalaboral_id,
+                    pregunta_actual_id
                 )
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
 
@@ -54,24 +59,38 @@ public class EntrevistaDAO {
                     )
             );
 
+
             stmt.setInt(
                     2,
                     entrevista.getDuracionMin()
             );
+
 
             stmt.setString(
                     3,
                     entrevista.getEstado().name()
             );
 
+
             stmt.setInt(
                     4,
                     entrevista.getPostulante().getCi()
             );
 
+
             stmt.setInt(
                     5,
                     entrevista.getOfertaLaboral().getId()
+            );
+
+
+            /*
+             * Al crear la entrevista todavía no existen
+             * las preguntas, por lo tanto comienza en NULL.
+             */
+            stmt.setNull(
+                    6,
+                    Types.INTEGER
             );
 
 
@@ -109,7 +128,7 @@ public class EntrevistaDAO {
                 SELECT id
                 FROM entrevista
                 WHERE postulante_ci = ?
-                  AND estado = 'ACTIVA'
+                  AND UPPER(estado) = 'ACTIVA'
                 ORDER BY id DESC
                 LIMIT 1
                 """;
@@ -136,7 +155,9 @@ public class EntrevistaDAO {
 
                 if (rs.next()) {
 
-                    return rs.getInt("id");
+                    return rs.getInt(
+                            "id"
+                    );
                 }
             }
         }
@@ -156,7 +177,8 @@ public class EntrevistaDAO {
 
         String sql = """
                 UPDATE entrevista
-                SET estado = 'TERMINADA'
+                SET estado = 'TERMINADA',
+                    pregunta_actual_id = NULL
                 WHERE id = ?
                 """;
 
@@ -177,6 +199,115 @@ public class EntrevistaDAO {
 
             stmt.executeUpdate();
         }
+    }
+
+
+    // ==================================================
+    // ACTUALIZAR PREGUNTA ACTUAL
+    // ==================================================
+
+    public void actualizarPreguntaActual(
+            int entrevistaId,
+            Integer preguntaId
+    ) throws SQLException {
+
+        String sql = """
+                UPDATE entrevista
+                SET pregunta_actual_id = ?
+                WHERE id = ?
+                """;
+
+
+        try (
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
+        ) {
+
+            if (preguntaId == null) {
+
+                stmt.setNull(
+                        1,
+                        Types.INTEGER
+                );
+
+            } else {
+
+                stmt.setInt(
+                        1,
+                        preguntaId
+                );
+            }
+
+
+            stmt.setInt(
+                    2,
+                    entrevistaId
+            );
+
+
+            stmt.executeUpdate();
+        }
+    }
+
+
+    // ==================================================
+    // OBTENER ID DE LA PREGUNTA ACTUAL
+    // ==================================================
+
+    public Integer obtenerPreguntaActualId(
+            int entrevistaId
+    ) throws SQLException {
+
+        String sql = """
+                SELECT pregunta_actual_id
+                FROM entrevista
+                WHERE id = ?
+                """;
+
+
+        try (
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setInt(
+                    1,
+                    entrevistaId
+            );
+
+
+            try (
+                    ResultSet rs =
+                            stmt.executeQuery()
+            ) {
+
+                if (rs.next()) {
+
+                    int preguntaId =
+                            rs.getInt(
+                                    "pregunta_actual_id"
+                            );
+
+
+                    if (rs.wasNull()) {
+
+                        return null;
+                    }
+
+
+                    return preguntaId;
+                }
+            }
+        }
+
+
+        return null;
     }
 
 
@@ -220,32 +351,43 @@ public class EntrevistaDAO {
                             new Entrevista();
 
 
+                    // ==================================================
+                    // DATOS DE ENTREVISTA
+                    // ==================================================
+
                     entrevista.setId(
-                            rs.getInt("id")
+                            rs.getInt(
+                                    "id"
+                            )
                     );
 
 
                     entrevista.setFecha(
-                            rs.getDate("fecha")
-                                    .toLocalDate()
+                            rs.getDate(
+                                    "fecha"
+                            ).toLocalDate()
                     );
 
 
                     entrevista.setDuracionMin(
-                            rs.getInt("duracionMin")
+                            rs.getInt(
+                                    "duracionMin"
+                            )
                     );
 
 
                     entrevista.setEstado(
                             EstadoEntrevista.valueOf(
-                                    rs.getString("estado").toUpperCase()
+                                    rs.getString(
+                                            "estado"
+                                    ).toUpperCase()
                             )
                     );
 
 
-                    // =========================
+                    // ==================================================
                     // POSTULANTE
-                    // =========================
+                    // ==================================================
 
                     int postulanteCi =
                             rs.getInt(
@@ -264,9 +406,9 @@ public class EntrevistaDAO {
                     );
 
 
-                    // =========================
+                    // ==================================================
                     // OFERTA LABORAL
-                    // =========================
+                    // ==================================================
 
                     int ofertaId =
                             rs.getInt(
@@ -285,6 +427,39 @@ public class EntrevistaDAO {
                     );
 
 
+                    // ==================================================
+                    // PREGUNTA ACTUAL
+                    // ==================================================
+
+                    int preguntaActualId =
+                            rs.getInt(
+                                    "pregunta_actual_id"
+                            );
+
+
+                    if (!rs.wasNull()) {
+
+                        Pregunta preguntaActual =
+                                new Pregunta();
+
+
+                        preguntaActual.setId(
+                                preguntaActualId
+                        );
+
+
+                        entrevista.setPreguntaActual(
+                                preguntaActual
+                        );
+
+                    } else {
+
+                        entrevista.setPreguntaActual(
+                                null
+                        );
+                    }
+
+
                     return entrevista;
                 }
             }
@@ -292,5 +467,170 @@ public class EntrevistaDAO {
 
 
         return null;
+    }
+
+
+    // ==================================================
+    // LISTAR ENTREVISTAS POR POSTULANTE
+    // ==================================================
+
+    public List<Entrevista> listarPorPostulante(
+            int postulanteCi
+    ) throws SQLException {
+
+        List<Entrevista> entrevistas =
+                new ArrayList<>();
+
+
+        String sql = """
+                SELECT
+                    id,
+                    fecha,
+                    duracionMin,
+                    estado,
+                    postulante_ci,
+                    ofertalaboral_id,
+                    pregunta_actual_id
+                FROM entrevista
+                WHERE postulante_ci = ?
+                ORDER BY id DESC
+                """;
+
+
+        try (
+                Connection conexion =
+                        ConexionDB.obtenerConexion();
+
+                PreparedStatement stmt =
+                        conexion.prepareStatement(sql)
+        ) {
+
+            stmt.setInt(
+                    1,
+                    postulanteCi
+            );
+
+
+            try (
+                    ResultSet rs =
+                            stmt.executeQuery()
+            ) {
+
+                while (rs.next()) {
+
+                    Entrevista entrevista =
+                            new Entrevista();
+
+
+                    // ==================================================
+                    // DATOS DE ENTREVISTA
+                    // ==================================================
+
+                    entrevista.setId(
+                            rs.getInt(
+                                    "id"
+                            )
+                    );
+
+
+                    entrevista.setFecha(
+                            rs.getDate(
+                                    "fecha"
+                            ).toLocalDate()
+                    );
+
+
+                    entrevista.setDuracionMin(
+                            rs.getInt(
+                                    "duracionMin"
+                            )
+                    );
+
+
+                    entrevista.setEstado(
+                            EstadoEntrevista.valueOf(
+                                    rs.getString(
+                                            "estado"
+                                    ).toUpperCase()
+                            )
+                    );
+
+
+                    // ==================================================
+                    // POSTULANTE
+                    // ==================================================
+
+                    Postulante postulante =
+                            postulanteDAO.buscarPorId(
+                                    rs.getInt(
+                                            "postulante_ci"
+                                    )
+                            );
+
+
+                    entrevista.setPostulante(
+                            postulante
+                    );
+
+
+                    // ==================================================
+                    // OFERTA LABORAL
+                    // ==================================================
+
+                    OfertaLaboral oferta =
+                            ofertaLaboralDAO.buscarPorId(
+                                    rs.getInt(
+                                            "ofertalaboral_id"
+                                    )
+                            );
+
+
+                    entrevista.setOfertaLaboral(
+                            oferta
+                    );
+
+
+                    // ==================================================
+                    // PREGUNTA ACTUAL
+                    // ==================================================
+
+                    int preguntaActualId =
+                            rs.getInt(
+                                    "pregunta_actual_id"
+                            );
+
+
+                    if (!rs.wasNull()) {
+
+                        Pregunta preguntaActual =
+                                new Pregunta();
+
+
+                        preguntaActual.setId(
+                                preguntaActualId
+                        );
+
+
+                        entrevista.setPreguntaActual(
+                                preguntaActual
+                        );
+
+                    } else {
+
+                        entrevista.setPreguntaActual(
+                                null
+                        );
+                    }
+
+
+                    entrevistas.add(
+                            entrevista
+                    );
+                }
+            }
+        }
+
+
+        return entrevistas;
     }
 }

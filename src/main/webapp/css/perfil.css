@@ -236,3 +236,15 @@
         grid-template-columns: 1fr;
     }
 }
+.perfil-header img.foto-perfil,
+img.foto-perfil {
+    width: 160px !important;
+    height: 160px !important;
+    min-width: 160px !important;
+    min-height: 160px !important;
+    max-width: 160px !important;
+    max-height: 160px !important;
+
+    object-fit: cover;
+    border-radius: 50%;
+}

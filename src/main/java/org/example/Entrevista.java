@@ -17,6 +17,7 @@ public class Entrevista {
     private OfertaLaboral ofertaLaboral;
     private List<Pregunta> preguntas;
     private RetroAlimentacion retroAlimentacion;
+    private Pregunta preguntaActual;
 
     // CONSTRUCTOR VACÍO
     public Entrevista() {
@@ -42,6 +43,7 @@ public class Entrevista {
         this.retroAlimentacion = retroAlimentacion;
 
         this.preguntas = new ArrayList<>();
+        this.preguntaActual = null;
     }
 
     // GETTERS
@@ -78,6 +80,10 @@ public class Entrevista {
         return retroAlimentacion;
     }
 
+    public Pregunta getPreguntaActual() {
+        return preguntaActual;
+    }
+
     // SETTERS
 
     public void setDuracionMin(int duracionMin) {
@@ -110,5 +116,9 @@ public class Entrevista {
 
     public void setRetroAlimentacion(RetroAlimentacion retroAlimentacion) {
         this.retroAlimentacion = retroAlimentacion;
+    }
+
+    public void setPreguntaActual(Pregunta preguntaActual) {
+        this.preguntaActual = preguntaActual;
     }
 }

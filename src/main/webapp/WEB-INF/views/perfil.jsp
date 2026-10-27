@@ -18,7 +18,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/perfil.css?v=1">
+          href="${pageContext.request.contextPath}/css/perfil.css?v=2">
 
 </head>
 
@@ -43,7 +43,7 @@
             Buscar ofertas
         </a>
 
-        <a href="#">
+        <a href="${pageContext.request.contextPath}/mis-entrevistas">
             Entrevistas
         </a>
 
@@ -133,7 +133,9 @@
                     <c:when test="${not empty postulante.fotoPerfil}">
 
                         <img src="${postulante.fotoPerfil}"
-                             alt="Foto de perfil">
+                             alt="Foto de perfil"
+                             class="foto-perfil">
+
 
                     </c:when>
 
