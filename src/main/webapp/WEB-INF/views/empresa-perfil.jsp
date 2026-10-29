@@ -10,7 +10,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=7">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=9">
 </head>
 <body>
 
@@ -21,14 +21,23 @@
 
     <section class="panel-hero">
         <div class="perfil-identidad">
-            <c:if test="${not empty empresa.logo}">
-                <img class="perfil-logo"
-                     src="<c:out value='${empresa.logo}' />"
-                     alt="Logo de la empresa">
-            </c:if>
+
+            <c:choose>
+                <c:when test="${not empty empresa.logo}">
+                    <img class="perfil-logo"
+                         src="<c:out value='${empresa.logo}' />"
+                         alt="Logo de la empresa">
+                </c:when>
+                <c:otherwise>
+                    <div class="perfil-avatar"><c:out value="${inicial}" /></div>
+                </c:otherwise>
+            </c:choose>
+
             <div>
                 <h1><c:out value="${empresa.nombre}" /></h1>
-                <p><c:out value="${empresa.mail}" /></p>
+                <p class="perfil-meta">
+                    Empresa registrada el <c:out value="${empresa.fechaRegistro}" />
+                </p>
             </div>
         </div>
 
@@ -42,29 +51,107 @@
         <div class="mensaje-exito">Los cambios se guardaron correctamente.</div>
     </c:if>
 
-    <section class="panel-card">
-        <h2>Datos de la empresa</h2>
-
-        <dl class="datos">
-            <dt>RUT</dt>
-            <dd><c:out value="${empresa.rut}" /></dd>
-
-            <dt>Correo</dt>
-            <dd><c:out value="${empresa.mail}" /></dd>
-
-            <dt>Teléfono</dt>
-            <dd><c:out value="${empresa.telefono == 0 ? 'No cargado' : empresa.telefono}" /></dd>
-
-            <dt>Sitio web</dt>
-            <dd><c:out value="${empty empresa.sitioWeb ? 'No cargado' : empresa.sitioWeb}" /></dd>
-
-            <dt>Descripción</dt>
-            <dd class="texto-largo"><c:out value="${empty empresa.descripcion ? 'No cargada' : empresa.descripcion}" /></dd>
-
-            <dt>Registrada el</dt>
-            <dd><c:out value="${empresa.fechaRegistro}" /></dd>
-        </dl>
+    <section class="panel-stats">
+        <div class="stat-card">
+            <span class="stat-numero"><c:out value="${totalOfertas}" /></span>
+            <span class="stat-texto">Ofertas publicadas</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-numero"><c:out value="${ofertasActivas}" /></span>
+            <span class="stat-texto">Ofertas activas</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-numero"><c:out value="${totalPostulaciones}" /></span>
+            <span class="stat-texto">Postulaciones recibidas</span>
+        </div>
     </section>
+
+    <section class="panel-card">
+        <div class="progreso-cabecera">
+            <span>Perfil completo</span>
+            <span><c:out value="${porcentajeCompleto}" />%</span>
+        </div>
+        <progress class="barra-progreso"
+                  value="${porcentajeCompleto}" max="100"></progress>
+
+        <c:if test="${not empty pendientesTexto}">
+            <p class="progreso-pendientes">
+                Te falta completar: <c:out value="${pendientesTexto}" />.
+                <a href="${pageContext.request.contextPath}/editar-empresa">Completar ahora</a>
+            </p>
+        </c:if>
+    </section>
+
+    <div class="perfil-grid">
+
+        <section class="panel-card">
+            <h2>Sobre la empresa</h2>
+
+            <c:choose>
+                <c:when test="${empty empresa.descripcion}">
+                    <p class="perfil-vacio">
+                        Todavía no escribiste una descripción.
+                        <a href="${pageContext.request.contextPath}/editar-empresa">Agregala</a>
+                        para que los postulantes sepan a qué se dedica tu empresa.
+                    </p>
+                </c:when>
+                <c:otherwise>
+                    <p class="texto-largo"><c:out value="${empresa.descripcion}" /></p>
+                </c:otherwise>
+            </c:choose>
+        </section>
+
+        <div class="perfil-columna">
+
+            <section class="panel-card">
+                <h2>Contacto</h2>
+
+                <ul class="contacto-lista">
+                    <li>
+                        <span class="contacto-etiqueta">Correo</span>
+                        <a href="mailto:<c:out value='${empresa.mail}' />">
+                            <c:out value="${empresa.mail}" />
+                        </a>
+                    </li>
+
+                    <li>
+                        <span class="contacto-etiqueta">Teléfono</span>
+                        <c:out value="${empresa.telefono == 0 ? 'No cargado' : empresa.telefono}" />
+                    </li>
+
+                    <li>
+                        <span class="contacto-etiqueta">Sitio web</span>
+                        <c:choose>
+                            <c:when test="${empty empresa.sitioWeb}">No cargado</c:when>
+                            <c:when test="${sitioEnlazable}">
+                                <a href="<c:out value='${empresa.sitioWeb}' />"
+                                   target="_blank" rel="noopener noreferrer">
+                                    <c:out value="${empresa.sitioWeb}" />
+                                </a>
+                            </c:when>
+                            <c:otherwise><c:out value="${empresa.sitioWeb}" /></c:otherwise>
+                        </c:choose>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="panel-card">
+                <h2>Cuenta</h2>
+
+                <ul class="contacto-lista">
+                    <li>
+                        <span class="contacto-etiqueta">RUT</span>
+                        <c:out value="${empresa.rut}" />
+                    </li>
+                    <li>
+                        <span class="contacto-etiqueta">Registrada el</span>
+                        <c:out value="${empresa.fechaRegistro}" />
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
 
 </main>
 

@@ -529,3 +529,130 @@ button.btn-peligro {
 .datos dd {
     word-break: break-word;
 }
+/* ===== Mi empresa: perfil rediseñado ===== */
+.perfil-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 84px;
+    height: 84px;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #0b4fc2;
+    font-size: 2.2rem;
+    font-weight: 800;
+}
+
+.perfil-meta {
+    margin: 4px 0 0;
+    opacity: 0.85;
+    font-size: 0.95rem;
+}
+
+/* Barra de perfil completo */
+.progreso-cabecera {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #173561;
+    font-weight: 700;
+}
+
+.barra-progreso {
+    display: block;
+    width: 100%;
+    height: 12px;
+    border: none;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #e5edf8;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.barra-progreso::-webkit-progress-bar {
+    background: #e5edf8;
+    border-radius: 999px;
+}
+
+.barra-progreso::-webkit-progress-value {
+    background: linear-gradient(90deg, #2586ff, #0866ee);
+    border-radius: 999px;
+}
+
+.barra-progreso::-moz-progress-bar {
+    background: #1475f7;
+    border-radius: 999px;
+}
+
+.progreso-pendientes {
+    margin: 12px 0 0;
+    color: #6b7f99;
+    font-size: 0.9rem;
+}
+
+.progreso-pendientes a,
+.perfil-vacio a {
+    color: #1475f7;
+    font-weight: 600;
+}
+
+/* Dos columnas */
+.perfil-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.perfil-grid .panel-card {
+    margin-bottom: 0;
+}
+
+.perfil-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.perfil-vacio {
+    margin: 0;
+    color: #6b7f99;
+}
+
+.contacto-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #173561;
+}
+
+.contacto-etiqueta {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.8rem;
+    color: #6b7f99;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.contacto-lista a {
+    color: #1475f7;
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.contacto-lista a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 800px) {
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+}
