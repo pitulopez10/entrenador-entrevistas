@@ -11,6 +11,10 @@
            class="${menuActivo == 'ofertas' ? 'active' : ''}">
             Mis ofertas
         </a>
+        <a href="${pageContext.request.contextPath}/empresa-perfil"
+         class="${menuActivo == 'perfil' ? 'active' : ''}">
+         Mi empresa
+         </a>
         <a href="${pageContext.request.contextPath}/ofertas">
             Ver sitio
         </a>

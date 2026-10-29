@@ -504,3 +504,28 @@ button.btn-peligro {
     flex-wrap: wrap;
     gap: 8px;
 }
+/* ===== Perfil de la empresa ===== */
+.panel-card h2 {
+    margin: 0 0 16px;
+    font-size: 1.15rem;
+    color: #173561;
+}
+
+.perfil-identidad {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.perfil-logo {
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 3px solid rgba(255, 255, 255, 0.6);
+}
+
+.datos dd {
+    word-break: break-word;
+}
