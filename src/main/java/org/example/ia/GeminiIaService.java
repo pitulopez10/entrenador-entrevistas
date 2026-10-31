@@ -30,7 +30,7 @@ public class GeminiIaService implements IaService {
     // ==================================================
 
     private static final String MODELO_POR_DEFECTO =
-            "gemini-3.6-flash";
+            "gemini-3.5-flash-lite";
 
     private static final int MAX_INTENTOS =
             3;
