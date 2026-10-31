@@ -18,13 +18,19 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
+        String urlDestino = request.getContextPath() + "/ofertas";
 
         if (session != null) {
+            // Si el usuario con sesión activa es un administrador
+            if (session.getAttribute("adminLogueado") != null) {
+                urlDestino = request.getContextPath() + "/login-admin";
+            }
+
+            // Invalida la sesión borrando todos los atributos
             session.invalidate();
         }
 
-        response.sendRedirect(
-                request.getContextPath() + "/ofertas"
-        );
+        // Redirige al destino correspondiente según el tipo de usuario
+        response.sendRedirect(urlDestino);
     }
 }

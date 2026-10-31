@@ -1,30 +1,34 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrador | Entrenador Entrevista</title>
-    <link rel="icon"
-          type="image/png"
-          href="${pageContext.request.contextPath}/img/logo.png">
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/login.css?v=1">
+    <title>Panel Administrador | Entrenador Entrevista</title>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
 </head>
+
 <body>
 
+<!-- ==================================================
+     HEADER ADMINISTRADOR
+     ================================================== -->
 <header class="topbar">
     <a href="${pageContext.request.contextPath}/admin-inicio" class="logo">
-        <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista" class="logo-img">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Entrenador Entrevista" class="logo-img">
     </a>
 
     <nav class="main-nav">
-        <a href="${pageContext.request.contextPath}/ofertas">Ver Ofertas</a>
+        <a href="${pageContext.request.contextPath}/admin-inicio" class="active">Inicio</a>
+        <a href="${pageContext.request.contextPath}/admin-postulantes">Postulantes</a>
+        <a href="${pageContext.request.contextPath}/admin-empresas">Empresas</a>
     </nav>
 
     <div class="nav-actions">
@@ -37,15 +41,102 @@
     </div>
 </header>
 
-<main class="login-page">
-    <section class="login-card" style="grid-template-columns: 1fr; padding: 2.5rem;">
+<!-- ==================================================
+     CONTENIDO PRINCIPAL MINIMALISTA
+     ================================================== -->
+<main class="postulaciones-page">
+
+    <!-- CABECERA Y FILTRO SIMPLE -->
+    <section class="postulaciones-header" style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
         <div>
-            <h1>Panel Principal de Administración</h1>
-            <p style="margin-top: 1rem; color: #666;">
-                Sesión iniciada correctamente como <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>.
-            </p>
+            <span class="postulaciones-kicker">Panel Administrador</span>
+            <h1>Consulta de Ofertas</h1>
+            <p>Filtrá y consultá las ofertas laborales según su área profesional.</p>
         </div>
+
+        <!-- BUSCADOR MINIMALISTA -->
+        <form method="get" action="${pageContext.request.contextPath}/admin-inicio" style="display: flex; gap: 0.8rem; width: 100%; max-width: 500px;">
+            <select name="area" id="area" style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 0.95rem;">
+                <option value="" <c:if test="${empty param.area}">selected</c:if>>
+                    Todas las áreas
+                </option>
+                <c:forEach var="areaItem" items="${areas}">
+                    <option value="${areaItem.id}" <c:if test="${param.area eq areaItem.id}">selected</c:if>>
+                        <c:out value="${areaItem.nombre}" />
+                    </option>
+                </c:forEach>
+            </select>
+
+            <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem;">
+                Filtrar
+            </button>
+        </form>
     </section>
+
+    <!-- SIN RESULTADOS -->
+    <c:if test="${empty ofertas}">
+        <section class="postulaciones-vacio">
+            <div class="postulaciones-vacio-icono">📋</div>
+            <h2>No hay ofertas disponibles</h2>
+            <p>No se encontraron registros para el área seleccionada.</p>
+        </section>
+    </c:if>
+
+    <!-- LISTADO DE OFERTAS EN TARJETAS -->
+    <c:if test="${not empty ofertas}">
+        <section class="postulaciones-lista">
+            <c:forEach var="oferta" items="${ofertas}">
+                <article class="postulacion-card">
+                    <div class="postulacion-card-contenido">
+                        <div class="postulacion-card-top">
+                            <div>
+                                <span class="postulacion-empresa">
+                                    Empresa: <strong><c:out value="${oferta.empresa.nombre}" /></strong> | Área: <strong><c:out value="${oferta.area.nombre}" /></strong>
+                                </span>
+                                <h2><c:out value="${oferta.titulo}" /></h2>
+                            </div>
+
+                            <c:choose>
+                                <c:when test="${oferta.estado == 'ACTIVA'}">
+                                    <span class="estado-postulacion seleccionado">Activa</span>
+                                </c:when>
+                                <c:when test="${oferta.estado == 'PAUSADA'}">
+                                    <span class="estado-postulacion revision">Pausada</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="estado-postulacion rechazado">Terminada</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+
+                        <div class="postulacion-info">
+                            <div class="postulacion-info-item">
+                                <span class="postulacion-info-label">Fecha Publicación</span>
+                                <strong><c:out value="${oferta.fechaPublicacion}" /></strong>
+                            </div>
+
+                            <div class="postulacion-info-item">
+                                <span class="postulacion-info-label">Fecha Cierre</span>
+                                <strong><c:out value="${oferta.fechaCierre != null ? oferta.fechaCierre : 'Sin fecha'}" /></strong>
+                            </div>
+
+                            <div class="postulacion-info-item" style="grid-column: span 2;">
+                                <span class="postulacion-info-label">Descripción</span>
+                                <strong><c:out value="${oferta.descripcion}" /></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="postulacion-card-actions" style="margin-top: 1rem;">
+                        <a href="${pageContext.request.contextPath}/admin-consultar-oferta?id=${oferta.id}" class="btn-outline">
+                            Consultar Oferta
+                        </a>
+                    </div>
+                </article>
+            </c:forEach>
+        </section>
+    </c:if>
+
 </main>
 
 </body>
