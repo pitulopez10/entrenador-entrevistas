@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.Empresa;
+import org.example.EmailService;
 import org.example.EstadoEntrevista;
 import org.example.EstadoPostulacion;
 import org.example.OfertaLaboral;
@@ -15,6 +16,7 @@ import org.example.Postulacion;
 import org.example.PostulacionDAO;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 
 @WebServlet("/empresa-accion")
@@ -22,6 +24,7 @@ public class EmpresaAccionServlet extends HttpServlet {
 
     private final OfertaLaboralDAO ofertaDAO = new OfertaLaboralDAO();
     private final PostulacionDAO postulacionDAO = new PostulacionDAO();
+    private final EmailService emailService = new EmailService();
 
     @Override
     protected void doPost(HttpServletRequest request,
@@ -108,7 +111,26 @@ public class EmpresaAccionServlet extends HttpServlet {
                         return;
                     }
 
-                    // (Paso 4: acá se le avisa al postulante que quedó seleccionado)
+                    try (InputStream logo = getServletContext().getResourceAsStream("/img/logo.png")) {
+                        if (seleccionar) {
+                            emailService.enviarNotificacionEstado(
+                                    postulacion.getPostulante(), oferta, logo,
+                                    "¡Fuiste seleccionado! - " + oferta.getTitulo(),
+                                    "¡Felicitaciones, fuiste seleccionado!",
+                                    "La empresa revisó tu postulación y decidió seleccionarte para continuar con el proceso.",
+                                    "¡Te deseamos muchos éxitos en esta nueva oportunidad!");
+                        } else {
+                            emailService.enviarNotificacionEstado(
+                                    postulacion.getPostulante(), oferta, logo,
+                                    "Actualización de tu postulación - " + oferta.getTitulo(),
+                                    "Gracias por postularte",
+                                    "En esta oportunidad la empresa decidió continuar con otro perfil.",
+                                    "No te desanimes: seguí intentando, porque seguramente tendrás suerte en la próxima oportunidad.");
+                        }
+                    } catch (jakarta.mail.MessagingException | IllegalStateException e) {
+                        getServletContext().log(
+                                "No se pudo enviar la notificación de estado al postulante", e);
+                    }
 
                     resultado = seleccionar ? "seleccionado" : "descartado";
                 }
