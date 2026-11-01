@@ -11,6 +11,8 @@ import org.example.PostulanteDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/perfil")
 public class PerfilServlet extends HttpServlet {
@@ -74,6 +76,21 @@ public class PerfilServlet extends HttpServlet {
                     postulante
             );
 
+            List<String> pendientes = new ArrayList<>();
+            if (vacio(postulante.getFotoPerfil())) pendientes.add("foto de perfil");
+            if (postulante.getTelefono() == 0) pendientes.add("teléfono");
+            if (postulante.getFechaNacimiento() == null) pendientes.add("fecha de nacimiento");
+            if (postulante.getGenero() == null) pendientes.add("género");
+            if (vacio(postulante.getLocalidad())) pendientes.add("localidad");
+            if (vacio(postulante.getDescripcion())) pendientes.add("descripción");
+            if (vacio(postulante.getDatosEstudio())) pendientes.add("formación");
+            if (vacio(postulante.getDatosExperiencia())) pendientes.add("experiencia");
+            if (vacio(postulante.getCv())) pendientes.add("currículum");
+
+            request.setAttribute("porcentajeCompleto",
+                    (9 - pendientes.size()) * 100 / 9);
+            request.setAttribute("pendientesTexto", String.join(", ", pendientes));
+
             request.getRequestDispatcher(
                     "/WEB-INF/views/perfil.jsp"
             ).forward(request, response);
@@ -85,5 +102,9 @@ public class PerfilServlet extends HttpServlet {
                     e
             );
         }
+    }
+
+    private boolean vacio(String texto) {
+        return texto == null || texto.isBlank();
     }
 }

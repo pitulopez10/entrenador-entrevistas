@@ -21,7 +21,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/perfil.css?v=2">
+          href="${pageContext.request.contextPath}/css/perfil.css?v=3">
 
 </head>
 
@@ -118,6 +118,22 @@
         </div>
 
     </c:if>
+
+    <section class="perfil-completitud">
+        <div class="progreso-cabecera">
+            <span>Perfil completo</span>
+            <span><c:out value="${porcentajeCompleto}" />%</span>
+        </div>
+        <progress class="barra-progreso"
+                  value="${porcentajeCompleto}" max="100"></progress>
+
+        <c:if test="${not empty pendientesTexto}">
+            <p class="progreso-pendientes">
+                Te falta completar: <c:out value="${pendientesTexto}" />.
+                <a href="${pageContext.request.contextPath}/editar-perfil">Completar ahora</a>
+            </p>
+        </c:if>
+    </section>
 
 
     <section class="perfil-grid">
