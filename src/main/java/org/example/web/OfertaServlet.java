@@ -29,19 +29,12 @@ public class OfertaServlet extends HttpServlet {
         try {
 
             String areaParam = request.getParameter("area");
-
-            List<OfertaLaboral> ofertas;
-
-            if (areaParam != null && !areaParam.isBlank()) {
-
-                int areaId = Integer.parseInt(areaParam);
-
-                ofertas = ofertaLaboralDAO.listarPorArea(areaId);
-
-            } else {
-
-                ofertas = ofertaLaboralDAO.listar();
-            }
+            String titulo = request.getParameter("titulo");
+            Integer areaId = areaParam != null && !areaParam.isBlank()
+                    ? Integer.parseInt(areaParam)
+                    : null;
+            List<OfertaLaboral> ofertas =
+                    ofertaLaboralDAO.listarPorFiltros(areaId, titulo);
 
             List<Area> areas = areaDAO.listar();
 

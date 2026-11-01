@@ -305,6 +305,35 @@ a {
     cursor: pointer;
 }
 
+.search-title-field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid #d8e3f2;
+    border-radius: 12px;
+    outline: none;
+    background: #f7f9fc;
+    color: #163765;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease,
+                background-color 0.2s ease;
+}
+
+.search-title-field input:focus {
+    border-color: #2384ff;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(35, 132, 255, 0.14);
+}
+
+.search-title-field input::placeholder {
+    color: #9aa9be;
+    font-weight: 400;
+    opacity: 1;
+}
+
 .search-btn {
     min-width: 210px;
 

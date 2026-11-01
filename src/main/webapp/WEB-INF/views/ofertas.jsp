@@ -14,7 +14,7 @@
           href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=14">
 </head>
 
 <body>
@@ -217,6 +217,15 @@
 
                     </select>
 
+                </div>
+
+                <div class="search-field search-title-field">
+                    <label for="titulo">Nombre de la oferta</label>
+                    <input type="search"
+                           name="titulo"
+                           id="titulo"
+                           value="<c:out value='${param.titulo}'/>"
+                           placeholder="Ej.: Desarrollador">
                 </div>
 
 
