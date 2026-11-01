@@ -133,9 +133,13 @@ public class PostularseServlet extends HttpServlet {
                     EstadoPostulacion.enviado
             );
 
-            postulacion.setMensaje(
-                    "Postulación realizada desde el portal web."
-            );
+            String cartaPresentacion = request.getParameter("cartaPresentacion");
+            if (cartaPresentacion == null || cartaPresentacion.isBlank()) {
+                cartaPresentacion = "Postulación realizada desde el portal web.";
+            } else {
+                cartaPresentacion = cartaPresentacion.trim();
+            }
+            postulacion.setMensaje(cartaPresentacion);
 
             postulacion.setPostulante(
                     postulante

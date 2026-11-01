@@ -1323,6 +1323,50 @@ a {
     border: 1px solid #efcaca;
 }
 
+.carta-label {
+    display: block;
+    margin: 22px 0 9px;
+    color: #173561;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.carta-label span {
+    color: #6b7f99;
+    font-weight: 400;
+}
+
+.carta-presentacion {
+    display: block;
+    width: 100%;
+    min-height: 142px;
+    box-sizing: border-box;
+    margin-bottom: 14px;
+    padding: 15px 16px;
+    border: 1px solid #d7e3f2;
+    border-radius: 16px;
+    background: #f8fbff;
+    color: #25456e;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    appearance: none;
+}
+
+.carta-presentacion::placeholder {
+    color: #91a3bb;
+}
+
+.carta-presentacion:focus {
+    outline: none;
+    border-color: #2586ff;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 134, 255, 0.12);
+}
+
 .boton-practicar-entrevista {
     width: 100%;
 

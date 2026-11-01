@@ -15,7 +15,7 @@
           href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=4">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=5">
 </head>
 
 <body>
@@ -413,6 +413,17 @@
                     <input type="hidden"
                            name="ofertaId"
                            value="${oferta.id}">
+
+                    <label for="cartaPresentacion" class="carta-label">
+                        Carta de presentación <span>(opcional)</span>
+                    </label>
+
+                    <textarea id="cartaPresentacion"
+                              name="cartaPresentacion"
+                              class="carta-presentacion"
+                              rows="6"
+                              maxlength="3000"
+                              placeholder="Contale a la empresa por qué te interesa esta oportunidad y qué podés aportar..."></textarea>
 
                     <button type="submit"
                             class="boton-postular">
