@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.EstadoEntrevista;
 import org.example.EstadoPostulacion;
+import org.example.EmailService;
 import org.example.OfertaLaboral;
 import org.example.OfertaLaboralDAO;
 import org.example.Postulacion;
@@ -15,8 +16,10 @@ import org.example.PostulacionDAO;
 import org.example.Postulante;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import jakarta.mail.MessagingException;
 
 @WebServlet("/postularse")
 public class PostularseServlet extends HttpServlet {
@@ -26,6 +29,8 @@ public class PostularseServlet extends HttpServlet {
 
     private final OfertaLaboralDAO ofertaLaboralDAO =
             new OfertaLaboralDAO();
+
+    private final EmailService emailService = new EmailService();
 
     @Override
     protected void doPost(
@@ -143,6 +148,18 @@ public class PostularseServlet extends HttpServlet {
             postulacionDAO.agregar(
                     postulacion
             );
+
+            try {
+                try (InputStream logo = getServletContext().getResourceAsStream("/img/logo.png")) {
+                    emailService.enviarConfirmacionPostulacion(postulante, oferta, logo);
+                }
+            } catch (MessagingException | IllegalStateException e) {
+                // La postulación ya fue guardada; el correo no debe deshacerla.
+                getServletContext().log(
+                        "No se pudo enviar la confirmación de postulación",
+                        e
+                );
+            }
 
             response.sendRedirect(
                     request.getContextPath()

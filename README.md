@@ -49,6 +49,14 @@ jdbc:mariadb://localhost:3306/entrenador_entrevista
 
 Antes de ejecutar la aplicación se debe iniciar el servicio de MariaDB.
 
+### Confirmación por correo
+
+Al registrarse una postulación desde el portal web, se envía un correo al postulante con el ID, título y descripción de la oferta. Para habilitarlo, configurar estas variables de entorno antes de iniciar Tomcat:
+
+Para Gmail, usar `SMTP_USERNAME` con el correo de la cuenta y `SMTP_PASSWORD` con una contraseña de aplicación de Google (no la contraseña normal). `SMTP_HOST` queda en `smtp.gmail.com` y `SMTP_PORT` en `587` por defecto. También se puede definir `SMTP_FROM`.
+
+En IntelliJ, agregar estas variables en la configuración de ejecución de Tomcat. Como alternativa, agregar las propiedades JVM `-DSMTP_USERNAME=... -DSMTP_PASSWORD=...`.
+
 Luego se debe ejecutar el archivo:
 
 schema.sql

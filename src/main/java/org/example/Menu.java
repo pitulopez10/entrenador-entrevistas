@@ -1,5 +1,6 @@
 package org.example;
 
+import jakarta.mail.MessagingException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class Menu {
     private final PreguntaDAO preguntaDAO = new PreguntaDAO();
     private final RespuestaDAO respuestaDAO = new RespuestaDAO();
     private final RetroAlimentacionDAO retroalimentacionDAO = new RetroAlimentacionDAO();
+    private final EmailService emailService = new EmailService();
 
     private boolean isAdminAutenticado = false;
     private Postulante postulanteAutenticado = null;
@@ -2104,6 +2106,16 @@ public class Menu {
             nuevaPostulacion.setOfertaLaboral(oferta);
 
             postulacionDAO.agregar(nuevaPostulacion);
+
+            try {
+                emailService.enviarConfirmacionPostulacion(
+                        postulanteAutenticado,
+                        oferta
+                );
+            } catch (MessagingException | IllegalStateException e) {
+                System.err.println("No se pudo enviar la confirmación por correo: "
+                        + e.getMessage());
+            }
 
             System.out.println("=== [ÉXITO] Te has postulado correctamente a la oferta laboral ===");
         } else {
