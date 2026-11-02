@@ -656,3 +656,33 @@ button.btn-peligro {
         grid-template-columns: 1fr;
     }
 }
+/* ===== Perfil del postulante (vista de empresa) ===== */
+.hero-estado .badge {
+    font-size: 0.95rem;
+    padding: 8px 18px;
+}
+
+.postulacion-mensaje {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    background: #f3f7fd;
+    border-left: 4px solid #1475f7;
+    border-radius: 8px;
+    color: #374151;
+    white-space: pre-line;
+}
+
+.acciones-izquierda {
+    justify-content: flex-start;
+    margin-top: 0;
+}
+
+.enlace-postulante {
+    color: #173561;
+    text-decoration: none;
+}
+
+.enlace-postulante:hover {
+    color: #1475f7;
+    text-decoration: underline;
+}

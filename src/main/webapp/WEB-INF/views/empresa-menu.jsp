@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" %>
 <%-- Menú superior de las pantallas de empresa.
      La página que lo incluye define antes: <c:set var="menuActivo" value="ofertas" /> --%>
 <header class="topbar">

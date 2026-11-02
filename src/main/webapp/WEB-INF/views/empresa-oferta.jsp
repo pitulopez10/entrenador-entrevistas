@@ -10,7 +10,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=6">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=11">
 </head>
 <body>
 
@@ -130,7 +130,10 @@
 
                             <div>
                                 <p class="postulante-nombre">
-                                    <c:out value="${postulacion.postulante.nombre}" />
+                                    <a class="enlace-postulante"
+                                       href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&postulacion=${postulacion.id}">
+                                        <c:out value="${postulacion.postulante.nombre}" />
+                                    </a>
                                 </p>
                                 <p class="postulante-mail">
                                     <c:out value="${postulacion.postulante.mail}" />
@@ -160,6 +163,12 @@
                                         <span class="badge badge-enviado">Enviada</span>
                                     </c:otherwise>
                                 </c:choose>
+                                <div class="postulante-acciones">
+                                    <a class="btn-accion-sec"
+                                       href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&postulacion=${postulacion.id}">
+                                        Ver perfil completo
+                                    </a>
+                                </div>
 
                                 <c:if test="${oferta.estado == 'ACTIVA'}">
                                     <div class="postulante-acciones">
