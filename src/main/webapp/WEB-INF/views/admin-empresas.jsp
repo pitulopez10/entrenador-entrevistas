@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Empresas | Entrenador Entrevista</title>
+    <title>Gestión de Empresas | JobMentor</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
@@ -15,7 +15,7 @@
 
 <header class="topbar">
     <a href="${pageContext.request.contextPath}/admin-inicio" class="logo">
-        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Entrenador Entrevista" class="logo-img">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="JobMentor" class="logo-img">
     </a>
 
     <nav class="main-nav">

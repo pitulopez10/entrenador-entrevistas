@@ -1141,6 +1141,68 @@ a {
     text-align: center;
 }
 
+.institucional-page {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 70px 0 90px;
+}
+
+.institucional-hero {
+    max-width: 720px;
+    margin-bottom: 42px;
+}
+
+.institucional-hero h1 {
+    margin: 8px 0 14px;
+    color: #16315f;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.1;
+}
+
+.institucional-hero p {
+    color: #617895;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+.institucional-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.institucional-card {
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #dbe5f3;
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(25, 65, 120, .06);
+}
+
+.institucional-numero {
+    color: #2586ff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.institucional-card h2 {
+    margin: 12px 0 10px;
+    color: #173561;
+}
+
+.institucional-card p {
+    margin: 0;
+    color: #617895;
+    line-height: 1.7;
+}
+
+.institucional-contacto a {
+    display: inline-block;
+    margin-top: 18px;
+    color: #1475f7;
+    font-weight: 700;
+}
+
 
 /* ==================================================
    RESPONSIVE

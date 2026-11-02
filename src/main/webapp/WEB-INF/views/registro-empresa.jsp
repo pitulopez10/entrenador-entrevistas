@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar empresa | Entrenador Entrevista</title>
+    <title>Registrar empresa | JobMentor</title>
     <link rel="icon"
           type="image/png"
           href="${pageContext.request.contextPath}/img/logo.png">
@@ -20,7 +20,7 @@
 <header class="topbar">
     <a href="${pageContext.request.contextPath}/ofertas" class="logo">
         <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista" class="logo-img">
+             alt="JobMentor" class="logo-img">
     </a>
 
     <nav class="main-nav">

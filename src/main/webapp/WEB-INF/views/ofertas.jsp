@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Entrenador Entrevista | Ofertas laborales</title>
+    <title>JobMentor | Ofertas laborales</title>
     <link rel="icon"
           type="image/png"
           href="${pageContext.request.contextPath}/img/logo.png">
@@ -29,7 +29,7 @@
        class="logo">
 
         <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista"
+             alt="JobMentor"
              class="logo-img">
 
     </a>
@@ -71,7 +71,7 @@
                     Empresas
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/institucional#quienes-somos">
                     Preguntas frecuentes
                 </a>
 
@@ -397,7 +397,7 @@
          COMO FUNCIONA
          ========================= -->
 
-    <section class="section how-it-works">
+    <section class="section how-it-works" id="entrevistas">
 
         <div class="section-mini-title">
             ¿Cómo funciona?
@@ -502,7 +502,7 @@
         <div class="footer-brand">
 
             <img src="${pageContext.request.contextPath}/img/logo.png"
-                 alt="Entrenador Entrevista"
+                 alt="JobMentor"
                  class="footer-logo">
 
             <p>
@@ -522,15 +522,15 @@
                     Institucional
                 </h4>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/institucional#quienes-somos">
                     Quiénes somos
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/institucional#contacto">
                     Contacto
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/institucional#proposito">
                     Nuestro propósito
                 </a>
 
@@ -547,7 +547,7 @@
                     Buscar ofertas
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}${not empty sessionScope.postulanteLogueado ? '/mis-entrevistas' : '/login'}">
                     Practicar entrevistas
                 </a>
 
@@ -580,15 +580,15 @@
                     Empresas
                 </h4>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}">
                     Publicar vacantes
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/registro-empresa'}">
                     Buscar candidatos
                 </a>
 
-                <a href="#">
+                <a href="${pageContext.request.contextPath}${not empty sessionScope.empresaLogueada ? '/empresa' : '/login-empresa'}">
                     Soluciones para empresas
                 </a>
 
@@ -601,8 +601,11 @@
 
     <div class="footer-copy">
 
-        Copyright 2026 Entrenador Entrevista.
+        Copyright 2026 JobMentor.
         Todos los derechos reservados.
+
+        <br>
+        Web realizada por Maximiliano Lopez, Paz Colla y Pablo Maidana.
 
     </div>
 

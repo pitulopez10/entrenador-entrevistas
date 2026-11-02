@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Postulante | Entrenador Entrevista</title>
+    <title>Editar Postulante | JobMentor</title>
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
@@ -19,7 +19,7 @@
      ================================================== -->
 <header class="topbar">
     <div class="logo">
-        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Entrenador Entrevista" class="logo-img">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="JobMentor" class="logo-img">
     </div>
 
     <!-- Mensaje informativo en lugar de botones de navegación -->

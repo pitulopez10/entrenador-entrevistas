@@ -11,7 +11,7 @@
           content="width=device-width, initial-scale=1.0">
 
     <title>
-        Mis postulaciones | Entrenador Entrevista
+        Mis postulaciones | JobMentor
     </title>
     <link rel="icon"
           type="image/png"
@@ -38,7 +38,7 @@
        class="logo">
 
         <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista"
+             alt="JobMentor"
              class="logo-img">
 
     </a>

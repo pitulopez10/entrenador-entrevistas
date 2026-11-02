@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis ofertas | Entrenador Entrevista</title>
+    <title>Mis ofertas | JobMentor</title>
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">

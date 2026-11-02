@@ -4,7 +4,7 @@
 <header class="topbar">
     <a href="${pageContext.request.contextPath}/ofertas" class="logo">
         <img src="${pageContext.request.contextPath}/img/logo.png"
-             alt="Entrenador Entrevista" class="logo-img">
+             alt="JobMentor" class="logo-img">
     </a>
 
     <nav class="main-nav">

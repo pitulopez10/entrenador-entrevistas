@@ -17,7 +17,7 @@
 <!-- HEADER LIMPIO SIN MENÚ NI NAVEGACIÓN -->
 <header class="topbar">
     <div class="logo">
-        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Entrenador Entrevista" class="logo-img">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="JobMentor" class="logo-img">
     </div>
 
     <div class="nav-actions">

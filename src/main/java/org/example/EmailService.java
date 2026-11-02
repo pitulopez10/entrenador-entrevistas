@@ -27,7 +27,7 @@ public class EmailService {
         enviarNotificacionEstado(postulante, oferta, logo,
                 "Postulación registrada: " + oferta.getTitulo(),
                 "¡Postulación registrada!",
-                "Tu postulación fue registrada correctamente en Entrenador Entrevista.",
+                "Tu postulación fue registrada correctamente en JobMentor.",
                 "Gracias por confiar en nosotros. Te avisaremos sobre cualquier novedad.");
     }
 
@@ -88,7 +88,7 @@ public class EmailService {
                                            String titulo,
                                            String mensaje,
                                            String cierre) {
-        String logo = incluyeLogo ? "<img src='cid:logo-app' alt='Entrenador Entrevista' "
+        String logo = incluyeLogo ? "<img src='cid:logo-app' alt='JobMentor' "
                 + "style='max-width:180px;height:auto;margin-bottom:18px;'>" : "";
         return "<div style='background:#f4f7fb;padding:32px 12px;font-family:Arial,sans-serif;color:#24324a;'>"
                 + "<div style='max-width:620px;margin:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px #dce3ef;'>"
@@ -103,7 +103,7 @@ public class EmailService {
                 + "<p style='margin:6px 0;'><strong>ID de oferta:</strong> " + oferta.getId() + "</p>"
                 + "<p style='margin:6px 0;'><strong>Descripción:</strong> " + escape(oferta.getDescripcion()) + "</p></div>"
                 + "<p>" + escape(cierre) + "</p>"
-                + "</div><div style='padding:18px;text-align:center;color:#8492a6;font-size:12px;'>Entrenador Entrevista</div></div></div>";
+                + "</div><div style='padding:18px;text-align:center;color:#8492a6;font-size:12px;'>JobMentor</div></div></div>";
     }
 
     private static String escape(String value) {
