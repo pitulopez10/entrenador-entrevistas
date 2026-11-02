@@ -28,8 +28,16 @@ public class AdminEmpresasServlet extends HttpServlet {
             return;
         }
 
+        String nombre = request.getParameter("nombre");
+
         try {
-            List<Empresa> empresas = empresaDAO.listar();
+            List<Empresa> empresas;
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                empresas = empresaDAO.buscarPorNombre(nombre);
+            } else {
+                empresas = empresaDAO.listar();
+            }
+
             request.setAttribute("empresas", empresas);
             request.getRequestDispatcher("/WEB-INF/views/admin-empresas.jsp")
                     .forward(request, response);

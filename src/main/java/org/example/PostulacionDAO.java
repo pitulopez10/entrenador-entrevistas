@@ -522,4 +522,57 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
 
         return false;
     }
+    public List<Postulacion> listarPorOferta(int ofertaId) throws SQLException {
+        List<Postulacion> postulaciones = new ArrayList<>();
+
+        String sql = """
+                SELECT p.id,
+                       p.fechaPostulacion,
+                       p.estado,
+                       p.mensaje,
+                       po.ci AS postulante_ci,
+                       po.nombre AS nombrePostulante,
+                       po.mail AS mailPostulante,
+                       po.telefono AS telefonoPostulante
+                FROM postulacion p
+                JOIN postulante po ON p.postulante_ci = po.ci
+                WHERE p.ofertalaboral_id = ?
+                ORDER BY p.fechaPostulacion DESC
+                """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setInt(1, ofertaId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Postulacion postulacion = new Postulacion();
+                    postulacion.setId(rs.getInt("id"));
+
+                    if (rs.getDate("fechaPostulacion") != null) {
+                        postulacion.setFechaPostulacion(
+                                rs.getDate("fechaPostulacion").toLocalDate()
+                        );
+                    }
+
+                    postulacion.setEstado(
+                            EstadoPostulacion.valueOf(rs.getString("estado"))
+                    );
+                    postulacion.setMensaje(rs.getString("mensaje"));
+
+                    Postulante postulante = new Postulante();
+                    postulante.setCi(rs.getInt("postulante_ci"));
+                    postulante.setNombre(rs.getString("nombrePostulante"));
+                    postulante.setMail(rs.getString("mailPostulante"));
+                    postulante.setTelefono(rs.getInt("telefonoPostulante"));
+
+                    postulacion.setPostulante(postulante);
+                    postulaciones.add(postulacion);
+                }
+            }
+        }
+
+        return postulaciones;
+    }
 }

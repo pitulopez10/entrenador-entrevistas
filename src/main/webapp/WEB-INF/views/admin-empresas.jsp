@@ -34,19 +34,34 @@
 
 <main class="postulaciones-page">
 
-    <section class="postulaciones-header">
+    <section class="postulaciones-header" style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
         <div>
             <span class="postulaciones-kicker">Panel de Administración</span>
             <h1>Listado de Empresas</h1>
-            <p>Visualizá y gestioná las empresas registradas en la plataforma.</p>
+            <p>Visualizá, buscá y gestioná las empresas registradas en la plataforma.</p>
         </div>
+
+        <!-- BARRA DE BÚSQUEDA POR NOMBRE -->
+        <form method="get" action="${pageContext.request.contextPath}/admin-empresas" style="display: flex; gap: 0.8rem; width: 100%; max-width: 500px;">
+            <input type="text" name="nombre" value="${param.nombre}" placeholder="Buscar por nombre..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem;">
+
+            <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem;">
+                Buscar
+            </button>
+
+            <c:if test="${not empty param.nombre}">
+                <a href="${pageContext.request.contextPath}/admin-empresas" class="btn-outline" style="padding: 0.6rem 1rem; text-decoration: none;">
+                    Limpiar
+                </a>
+            </c:if>
+        </form>
     </section>
 
     <c:if test="${empty empresas}">
         <section class="postulaciones-vacio">
             <div class="postulaciones-vacio-icono">🏢</div>
-            <h2>No hay empresas registradas</h2>
-            <p>Actualmente no se encuentran organizaciones en la base de datos.</p>
+            <h2>No se encontraron empresas</h2>
+            <p>No hay organizaciones registradas que coincidan con el criterio de búsqueda.</p>
         </section>
     </c:if>
 
@@ -110,6 +125,10 @@
 
                         <a href="${pageContext.request.contextPath}/admin-editar-empresa?rut=${empresa.rut}" class="btn-outline">
                             Editar
+                        </a>
+
+                        <a href="${pageContext.request.contextPath}/admin-ofertas-empresa?rut=${empresa.rut}" class="btn-primary">
+                            Ver Ofertas
                         </a>
                     </div>
                 </article>

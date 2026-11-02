@@ -456,4 +456,38 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
 
         return empresa;
     }
+    public List<Empresa> buscarPorNombre(
+            String nombre
+    ) throws SQLException {
+
+        List<Empresa> empresas = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM empresa
+                WHERE LOWER(nombre) LIKE ?
+                ORDER BY nombre ASC
+                """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setString(
+                    1,
+                    "%" + nombre.toLowerCase().trim() + "%"
+            );
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    empresas.add(
+                            crearEmpresaDesdeResultSet(rs)
+                    );
+                }
+            }
+        }
+
+        return empresas;
+    }
 }

@@ -78,8 +78,12 @@
             <p style="margin-top: 0.4rem; background: #f9f9f9; padding: 1rem; border-radius: 6px; white-space: pre-line;"><c:out value="${not empty oferta.requisitos ? oferta.requisitos : 'No se especificaron requisitos'}" /></p>
         </div>
 
-        <div style="text-align: right;">
-            <a href="${pageContext.request.contextPath}/admin-inicio" class="btn-primary" style="text-decoration: none; padding: 0.7rem 1.5rem; display: inline-block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <a href="${pageContext.request.contextPath}/admin-postulantes-oferta?id=${oferta.id}" class="btn-primary" style="text-decoration: none; padding: 0.7rem 1.5rem;">
+                Ver Postulantes de esta Oferta
+            </a>
+
+            <a href="${pageContext.request.contextPath}/admin-inicio" class="btn-outline" style="text-decoration: none; padding: 0.7rem 1.5rem;">
                 Volver a Inicio
             </a>
         </div>

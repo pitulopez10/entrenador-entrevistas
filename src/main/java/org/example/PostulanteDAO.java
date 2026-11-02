@@ -649,4 +649,38 @@ public class PostulanteDAO implements CrudDAO<Postulante, Integer> {
 
         return postulante;
     }
+    public List<Postulante> buscarPorNombre(
+            String nombre
+    ) throws SQLException {
+
+        List<Postulante> postulantes = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM postulante
+                WHERE LOWER(nombre) LIKE ?
+                ORDER BY nombre ASC
+                """;
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            stmt.setString(
+                    1,
+                    "%" + nombre.toLowerCase().trim() + "%"
+            );
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    postulantes.add(
+                            crearPostulanteDesdeResultSet(rs)
+                    );
+                }
+            }
+        }
+
+        return postulantes;
+    }
 }

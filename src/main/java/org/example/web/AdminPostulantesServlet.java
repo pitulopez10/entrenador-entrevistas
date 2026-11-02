@@ -30,9 +30,16 @@ public class AdminPostulantesServlet extends HttpServlet {
             return;
         }
 
+        String nombre = request.getParameter("nombre");
+
         try {
-            // Invocar el método listar() de tu PostulanteDAO
-            List<Postulante> postulantes = postulanteDAO.listar();
+            List<Postulante> postulantes;
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                postulantes = postulanteDAO.buscarPorNombre(nombre);
+            } else {
+                postulantes = postulanteDAO.listar();
+            }
+
             request.setAttribute("postulantes", postulantes);
 
             // Redirigir a la vista JSP de postulantes
@@ -40,7 +47,7 @@ public class AdminPostulantesServlet extends HttpServlet {
                     .forward(request, response);
 
         } catch (SQLException e) {
-            throw new ServletException("Error al listar postulantes desde la base de datos", e);
+            throw new ServletException("Error al consultar postulantes desde la base de datos", e);
         }
     }
 }
