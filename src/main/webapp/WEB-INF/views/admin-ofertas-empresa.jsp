@@ -47,6 +47,10 @@
         </section>
     </c:if>
 
+    <c:if test="${param.baja == 'ok'}">
+        <div class="mensaje-exito">La oferta fue dada de baja correctamente.</div>
+    </c:if>
+
     <c:if test="${not empty ofertas}">
         <section class="postulaciones-lista">
             <c:forEach var="oferta" items="${ofertas}">
@@ -87,6 +91,21 @@
                                 <strong><c:out value="${oferta.descripcion}" /></strong>
                             </div>
                         </div>
+
+                        <c:if test="${oferta.estado != 'TERMINADA'}">
+                            <form method="post"
+                                  action="${pageContext.request.contextPath}/admin-ofertas-empresa"
+                                  onsubmit="return confirm('¿Querés dar de baja esta oferta? Ya no recibirá nuevas postulaciones.');"
+                                  style="margin-top: 20px;">
+                                <input type="hidden" name="ofertaId" value="${oferta.id}">
+                                <input type="hidden" name="rut" value="${empresa.rut}">
+                                <button type="submit"
+                                        class="btn-outline"
+                                        style="color: #b42318; border-color: #efb4ae;">
+                                    Dar de baja oferta
+                                </button>
+                            </form>
+                        </c:if>
                     </div>
                 </article>
             </c:forEach>

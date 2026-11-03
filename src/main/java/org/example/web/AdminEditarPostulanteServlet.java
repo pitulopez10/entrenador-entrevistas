@@ -2,11 +2,14 @@ package org.example.web;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.DTGenero;
+import org.example.CloudinaryService;
 import org.example.Postulante;
 import org.example.PostulanteDAO;
 
@@ -15,9 +18,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 @WebServlet("/admin-editar-postulante")
+@MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class AdminEditarPostulanteServlet extends HttpServlet {
 
     private final PostulanteDAO postulanteDAO = new PostulanteDAO();
+    private final CloudinaryService cloudinaryService = new CloudinaryService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -79,6 +84,18 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
                 postulante.setDatosEstudio(request.getParameter("datosEstudio"));
                 postulante.setDatosExperiencia(request.getParameter("datosExperiencia"));
 
+                Part foto = request.getPart("fotoPerfil");
+                if (foto != null && foto.getSize() > 0) {
+                    String fotoAnterior = postulante.getFotoPerfilPublicId();
+                    java.util.Map<String, String> datos = cloudinaryService.subirImagen(
+                            foto.getInputStream().readAllBytes());
+                    postulante.setFotoPerfil(datos.get("url"));
+                    postulante.setFotoPerfilPublicId(datos.get("publicId"));
+                    if (fotoAnterior != null && !fotoAnterior.isBlank()) {
+                        cloudinaryService.eliminarImagen(fotoAnterior);
+                    }
+                }
+
                 String fechaNacStr = request.getParameter("fechaNacimiento");
                 if (fechaNacStr != null && !fechaNacStr.isEmpty()) {
                     postulante.setFechaNacimiento(LocalDate.parse(fechaNacStr));
@@ -95,7 +112,7 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
 
             response.sendRedirect(request.getContextPath() + "/admin-postulantes");
 
-        } catch (SQLException | NumberFormatException e) {
+        } catch (SQLException | NumberFormatException | java.io.IOException e) {
             throw new ServletException("Error al actualizar la información del postulante", e);
         }
     }

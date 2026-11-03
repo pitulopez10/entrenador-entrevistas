@@ -9,7 +9,7 @@
     <title>Editar Empresa | JobMentor</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=2">
 </head>
 <body>
 
@@ -81,8 +81,14 @@
             RUT: <strong><c:out value="${empresa.rut}" /></strong>
         </p>
 
-        <form method="post" action="${pageContext.request.contextPath}/admin-editar-empresa" class="login-form">
+        <form method="post" action="${pageContext.request.contextPath}/admin-editar-empresa" enctype="multipart/form-data" class="login-form">
             <input type="hidden" name="rut" value="${empresa.rut}">
+
+            <div class="login-field">
+                <label for="logo">Cambiar logo de la empresa</label>
+                <input type="file" id="logo" name="logo" accept="image/*">
+                <small style="color: #666;">Si no seleccionás una imagen, se conservará el logo actual.</small>
+            </div>
 
             <div class="login-field">
                 <label for="nombre">Nombre de la empresa</label>

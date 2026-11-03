@@ -2,20 +2,25 @@ package org.example.web;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.Empresa;
 import org.example.EmpresaDAO;
+import org.example.CloudinaryService;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet("/admin-editar-empresa")
+@MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class AdminEditarEmpresaServlet extends HttpServlet {
 
     private final EmpresaDAO empresaDAO = new EmpresaDAO();
+    private final CloudinaryService cloudinaryService = new CloudinaryService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -73,12 +78,24 @@ public class AdminEditarEmpresaServlet extends HttpServlet {
                 empresa.setSitioWeb(request.getParameter("sitioWeb"));
                 empresa.setDescripcion(request.getParameter("descripcion"));
 
+                Part logo = request.getPart("logo");
+                if (logo != null && logo.getSize() > 0) {
+                    String logoAnterior = empresa.getLogoPublicId();
+                    java.util.Map<String, String> datos = cloudinaryService.subirImagen(
+                            logo.getInputStream().readAllBytes());
+                    empresa.setLogo(datos.get("url"));
+                    empresa.setLogoPublicId(datos.get("publicId"));
+                    if (logoAnterior != null && !logoAnterior.isBlank()) {
+                        cloudinaryService.eliminarImagen(logoAnterior);
+                    }
+                }
+
                 empresaDAO.modificar(empresa);
             }
 
             response.sendRedirect(request.getContextPath() + "/admin-empresas");
 
-        } catch (SQLException | NumberFormatException e) {
+        } catch (SQLException | NumberFormatException | java.io.IOException e) {
             throw new ServletException("Error al modificar la empresa", e);
         }
     }

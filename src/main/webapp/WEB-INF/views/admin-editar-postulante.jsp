@@ -10,7 +10,7 @@
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=2">
 </head>
 <body>
 

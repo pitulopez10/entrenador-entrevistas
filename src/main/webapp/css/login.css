@@ -386,6 +386,34 @@
             );
 }
 
+/* Selector de archivos con el estilo visual de JobMentor */
+.login-field input[type="file"] {
+    min-height: auto;
+    padding: 9px;
+    border: 1px dashed #a9c5e9;
+    border-radius: 14px;
+    background: #f7fbff;
+    color: #617895;
+    cursor: pointer;
+}
+
+.login-field input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2586ff, #0866ee);
+    color: #ffffff;
+    font: 700 13px "Segoe UI", Arial, sans-serif;
+    cursor: pointer;
+    transition: filter .2s ease, transform .2s ease;
+}
+
+.login-field input[type="file"]::file-selector-button:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
 
 /* ==================================================
    OPCIONES

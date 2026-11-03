@@ -247,6 +247,25 @@
     background: #eef5ff;
 }
 
+.form-acciones {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.form-acciones .login-button,
+.form-acciones .btn-accion-sec {
+    flex: 1 1 0;
+    width: auto;
+    min-height: 54px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+}
+
 /* Sin ofertas */
 .estado-vacio {
     padding: 48px 24px;
@@ -614,6 +633,24 @@ button.btn-peligro {
     display: flex;
     flex-direction: column;
     gap: 24px;
+}
+
+.empresa-logo-edicion img,
+.empresa-logo-placeholder {
+    width: 112px;
+    height: 112px;
+    margin: 4px 0 8px;
+    object-fit: contain;
+    border: 1px solid #dbe5f3;
+    border-radius: 22px;
+    background: #f7fbff;
+}
+
+.empresa-logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
 }
 
 .perfil-vacio {

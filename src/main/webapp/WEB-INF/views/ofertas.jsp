@@ -14,7 +14,7 @@
           href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=14">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=15">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
      HEADER
      ========================= -->
 
-<header class="topbar">
+<header class="topbar home-topbar">
 
     <a href="${pageContext.request.contextPath}/ofertas"
        class="logo">
@@ -610,6 +610,15 @@
     </div>
 
 </footer>
+
+<script>
+    const barraInicio = document.querySelector('.home-topbar');
+    const actualizarBarra = () => {
+        barraInicio.classList.toggle('scrolled', window.scrollY > 24);
+    };
+    window.addEventListener('scroll', actualizarBarra, { passive: true });
+    actualizarBarra();
+</script>
 
 </body>
 
