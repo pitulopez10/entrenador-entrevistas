@@ -20,7 +20,7 @@
 
     <div class="nav-actions">
         <span class="btn-outline" style="border: none; color: #666;">
-            Modo Edición | Admin: <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
+            Modo Edicion | <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
         </span>
     </div>
 </header>
@@ -29,7 +29,57 @@
     <section class="login-card" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto; padding: 2rem;">
 
         <h2>Editar Información de la Empresa</h2>
-        <p style="margin-bottom: 1.5rem; color: #666;">RUT: <strong><c:out value="${empresa.rut}" /></strong></p>
+
+        <!-- FOTO DE LA EMPRESA -->
+        <div style="display: flex; justify-content: center; margin: 1rem 0 1.5rem;">
+
+            <c:choose>
+                <c:when test="${not empty empresa.logo}">
+                    <div style="width: 130px; height: 130px;">
+                        <img src="${empresa.logo}"
+                             alt="Logo de ${empresa.nombre}"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                             style="width: 130px;
+                                    height: 130px;
+                                    object-fit: contain;
+                                    border-radius: 50%;
+                                    border: 2px solid #ddd;
+                                    background-color: white;">
+
+                        <div style="width: 130px;
+                                    height: 130px;
+                                    border-radius: 50%;
+                                    background-color: #e9ecef;
+                                    display: none;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 60px;
+                                    border: 2px solid #ddd;">
+                            🏢
+                        </div>
+                    </div>
+                </c:when>
+
+                <c:otherwise>
+                    <div style="width: 130px;
+                                height: 130px;
+                                border-radius: 50%;
+                                background-color: #e9ecef;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 60px;
+                                border: 2px solid #ddd;">
+                        🏢
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+        </div>
+
+        <p style="margin-bottom: 1.5rem; color: #666; text-align: center;">
+            RUT: <strong><c:out value="${empresa.rut}" /></strong>
+        </p>
 
         <form method="post" action="${pageContext.request.contextPath}/admin-editar-empresa" class="login-form">
             <input type="hidden" name="rut" value="${empresa.rut}">

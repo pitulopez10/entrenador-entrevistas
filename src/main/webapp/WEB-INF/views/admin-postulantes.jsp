@@ -29,9 +29,12 @@
 
     <div class="nav-actions">
         <span class="btn-outline" style="border: none;">
-            Admin: <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
+            <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
         </span>
-        <a href="${pageContext.request.contextPath}/logout" class="btn-primary">Cerrar sesión</a>
+
+        <a href="${pageContext.request.contextPath}/logout" class="btn-primary">
+            Cerrar sesión
+        </a>
     </div>
 </header>
 
@@ -70,26 +73,98 @@
 
     <c:if test="${not empty postulantes}">
         <section class="postulaciones-lista">
+
             <c:forEach var="postulante" items="${postulantes}">
+
                 <article class="postulacion-card">
+
                     <div class="postulacion-card-contenido">
+
+                        <!-- FOTO DE PERFIL -->
+                        <div style="margin-bottom: 1rem;">
+
+                            <c:choose>
+                                <c:when test="${not empty postulante.fotoPerfil}">
+
+                                    <div style="width: 120px; height: 120px;">
+
+                                        <img src="${postulante.fotoPerfil}"
+                                             alt="Foto de ${postulante.nombre}"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                             style="width: 120px;
+                                                    height: 120px;
+                                                    object-fit: cover;
+                                                    border-radius: 50%;
+                                                    border: 2px solid #ddd;">
+
+                                        <!-- AVATAR SI FALLA LA IMAGEN -->
+                                        <div style="width: 120px;
+                                                    height: 120px;
+                                                    border-radius: 50%;
+                                                    background-color: #e9ecef;
+                                                    display: none;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    font-size: 55px;
+                                                    border: 2px solid #ddd;">
+                                            👤
+                                        </div>
+
+                                    </div>
+
+                                </c:when>
+
+                                <c:otherwise>
+
+                                    <!-- AVATAR SI NO TIENE FOTO -->
+                                    <div style="width: 120px;
+                                                height: 120px;
+                                                border-radius: 50%;
+                                                background-color: #e9ecef;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                font-size: 55px;
+                                                border: 2px solid #ddd;">
+                                        👤
+                                    </div>
+
+                                </c:otherwise>
+                            </c:choose>
+
+                        </div>
+
+                        <!-- DATOS DEL POSTULANTE -->
                         <div class="postulacion-card-top">
+
                             <div>
-                                <span class="postulacion-empresa">Cédula: <c:out value="${postulante.ci}" /></span>
+                                <span class="postulacion-empresa">
+                                    Cédula: <c:out value="${postulante.ci}" />
+                                </span>
+
                                 <h2><c:out value="${postulante.nombre}" /></h2>
                             </div>
 
                             <c:choose>
                                 <c:when test="${postulante.bloqueado}">
-                                    <span class="estado-postulacion rechazado">Bloqueado</span>
+                                    <span class="estado-postulacion rechazado"
+                                    style="transform: translateY(-125px);">
+                                    Bloqueado
+                                    </span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="estado-postulacion seleccionado">Activo</span>
+                                    <span class="estado-postulacion seleccionado"
+                                     style="transform: translateY(-125px);">
+                                    Activo
+                                    </span>
                                 </c:otherwise>
                             </c:choose>
+
                         </div>
 
+                        <!-- INFORMACIÓN -->
                         <div class="postulacion-info">
+
                             <div class="postulacion-info-item">
                                 <span class="postulacion-info-label">Correo electrónico</span>
                                 <strong><c:out value="${postulante.mail}" /></strong>
@@ -104,42 +179,55 @@
                                 <span class="postulacion-info-label">Localidad</span>
                                 <strong><c:out value="${postulante.localidad != null ? postulante.localidad : 'No especificada'}" /></strong>
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Botones de Acción -->
+                    <!-- BOTONES DE ACCIÓN -->
                     <div class="postulacion-card-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                        <!-- Acción Bloquear / Desbloquear -->
+
+                        <!-- BLOQUEAR / DESBLOQUEAR -->
                         <form method="post" action="${pageContext.request.contextPath}/admin-estado-postulante" style="margin: 0;">
+
                             <input type="hidden" name="ci" value="${postulante.ci}">
+
                             <c:choose>
                                 <c:when test="${postulante.bloqueado}">
                                     <input type="hidden" name="accion" value="desbloquear">
+
                                     <button type="submit" class="btn-primary" style="background-color: #28a745; border-color: #28a745;">
                                         Desbloquear
                                     </button>
                                 </c:when>
+
                                 <c:otherwise>
                                     <input type="hidden" name="accion" value="bloquear">
+
                                     <button type="submit" class="btn-outline" style="color: #dc3545; border-color: #dc3545;">
                                         Bloquear
                                     </button>
                                 </c:otherwise>
                             </c:choose>
+
                         </form>
 
-                        <!-- Acción Editar -->
+                        <!-- EDITAR -->
                         <a href="${pageContext.request.contextPath}/admin-editar-postulante?ci=${postulante.ci}" class="btn-outline">
                             Editar
                         </a>
 
-                        <!-- BOTÓN DE VER POSTULACIONES -->
+                        <!-- VER POSTULACIONES -->
                         <a href="${pageContext.request.contextPath}/admin-postulaciones-postulante?ci=${postulante.ci}" class="btn-primary">
                             Ver Postulaciones
                         </a>
+
                     </div>
+
                 </article>
+
             </c:forEach>
+
         </section>
     </c:if>
 

@@ -23,7 +23,7 @@
 
     <div class="nav-actions">
         <span class="btn-outline" style="border: none; color: #666;">
-            Modo Consulta | Admin: <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
+            Modo Consulta | <strong><c:out value="${sessionScope.adminLogueado.usuario}" /></strong>
         </span>
     </div>
 </header>

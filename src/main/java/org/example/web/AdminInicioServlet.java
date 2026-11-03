@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import org.example.Area;
 import org.example.AreaDAO;
 import org.example.OfertaLaboral;
@@ -26,34 +27,43 @@ public class AdminInicioServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
+
+        // Verificar que el administrador haya iniciado sesión
         if (session == null || session.getAttribute("adminLogueado") == null) {
             response.sendRedirect(request.getContextPath() + "/login-admin");
             return;
         }
 
         try {
-            // Cargar áreas para el desplegable del buscador
+            // Obtener las áreas para el filtro
             List<Area> areas = areaDAO.listar();
             request.setAttribute("areas", areas);
 
-            // Filtrar ofertas por área si viene el parámetro 'area'
+            // Obtener los parámetros enviados desde el formulario
             String areaParam = request.getParameter("area");
-            List<OfertaLaboral> ofertas;
+            String nombreParam = request.getParameter("nombre");
 
+            Integer areaId = null;
+
+            // Convertir el área a número si se seleccionó alguna
             if (areaParam != null && !areaParam.trim().isEmpty()) {
-                int areaId = Integer.parseInt(areaParam);
-                ofertas = ofertaLaboralDAO.listarPorArea(areaId);
-            } else {
-                ofertas = ofertaLaboralDAO.listar();
+                areaId = Integer.parseInt(areaParam);
             }
+
+            // Aplicar los filtros por área y título
+            List<OfertaLaboral> ofertas =
+                    ofertaLaboralDAO.listarPorFiltros(areaId, nombreParam);
 
             request.setAttribute("ofertas", ofertas);
 
+            // Mostrar el JSP
             request.getRequestDispatcher("/WEB-INF/views/admin-inicio.jsp")
                     .forward(request, response);
 
         } catch (SQLException | NumberFormatException e) {
-            throw new ServletException("Error al consultar las ofertas para el administrador", e);
+            throw new ServletException(
+                    "Error al consultar las ofertas para el administrador", e
+            );
         }
     }
 }
