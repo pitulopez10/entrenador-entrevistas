@@ -278,13 +278,12 @@
                     </label>
 
 
-                    <a href="#"
+                    <a href="${pageContext.request.contextPath}/recuperar-contrasena"
                        class="forgot-password">
                         ¿Olvidaste tu contraseña?
                     </a>
 
                 </div>
-
 
                 <button type="submit"
                         class="login-button">

@@ -33,6 +33,83 @@
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
+.recuperacion-page {
+    min-height: 100vh;
+}
+
+.recuperacion-card {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    width: min(520px, 95%);
+    min-height: 0;
+    padding: 42px;
+}
+
+.recuperacion-card h1,
+.recuperacion-card > p,
+.recuperacion-card > .login-error,
+.recuperacion-card > .mensaje-exito {
+    width: 100%;
+    text-align: center;
+}
+
+.recuperacion-card .login-form {
+    width: 100%;
+}
+
+.recuperacion-card h1 {
+    margin: 12px 0 8px;
+    color: #16315f;
+}
+
+.recuperacion-logo {
+    display: block;
+    width: 150px;
+    height: auto;
+    margin: 0 auto 20px;
+}
+
+.recuperacion-card .btn-primary,
+.recuperacion-card .btn-accion-sec {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    margin-top: 14px;
+    border-radius: 999px;
+    box-sizing: border-box;
+}
+
+.btn-recuperacion-secundario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 54px;
+    box-sizing: border-box;
+    margin-top: 14px;
+    border: 1px solid #b9d1ef;
+    border-radius: 999px;
+    background: #f7fbff;
+    color: #1475f7;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.btn-recuperacion-secundario:hover {
+    background: #eaf4ff;
+    border-color: #1475f7;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 560px) {
+    .recuperacion-card {
+        padding: 28px 22px;
+    }
+}
+
 
 /* ==================================================
    TARJETA PRINCIPAL

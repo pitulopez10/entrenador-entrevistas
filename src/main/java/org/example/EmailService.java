@@ -16,6 +16,37 @@ import java.util.Properties;
 /** Servicio de notificaciones por correo. Se configura mediante variables de entorno. */
 public class EmailService {
 
+    public void enviarRecuperacion(String destinatario, String enlace) throws MessagingException {
+        enviarRecuperacion(destinatario, enlace, null);
+    }
+
+    public void enviarRecuperacion(String destinatario, String enlace, InputStream logo) throws MessagingException {
+        String username = requiredConfig("SMTP_USERNAME");
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true"); properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", config("SMTP_HOST", "smtp.gmail.com"));
+        properties.put("mail.smtp.port", config("SMTP_PORT", "587"));
+        Session session = Session.getInstance(properties);
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(config("SMTP_FROM", username)));
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));
+        message.setSubject("Restablecer contraseña - JobMentor", "UTF-8");
+        MimeMultipart content = new MimeMultipart("related");
+        MimeBodyPart html = new MimeBodyPart();
+        String logoHtml = logo == null ? "" : "<img src='cid:logo-app' alt='JobMentor' style='max-width:180px;margin-bottom:18px'>";
+        html.setContent("<div style='background:#f4f7fb;padding:32px 12px;font-family:Arial;color:#24324a'><div style='max-width:620px;margin:auto;background:#fff;border-radius:18px;overflow:hidden'><div style='background:#14213d;padding:28px;text-align:center'>" + logoHtml + "<h1 style='color:#fff;font-size:24px;margin:0'>Restablecé tu contraseña</h1></div><div style='padding:30px'><p>Recibimos una solicitud para cambiar tu contraseña de JobMentor.</p><p style='text-align:center;margin:28px 0'><a style='background:#1475f7;color:white;padding:13px 24px;border-radius:24px;text-decoration:none;font-weight:bold' href='" + enlace + "'>Cambiar contraseña</a></p><p>Este enlace vence en 10 minutos y sólo puede utilizarse una vez.</p></div><div style='padding:18px;text-align:center;color:#8492a6;font-size:12px'>JobMentor</div></div></div>", "text/html; charset=UTF-8");
+        content.addBodyPart(html);
+        if (logo != null) {
+            try {
+                MimeBodyPart image = new MimeBodyPart();
+                image.setDataHandler(new jakarta.activation.DataHandler(new jakarta.mail.util.ByteArrayDataSource(logo, "image/png")));
+                image.setHeader("Content-ID", "<logo-app>"); image.setDisposition(MimeBodyPart.INLINE); content.addBodyPart(image);
+            } catch (IOException e) { throw new MessagingException("No se pudo adjuntar el logo", e); }
+        }
+        message.setContent(content);
+        try (Transport transport = session.getTransport("smtp")) { transport.connect(username, requiredConfig("SMTP_PASSWORD")); transport.sendMessage(message, message.getAllRecipients()); }
+    }
+
     public void enviarConfirmacionPostulacion(Postulante postulante,
                                                OfertaLaboral oferta) throws MessagingException {
         enviarConfirmacionPostulacion(postulante, oferta, null);

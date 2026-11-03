@@ -86,6 +86,8 @@
                            required>
                 </div>
 
+                <a href="${pageContext.request.contextPath}/recuperar-contrasena" class="forgot-password">¿Olvidaste tu contraseña?</a>
+
                 <button type="submit" class="login-button">
                     Iniciar sesión
                 </button>
