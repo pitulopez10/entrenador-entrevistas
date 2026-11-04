@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.example.Entrevista;
@@ -29,6 +28,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @WebServlet("/entrevista")
@@ -247,6 +247,10 @@ public class EntrevistaServlet extends HttpServlet {
 
         switch (accion) {
 
+            case "generarRespuestaDemo":
+                generarRespuestaDemo(request, response);
+                break;
+
             case "generar":
 
                 generarEntrevista(
@@ -291,6 +295,28 @@ public class EntrevistaServlet extends HttpServlet {
 
                 break;
         }
+    }
+
+    private void generarRespuestaDemo(HttpServletRequest request,
+                                      HttpServletResponse response)
+            throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        try {
+            Pregunta pregunta = new Pregunta();
+            pregunta.setTexto(request.getParameter("pregunta"));
+            pregunta.setTipo(org.example.TipoPregunta.valueOf(request.getParameter("tipo")));
+            pregunta.setDificultad(org.example.TipoDificultad.valueOf(request.getParameter("dificultad")));
+            String texto = iaService.generarRespuestaEjemplo(pregunta);
+            response.getWriter().write("{\"respuesta\":\"" + jsonEscape(texto) + "\"}");
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"No se pudo generar la respuesta de ejemplo.\"}");
+        }
+    }
+
+    private String jsonEscape(String texto) {
+        return texto.replace("\\", "\\\\").replace("\"", "\\\"")
+                .replace("\r", "\\r").replace("\n", "\\n");
     }
 
 

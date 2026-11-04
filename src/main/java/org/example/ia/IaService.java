@@ -17,4 +17,6 @@ public interface IaService {
             List<Pregunta> preguntas,
             List<Respuesta> respuestas
     ) throws Exception;
+
+    String generarRespuestaEjemplo(Pregunta pregunta) throws Exception;
 }

@@ -186,6 +186,20 @@ public class GeminiIaService implements IaService {
         );
     }
 
+    @Override
+    public String generarRespuestaEjemplo(Pregunta pregunta) throws Exception {
+        String prompt = """
+                Actuá como un candidato en una entrevista laboral.
+                Generá una respuesta de ejemplo, natural y profesional, para la siguiente pregunta.
+                Debe tener entre 80 y 140 palabras, estar escrita en primera persona y no inventar datos demasiado específicos.
+                Pregunta: %s
+                Tipo: %s
+                Dificultad: %s
+                Respondé únicamente con el texto de la respuesta, sin comillas ni títulos.
+                """.formatted(pregunta.getTexto(), pregunta.getTipo(), pregunta.getDificultad());
+        return generarContenido(prompt, false).trim();
+    }
+
 
     // ==================================================
     // PROMPT PARA GENERAR PREGUNTAS

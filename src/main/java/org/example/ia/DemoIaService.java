@@ -219,6 +219,16 @@ public class DemoIaService implements IaService {
                 """;
     }
 
+    @Override
+    public String generarRespuestaEjemplo(Pregunta pregunta) {
+        return switch (pregunta.getTipo()) {
+            case TECNICA -> "Analizaría el problema, revisaría los requisitos y dividiría la solución en pasos claros. Luego implementaría una alternativa mantenible, probaría los casos principales y documentaría las decisiones tomadas.";
+            case SITUACIONAL -> "Primero mantendría la calma y buscaría entender la situación completa. Después priorizaría las tareas, comunicaría el problema al equipo y propondría una solución concreta, haciendo seguimiento hasta obtener el resultado esperado.";
+            case CONDUCTUAL -> "En una situación similar, asumiría la responsabilidad, organizaría las prioridades y mantendría una comunicación clara con el equipo. Buscaría aprender de la experiencia y aplicar esa mejora en futuros desafíos.";
+            case GENERAL -> "Me enfocaría en comprender el objetivo, organizar mis prioridades y comunicar claramente las decisiones tomadas. También pediría retroalimentación para asegurar un buen resultado y seguir mejorando.";
+        };
+    }
+
 
     // ==================================================
     // MÉTODO AUXILIAR

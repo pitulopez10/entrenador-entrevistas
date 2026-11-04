@@ -173,6 +173,11 @@
             <c:out value="${preguntaActual.texto}" />
         </h2>
 
+        <div id="datosPreguntaDemo"
+             data-texto="<c:out value='${preguntaActual.texto}' />"
+             data-tipo="${preguntaActual.tipo}"
+             data-dificultad="${preguntaActual.dificultad}"></div>
+
 
         <form method="post"
               action="${pageContext.request.contextPath}/entrevista"
@@ -215,6 +220,12 @@
                     </span>
 
                 </div>
+
+                <button type="button"
+                        class="btn-respuesta-demo"
+                        id="completarRespuestaDemo">
+                    Completar respuesta de ejemplo
+                </button>
 
             </div>
 
@@ -332,6 +343,41 @@
 
     const totalPreguntas =
         ${totalPreguntas};
+
+    const botonRespuestaDemo =
+        document.getElementById("completarRespuestaDemo");
+
+    if (botonRespuestaDemo) {
+        botonRespuestaDemo.addEventListener("click", async function () {
+            const respuesta = document.getElementById("respuesta");
+            botonRespuestaDemo.disabled = true;
+            botonRespuestaDemo.textContent = "Generando respuesta con IA...";
+            try {
+                const preguntaDemo = document.getElementById("datosPreguntaDemo").dataset;
+                const datos = new URLSearchParams({
+                    accion: "generarRespuestaDemo",
+                    pregunta: preguntaDemo.texto,
+                    tipo: preguntaDemo.tipo,
+                    dificultad: preguntaDemo.dificultad
+                });
+                const resultado = await fetch("${pageContext.request.contextPath}/entrevista", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+                    body: datos
+                });
+                const json = await resultado.json();
+                if (!resultado.ok || json.error) throw new Error(json.error);
+                respuesta.value = json.respuesta;
+                respuesta.dispatchEvent(new Event("input", { bubbles: true }));
+                respuesta.focus();
+            } catch (error) {
+                alert("No se pudo generar la respuesta de ejemplo. Revisá la configuración de Gemini.");
+            } finally {
+                botonRespuestaDemo.disabled = false;
+                botonRespuestaDemo.textContent = "Completar respuesta de ejemplo";
+            }
+        });
+    }
 
 
     formRespuesta.addEventListener(

@@ -554,6 +554,25 @@
     font-size: 12px;
 }
 
+.btn-respuesta-demo {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border: 1px solid #b9d1ef;
+    border-radius: 999px;
+    background: #f7fbff;
+    color: #1475f7;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.btn-respuesta-demo:hover {
+    background: #eaf4ff;
+    border-color: #1475f7;
+    transform: translateY(-1px);
+}
+
 
 /* ==================================================
    ACCIONES
