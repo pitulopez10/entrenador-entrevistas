@@ -10,6 +10,44 @@
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
+.resumen-postulaciones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 30px;
+}
+
+.resumen-postulacion-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 22px 24px;
+    background: linear-gradient(135deg, #153d75, #1475f7);
+    border: 1px solid #126cf0;
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(20, 108, 240, .18);
+}
+
+.resumen-postulacion-numero {
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.resumen-postulacion-label {
+    color: rgba(255, 255, 255, .9);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.resumen-postulacion-card.seleccionado,
+.resumen-postulacion-card.rechazado { background: linear-gradient(135deg, #153d75, #1475f7); }
+
+@media (max-width: 650px) {
+    .resumen-postulaciones { grid-template-columns: 1fr; }
+}
+
 
 /* ==================================================
    CABECERA DE LA PÁGINA

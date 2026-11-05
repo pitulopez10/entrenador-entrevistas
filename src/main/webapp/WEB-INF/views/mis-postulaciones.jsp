@@ -18,7 +18,7 @@
           href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=16">
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
@@ -131,6 +131,21 @@
 
         </a>
 
+    </section>
+
+    <section class="resumen-postulaciones" aria-label="Resumen de postulaciones">
+        <article class="resumen-postulacion-card">
+            <span class="resumen-postulacion-numero"><c:out value="${totalPostulaciones}" /></span>
+            <span class="resumen-postulacion-label">Total de postulaciones</span>
+        </article>
+        <article class="resumen-postulacion-card seleccionado">
+            <span class="resumen-postulacion-numero"><c:out value="${postulacionesSeleccionadas}" /></span>
+            <span class="resumen-postulacion-label">Veces seleccionado</span>
+        </article>
+        <article class="resumen-postulacion-card rechazado">
+            <span class="resumen-postulacion-numero"><c:out value="${postulacionesRechazadas}" /></span>
+            <span class="resumen-postulacion-label">Veces rechazado</span>
+        </article>
     </section>
 
 
@@ -292,6 +307,14 @@
             </c:forEach>
 
         </section>
+
+        <c:if test="${totalPaginas > 1}">
+            <nav class="paginacion-ofertas" aria-label="Páginas de postulaciones">
+                <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina - 1}">← Anterior</a></c:if>
+                <span class="pagina-indicador">Página ${pagina} de ${totalPaginas}</span>
+                <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina + 1}">Siguiente →</a></c:if>
+            </nav>
+        </c:if>
 
     </c:if>
 

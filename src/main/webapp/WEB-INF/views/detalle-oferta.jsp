@@ -318,7 +318,7 @@
                     </span>
 
                     <strong>
-                        ${oferta.empresa.nombre}
+                        <a class="empresa-link" href="${pageContext.request.contextPath}/empresa-publica?rut=${oferta.empresa.rut}">${oferta.empresa.nombre}</a>
                     </strong>
 
                 </div>

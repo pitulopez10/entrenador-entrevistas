@@ -14,7 +14,7 @@
           href="${pageContext.request.contextPath}/img/logo.png">
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=15">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=16">
 </head>
 
 <body>
@@ -350,7 +350,7 @@
                             Empresa:
                         </strong>
 
-                            ${oferta.empresa.nombre}
+                            <a class="empresa-link" href="${pageContext.request.contextPath}/empresa-publica?rut=${oferta.empresa.rut}">${oferta.empresa.nombre}</a>
 
                     </p>
 
@@ -389,6 +389,20 @@
             </c:forEach>
 
         </div>
+
+        <c:if test="${totalPaginas > 1}">
+            <nav class="paginacion-ofertas" aria-label="Páginas de ofertas">
+                <c:if test="${pagina > 1}">
+                    <a href="${pageContext.request.contextPath}/ofertas?pagina=${pagina - 1}&area=${areaSeleccionada}&titulo=${tituloBuscado}"
+                       class="pagina-enlace">← Anterior</a>
+                </c:if>
+                <span class="pagina-indicador">Página ${pagina} de ${totalPaginas}</span>
+                <c:if test="${pagina < totalPaginas}">
+                    <a href="${pageContext.request.contextPath}/ofertas?pagina=${pagina + 1}&area=${areaSeleccionada}&titulo=${tituloBuscado}"
+                       class="pagina-enlace">Siguiente →</a>
+                </c:if>
+            </nav>
+        </c:if>
 
     </section>
 

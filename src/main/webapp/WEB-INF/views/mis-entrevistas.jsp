@@ -17,7 +17,7 @@
           type="image/png"
           href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
+          href="${pageContext.request.contextPath}/css/ofertas.css?v=16">
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/entrevista.css?v=4">
@@ -254,6 +254,14 @@
                 </c:forEach>
 
             </section>
+
+            <c:if test="${totalPaginas > 1}">
+                <nav class="paginacion-ofertas" aria-label="Páginas de entrevistas">
+                    <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina - 1}">← Anterior</a></c:if>
+                    <span class="pagina-indicador">Página ${pagina} de ${totalPaginas}</span>
+                    <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina + 1}">Siguiente →</a></c:if>
+                </nav>
+            </c:if>
 
         </c:otherwise>
 

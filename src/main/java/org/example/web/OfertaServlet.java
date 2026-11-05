@@ -14,6 +14,7 @@ import org.example.OfertaLaboralDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 
 @WebServlet("/ofertas")
 public class OfertaServlet extends HttpServlet {
@@ -33,13 +34,34 @@ public class OfertaServlet extends HttpServlet {
             Integer areaId = areaParam != null && !areaParam.isBlank()
                     ? Integer.parseInt(areaParam)
                     : null;
-            List<OfertaLaboral> ofertas =
+            List<OfertaLaboral> todasLasOfertas =
                     ofertaLaboralDAO.listarPorFiltros(areaId, titulo);
+
+            int pagina = 1;
+            try {
+                pagina = Math.max(1, Integer.parseInt(request.getParameter("pagina")));
+            } catch (NumberFormatException ignored) {
+                // Se utiliza la primera página cuando el parámetro no es válido.
+            }
+
+            int porPagina = 10;
+            int totalPaginas = Math.max(1,
+                    (int) Math.ceil(todasLasOfertas.size() / (double) porPagina));
+            pagina = Math.min(pagina, totalPaginas);
+            int desde = (pagina - 1) * porPagina;
+            int hasta = Math.min(desde + porPagina, todasLasOfertas.size());
+            List<OfertaLaboral> ofertas = todasLasOfertas.isEmpty()
+                    ? new ArrayList<>()
+                    : todasLasOfertas.subList(desde, hasta);
 
             List<Area> areas = areaDAO.listar();
 
             request.setAttribute("ofertas", ofertas);
             request.setAttribute("areas", areas);
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("totalPaginas", totalPaginas);
+            request.setAttribute("areaSeleccionada", areaParam);
+            request.setAttribute("tituloBuscado", titulo);
 
             request.getRequestDispatcher(
                     "/WEB-INF/views/ofertas.jsp"

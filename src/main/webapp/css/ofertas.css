@@ -477,6 +477,61 @@ a {
     gap: 25px;
 }
 
+.paginacion-ofertas {
+    width: 100%;
+    grid-column: 1 / -1;
+    clear: both;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 34px auto 8px;
+}
+
+.pagina-enlace {
+    min-width: 112px;
+    padding: 11px 20px;
+    border: 1px solid #1475f7;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #1475f7;
+    text-align: center;
+    font-weight: 700;
+    transition: .2s ease;
+}
+
+.pagina-enlace:hover {
+    background: linear-gradient(135deg, #2586ff, #0866ee);
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(20, 117, 247, .2);
+    transform: translateY(-1px);
+}
+
+.pagina-indicador {
+    min-width: 120px;
+    color: #617895;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media (max-width: 550px) {
+    .paginacion-ofertas {
+        gap: 10px;
+    }
+
+    .pagina-enlace {
+        min-width: 92px;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .pagina-indicador {
+        min-width: auto;
+        font-size: 13px;
+    }
+}
+
 .offer-card {
     padding: 27px;
 
@@ -1225,6 +1280,25 @@ a {
     color: #1475f7;
     font-weight: 700;
 }
+
+.empresa-link { color: #1475f7; font-weight: 700; }
+.empresa-link:hover { text-decoration: underline; }
+.empresa-publica-page { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 80px; }
+.empresa-publica-hero { display:flex; align-items:center; gap:28px; margin:28px 0 46px; padding:36px; background:linear-gradient(135deg,#153d75,#1475f7); border-radius:26px; color:#fff; }
+.empresa-publica-hero img, .empresa-publica-avatar { width:112px; height:112px; flex-shrink:0; object-fit:contain; border-radius:24px; background:#fff; }
+.empresa-publica-hero .logo-fallback { display:none; }
+.empresa-publica-avatar { display:flex; align-items:center; justify-content:center; font-size:46px; }
+.empresa-publica-hero h1 { margin:5px 0 10px; font-size:38px; }
+.empresa-publica-hero p { max-width:700px; margin:0 0 10px; opacity:.9; }
+.empresa-publica-web { color:#fff; font-weight:700; text-decoration:underline; }
+.empresa-publica-datos { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin:-22px 0 44px; padding:22px 26px; background:#fff; border:1px solid #dbe5f3; border-radius:18px; box-shadow:0 8px 22px rgba(25,65,120,.06); }
+.empresa-publica-datos div { display:flex; flex-direction:column; gap:5px; }
+.empresa-publica-datos span { color:#71849f; font-size:13px; font-weight:700; text-transform:uppercase; }
+.empresa-publica-datos strong { color:#173561; font-size:15px; }
+.empresa-publica-datos a { color:#1475f7; }
+.empresa-publica-ofertas h2 { margin:5px 0 28px; color:#16315f; font-size:34px; }
+.empresa-publica-vacio { padding:28px; background:#fff; border:1px solid #dbe5f3; border-radius:18px; color:#617895; }
+@media (max-width:650px) { .empresa-publica-hero { align-items:flex-start; flex-direction:column; padding:26px; } .empresa-publica-hero h1 { font-size:30px; } .empresa-publica-datos { grid-template-columns:1fr; margin-top:-18px; } }
 
 
 /* ==================================================

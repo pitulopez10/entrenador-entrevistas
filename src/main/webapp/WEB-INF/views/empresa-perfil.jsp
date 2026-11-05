@@ -26,7 +26,9 @@
                 <c:when test="${not empty empresa.logo}">
                     <img class="perfil-logo"
                          src="<c:out value='${empresa.logo}' />"
-                         alt="Logo de la empresa">
+                         alt="Logo de la empresa"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="perfil-avatar" style="display:none;">🏢</div>
                 </c:when>
                 <c:otherwise>
                     <div class="perfil-avatar"><c:out value="${inicial}" /></div>
