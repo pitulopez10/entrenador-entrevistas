@@ -227,6 +227,18 @@
                     Completar respuesta de ejemplo
                 </button>
 
+                <button type="button"
+                        class="btn-microfono"
+                        id="activarMicrofono"
+                        aria-pressed="false">
+                    🎙️ Responder con micrófono
+                </button>
+
+                <span class="microfono-estado"
+                      id="estadoMicrofono"
+                      role="status"
+                      aria-live="polite"></span>
+
             </div>
 
 
@@ -346,6 +358,75 @@
 
     const botonRespuestaDemo =
         document.getElementById("completarRespuestaDemo");
+
+    const botonMicrofono =
+            document.getElementById("activarMicrofono");
+    const estadoMicrofono =
+            document.getElementById("estadoMicrofono");
+    const respuesta =
+            document.getElementById("respuesta");
+
+    const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (botonMicrofono) {
+        if (!SpeechRecognition) {
+            botonMicrofono.disabled = true;
+            botonMicrofono.title = "Tu navegador no admite transcripción por voz";
+            estadoMicrofono.textContent = "Usá Chrome o Edge para responder por voz.";
+        } else {
+            const reconocimiento = new SpeechRecognition();
+            reconocimiento.lang = "es-UY";
+            reconocimiento.continuous = true;
+            reconocimiento.interimResults = true;
+            let transcripcionFinal = "";
+
+            reconocimiento.onstart = function () {
+                botonMicrofono.classList.add("escuchando");
+                botonMicrofono.setAttribute("aria-pressed", "true");
+                botonMicrofono.textContent = "⏹️ Detener micrófono";
+                estadoMicrofono.textContent = "Escuchando... hablá con naturalidad.";
+            };
+
+            reconocimiento.onresult = function (evento) {
+                let transcripcionIntermedia = "";
+                for (let i = evento.resultIndex; i < evento.results.length; i++) {
+                    const texto = evento.results[i][0].transcript;
+                    if (evento.results[i].isFinal) {
+                        transcripcionFinal += texto + " ";
+                    } else {
+                        transcripcionIntermedia += texto;
+                    }
+                }
+                respuesta.value = (transcripcionFinal + transcripcionIntermedia).trim();
+                respuesta.dispatchEvent(new Event("input", { bubbles: true }));
+            };
+
+            reconocimiento.onerror = function (evento) {
+                estadoMicrofono.textContent = evento.error === "not-allowed"
+                        ? "Permití el acceso al micrófono para continuar."
+                        : "No se pudo transcribir la voz. Intentá nuevamente.";
+            };
+
+            reconocimiento.onend = function () {
+                botonMicrofono.classList.remove("escuchando");
+                botonMicrofono.setAttribute("aria-pressed", "false");
+                botonMicrofono.textContent = "🎙️ Responder con micrófono";
+                if (estadoMicrofono.textContent === "Escuchando... hablá con naturalidad.") {
+                    estadoMicrofono.textContent = "Transcripción lista para revisar.";
+                }
+            };
+
+            botonMicrofono.addEventListener("click", function () {
+                if (botonMicrofono.getAttribute("aria-pressed") === "true") {
+                    reconocimiento.stop();
+                } else {
+                    transcripcionFinal = respuesta.value.trim();
+                    reconocimiento.start();
+                }
+            });
+        }
+    }
 
     if (botonRespuestaDemo) {
         botonRespuestaDemo.addEventListener("click", async function () {

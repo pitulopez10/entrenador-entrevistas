@@ -297,9 +297,11 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
         List<Postulacion> postulaciones = new ArrayList<>();
 
         String sql = """
-            SELECT p.*, o.titulo AS tituloOferta, o.id AS ofertaId, e.nombre AS nombreEmpresa
+            SELECT p.*, o.titulo AS tituloOferta, o.id AS ofertaId,
+                   a.nombre AS nombreArea, e.nombre AS nombreEmpresa
             FROM postulacion p
             JOIN ofertalaboral o ON p.ofertalaboral_id = o.id
+            JOIN area a ON o.area_id = a.id
             JOIN empresa e ON o.empresa_rut = e.rut
             WHERE p.postulante_ci = ?
             ORDER BY p.fechaPostulacion
@@ -325,6 +327,11 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
                     OfertaLaboral oferta = new OfertaLaboral();
                     oferta.setId(rs.getInt("ofertaId"));
                     oferta.setTitulo(rs.getString("tituloOferta"));
+
+                    Area area = new Area();
+                    area.setNombre(rs.getString("nombreArea"));
+                    oferta.setArea(area);
+
                     postulacion.setOfertaLaboral(oferta);
 
                     // Idem con una empresa

@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpSession;
 import org.example.Entrevista;
 import org.example.EntrevistaDAO;
 import org.example.Postulante;
+import org.example.EstadoEntrevista;
+import org.example.AreaDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,6 +23,7 @@ public class MisEntrevistasServlet extends HttpServlet {
 
     private final EntrevistaDAO entrevistaDAO =
             new EntrevistaDAO();
+    private final AreaDAO areaDAO = new AreaDAO();
 
 
     @Override
@@ -65,16 +68,43 @@ public class MisEntrevistasServlet extends HttpServlet {
                             postulante.getCi()
                     );
 
+            long finalizadas = entrevistas.stream()
+                    .filter(entrevista -> entrevista.getEstado() == EstadoEntrevista.TERMINADA)
+                    .count();
+            request.setAttribute("totalEntrevistas", entrevistas.size());
+            request.setAttribute("entrevistasEnCurso", entrevistas.size() - finalizadas);
+            request.setAttribute("entrevistasFinalizadas", finalizadas);
+
+            String nombreBuscado = valor(request.getParameter("nombre"));
+            String areaBuscada = valor(request.getParameter("area"));
+            List<Entrevista> entrevistasFiltradas = new ArrayList<>();
+            for (Entrevista entrevista : entrevistas) {
+                String titulo = entrevista.getOfertaLaboral() != null
+                        && entrevista.getOfertaLaboral().getTitulo() != null
+                        ? entrevista.getOfertaLaboral().getTitulo().toLowerCase() : "";
+                String area = entrevista.getOfertaLaboral() != null
+                        && entrevista.getOfertaLaboral().getArea() != null
+                        && entrevista.getOfertaLaboral().getArea().getNombre() != null
+                        ? entrevista.getOfertaLaboral().getArea().getNombre().toLowerCase() : "";
+                if ((nombreBuscado.isEmpty() || titulo.contains(nombreBuscado))
+                        && (areaBuscada.isEmpty() || area.contains(areaBuscada))) {
+                    entrevistasFiltradas.add(entrevista);
+                }
+            }
+
 
             int pagina = pagina(request.getParameter("pagina"));
-            int totalPaginas = Math.max(1, (int) Math.ceil(entrevistas.size() / 6.0));
+            int totalPaginas = Math.max(1, (int) Math.ceil(entrevistasFiltradas.size() / 6.0));
             pagina = Math.min(pagina, totalPaginas);
             int desde = (pagina - 1) * 6;
-            int hasta = Math.min(desde + 6, entrevistas.size());
-            request.setAttribute("entrevistas", entrevistas.isEmpty()
-                    ? new ArrayList<>() : entrevistas.subList(desde, hasta));
+            int hasta = Math.min(desde + 6, entrevistasFiltradas.size());
+            request.setAttribute("entrevistas", entrevistasFiltradas.isEmpty()
+                    ? new ArrayList<>() : entrevistasFiltradas.subList(desde, hasta));
             request.setAttribute("pagina", pagina);
             request.setAttribute("totalPaginas", totalPaginas);
+            request.setAttribute("nombreBuscado", nombreBuscado);
+            request.setAttribute("areaBuscada", areaBuscada);
+            request.setAttribute("areas", areaDAO.listar());
 
 
             request.getRequestDispatcher(
@@ -97,5 +127,9 @@ public class MisEntrevistasServlet extends HttpServlet {
     private int pagina(String valor) {
         try { return Math.max(1, Integer.parseInt(valor)); }
         catch (Exception e) { return 1; }
+    }
+
+    private String valor(String valor) {
+        return valor == null ? "" : valor.trim().toLowerCase();
     }
 }

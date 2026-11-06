@@ -21,6 +21,8 @@
 
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/entrevista.css?v=4">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=2">
 </head>
 
 <body>
@@ -94,6 +96,41 @@
         </p>
 
     </section>
+
+    <section class="resumen-postulaciones resumen-entrevistas" aria-label="Resumen de entrevistas">
+        <article class="resumen-postulacion-card">
+            <span class="resumen-postulacion-numero"><c:out value="${totalEntrevistas}" /></span>
+            <span class="resumen-postulacion-label">Total de entrevistas inscriptas</span>
+        </article>
+        <article class="resumen-postulacion-card seleccionado">
+            <span class="resumen-postulacion-numero"><c:out value="${entrevistasEnCurso}" /></span>
+            <span class="resumen-postulacion-label">Entrevistas en curso</span>
+        </article>
+        <article class="resumen-postulacion-card rechazado">
+            <span class="resumen-postulacion-numero"><c:out value="${entrevistasFinalizadas}" /></span>
+            <span class="resumen-postulacion-label">Entrevistas finalizadas</span>
+        </article>
+    </section>
+
+    <form method="get" action="${pageContext.request.contextPath}/mis-entrevistas" class="search-box entrevistas-search-box">
+        <div class="search-field search-title-field">
+            <label for="nombre">Nombre de la entrevista</label>
+            <input type="search" name="nombre" id="nombre" value="<c:out value='${nombreBuscado}'/>" placeholder="Ej.: Desarrollador">
+        </div>
+        <div class="search-field search-title-field">
+            <label for="area">Área profesional</label>
+            <select name="area" id="area">
+                <option value="">Todas las áreas</option>
+                <c:forEach var="areaItem" items="${areas}">
+                    <option value="${areaItem.nombre}"
+                            <c:if test="${param.area eq areaItem.nombre}">selected</c:if>>
+                        <c:out value="${areaItem.nombre}" />
+                    </option>
+                </c:forEach>
+            </select>
+        </div>
+        <button type="submit" class="search-btn">Buscar entrevistas</button>
+    </form>
 
 
     <c:choose>
@@ -257,9 +294,9 @@
 
             <c:if test="${totalPaginas > 1}">
                 <nav class="paginacion-ofertas" aria-label="Páginas de entrevistas">
-                    <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina - 1}">← Anterior</a></c:if>
+                    <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina - 1}&amp;nombre=${nombreBuscado}&amp;area=${areaBuscada}">← Anterior</a></c:if>
                     <span class="pagina-indicador">Página ${pagina} de ${totalPaginas}</span>
-                    <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina + 1}">Siguiente →</a></c:if>
+                    <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-entrevistas?pagina=${pagina + 1}&amp;nombre=${nombreBuscado}&amp;area=${areaBuscada}">Siguiente →</a></c:if>
                 </nav>
             </c:if>
 

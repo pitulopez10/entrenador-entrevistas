@@ -148,6 +148,26 @@
         </article>
     </section>
 
+    <form method="get" action="${pageContext.request.contextPath}/mis-postulaciones" class="search-box postulaciones-search-box">
+        <div class="search-field search-title-field">
+            <label for="nombre">Nombre de la oferta</label>
+            <input type="search" name="nombre" id="nombre" value="<c:out value='${nombreBuscado}'/>" placeholder="Ej.: Desarrollador">
+        </div>
+        <div class="search-field search-title-field">
+            <label for="area">Área profesional</label>
+            <select name="area" id="area">
+                <option value="">Todas las áreas</option>
+                <c:forEach var="areaItem" items="${areas}">
+                    <option value="${areaItem.nombre}"
+                            <c:if test="${param.area eq areaItem.nombre}">selected</c:if>>
+                        <c:out value="${areaItem.nombre}" />
+                    </option>
+                </c:forEach>
+            </select>
+        </div>
+        <button type="submit" class="search-btn">Buscar postulaciones</button>
+    </form>
+
 
     <!-- ==================================================
          SIN POSTULACIONES
@@ -310,9 +330,9 @@
 
         <c:if test="${totalPaginas > 1}">
             <nav class="paginacion-ofertas" aria-label="Páginas de postulaciones">
-                <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina - 1}">← Anterior</a></c:if>
+                <c:if test="${pagina > 1}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina - 1}&amp;nombre=${nombreBuscado}&amp;area=${areaBuscada}">← Anterior</a></c:if>
                 <span class="pagina-indicador">Página ${pagina} de ${totalPaginas}</span>
-                <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina + 1}">Siguiente →</a></c:if>
+                <c:if test="${pagina < totalPaginas}"><a class="pagina-enlace" href="${pageContext.request.contextPath}/mis-postulaciones?pagina=${pagina + 1}&amp;nombre=${nombreBuscado}&amp;area=${areaBuscada}">Siguiente →</a></c:if>
             </nav>
         </c:if>
 
