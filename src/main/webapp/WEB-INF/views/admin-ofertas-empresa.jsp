@@ -47,15 +47,13 @@
         </section>
     </c:if>
 
-    <c:if test="${param.baja == 'ok'}">
-        <div class="mensaje-exito">La oferta fue dada de baja correctamente.</div>
-    </c:if>
-
     <c:if test="${not empty ofertas}">
         <section class="postulaciones-lista">
             <c:forEach var="oferta" items="${ofertas}">
                 <article class="postulacion-card">
                     <div class="postulacion-card-contenido">
+
+                        <!-- CABECERA: TÍTULO Y ESTADO -->
                         <div class="postulacion-card-top">
                             <div>
                                 <span class="postulacion-empresa">Área: <c:out value="${oferta.area.nombre}" /></span>
@@ -75,37 +73,38 @@
                             </c:choose>
                         </div>
 
-                        <div class="postulacion-info">
-                            <div class="postulacion-info-item">
-                                <span class="postulacion-info-label">Fecha Publicación</span>
-                                <strong><c:out value="${oferta.fechaPublicacion}" /></strong>
+                        <!-- CUERPO CENTRAL: INFORMACIÓN A LA IZQUIERDA Y BOTÓN DE EDITAR AL MEDIO/DERECHA -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 2rem; margin-top: 15px;">
+
+                            <!-- Información de la oferta -->
+                            <div class="postulacion-info" style="flex: 1; margin: 0;">
+                                <div class="postulacion-info-item">
+                                    <span class="postulacion-info-label">Fecha Publicación</span>
+                                    <strong><c:out value="${oferta.fechaPublicacion}" /></strong>
+                                </div>
+
+                                <div class="postulacion-info-item">
+                                    <span class="postulacion-info-label">Fecha Cierre</span>
+                                    <strong><c:out value="${oferta.fechaCierre != null ? oferta.fechaCierre : 'Sin fecha'}" /></strong>
+                                </div>
+
+                                <div class="postulacion-info-item" style="grid-column: span 2;">
+                                    <span class="postulacion-info-label">Descripción</span>
+                                    <strong><c:out value="${oferta.descripcion}" /></strong>
+                                </div>
                             </div>
 
-                            <div class="postulacion-info-item">
-                                <span class="postulacion-info-label">Fecha Cierre</span>
-                                <strong><c:out value="${oferta.fechaCierre != null ? oferta.fechaCierre : 'Sin fecha'}" /></strong>
+                            <!-- Botón de Editar alineado al medio a la derecha -->
+                            <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-end; justify-content: center; min-width: 140px;">
+                                <a href="${pageContext.request.contextPath}/admin-editar-oferta?id=${oferta.id}"
+                                   class="btn-primary"
+                                   style="text-decoration: none; padding: 0.6rem 1.2rem; text-align: center; width: 100%;">
+                                    Editar
+                                </a>
                             </div>
 
-                            <div class="postulacion-info-item" style="grid-column: span 2;">
-                                <span class="postulacion-info-label">Descripción</span>
-                                <strong><c:out value="${oferta.descripcion}" /></strong>
-                            </div>
                         </div>
 
-                        <c:if test="${oferta.estado != 'TERMINADA'}">
-                            <form method="post"
-                                  action="${pageContext.request.contextPath}/admin-ofertas-empresa"
-                                  onsubmit="return confirm('¿Querés dar de baja esta oferta? Ya no recibirá nuevas postulaciones.');"
-                                  style="margin-top: 20px;">
-                                <input type="hidden" name="ofertaId" value="${oferta.id}">
-                                <input type="hidden" name="rut" value="${empresa.rut}">
-                                <button type="submit"
-                                        class="btn-outline"
-                                        style="color: #b42318; border-color: #efb4ae;">
-                                    Dar de baja oferta
-                                </button>
-                            </form>
-                        </c:if>
                     </div>
                 </article>
             </c:forEach>

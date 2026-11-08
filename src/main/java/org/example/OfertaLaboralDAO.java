@@ -347,7 +347,35 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
 
     @Override
     public void modificar(OfertaLaboral oferta) throws SQLException {
+        String sql = """
+                UPDATE ofertalaboral
+                SET titulo = ?, descripcion = ?, requisitos = ?,
+                    fechaPublicacion = ?, fechaCierre = ?, estado = ?, area_id = ?
+                WHERE id = ?
+                """;
 
+        try (
+                Connection conexion = ConexionDB.obtenerConexion();
+                PreparedStatement stmt = conexion.prepareStatement(sql)
+        ) {
+            stmt.setString(1, oferta.getTitulo());
+            stmt.setString(2, oferta.getDescripcion());
+            stmt.setString(3, oferta.getRequisitos());
+
+            stmt.setDate(4, java.sql.Date.valueOf(oferta.getFechaPublicacion()));
+
+            if (oferta.getFechaCierre() != null) {
+                stmt.setDate(5, java.sql.Date.valueOf(oferta.getFechaCierre()));
+            } else {
+                stmt.setNull(5, java.sql.Types.DATE);
+            }
+
+            stmt.setString(6, oferta.getEstado().name());
+            stmt.setInt(7, oferta.getArea().getId());
+            stmt.setInt(8, oferta.getId());
+
+            stmt.executeUpdate();
+        }
     }
 
     @Override
@@ -480,7 +508,7 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
             stmt.executeUpdate();
         }
     }
-    // Cambia el estado SOLO si la oferta es de esa empresa
+
     public boolean cambiarEstadoDeOferta(int ofertaId,
                                          String rutEmpresa,
                                          EstadoEntrevista nuevoEstado)
@@ -502,6 +530,7 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
             return stmt.executeUpdate() > 0;
         }
     }
+
     public List<OfertaLaboral> listarPorFiltrosPaginados(Integer areaId, String titulo, int limit, int offset)
             throws SQLException {
 

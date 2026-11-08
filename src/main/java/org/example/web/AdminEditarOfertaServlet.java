@@ -40,6 +40,15 @@ public class AdminEditarOfertaServlet extends HttpServlet {
             return;
         }
 
+        // Capturar la procedencia dinámica (permite recibir un parámetro explícito o usar el Referer del navegador)
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl == null || returnUrl.isBlank()) {
+            String referer = request.getHeader("Referer");
+            if (referer != null && !referer.contains("/admin-editar-oferta")) {
+                returnUrl = referer;
+            }
+        }
+
         try {
             int ofertaId = Integer.parseInt(idStr);
             OfertaLaboral oferta = ofertaLaboralDAO.buscarPorId(ofertaId);
@@ -53,6 +62,7 @@ public class AdminEditarOfertaServlet extends HttpServlet {
 
             request.setAttribute("oferta", oferta);
             request.setAttribute("areas", areas);
+            request.setAttribute("returnUrl", returnUrl);
 
             request.getRequestDispatcher("/WEB-INF/views/admin-editar-oferta.jsp")
                     .forward(request, response);
@@ -73,6 +83,12 @@ public class AdminEditarOfertaServlet extends HttpServlet {
         }
 
         request.setCharacterEncoding("UTF-8");
+
+        // Capturar la URL de retorno enviada por el formulario oculto
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl == null || returnUrl.isBlank()) {
+            returnUrl = request.getContextPath() + "/admin-inicio";
+        }
 
         try {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -114,6 +130,6 @@ public class AdminEditarOfertaServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/admin-inicio");
+        response.sendRedirect(returnUrl);
     }
 }

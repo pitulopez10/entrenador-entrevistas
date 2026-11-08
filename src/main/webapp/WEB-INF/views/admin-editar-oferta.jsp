@@ -9,48 +9,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Oferta | JobMentor</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
-    <style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=2">
+<style>
         .form-card {
             background: #fff;
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 800px;
-            margin: 2rem auto;
+            max-width: 850px;
+            width: 100%;
+            margin: 1.5rem auto;
         }
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.3rem;
+            width: 100%;
         }
         .form-group label {
             font-weight: 600;
             color: #333;
+            font-size: 0.95rem;
         }
-        .form-group input, .form-group select, .form-group textarea {
-            padding: 0.7rem 1rem;
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.65rem 0.9rem;
             border-radius: 8px;
             border: 1px solid #ccc;
             font-size: 0.95rem;
             width: 100%;
+            box-sizing: border-box;
         }
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 90px;
         }
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-        }
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
+            width: 100%;
         }
     </style>
 </head>
@@ -72,15 +73,18 @@
     </div>
 </header>
 
-<main class="postulaciones-page">
+<main class="login-page" style="padding: 2rem 1rem;">
 
     <section class="form-card">
         <h2>Editar Oferta Laboral</h2>
         <p style="margin-bottom: 1.5rem; color: #666;">Modifica todos los detalles de la oferta seleccionada.</p>
 
-        <form method="post" action="${pageContext.request.contextPath}/admin-editar-oferta">
+        <form method="post" action="${pageContext.request.contextPath}/admin-editar-oferta" class="login-form">
 
             <input type="hidden" name="id" value="${oferta.id}">
+
+            <!-- CAMPO OCULTO PARA CONSERVAR LA URL DE RETORNO DINÁMICA -->
+            <input type="hidden" name="returnUrl" value="${not empty returnUrl ? returnUrl : pageContext.request.contextPath.concat('/admin-inicio')}">
 
             <div class="form-group">
                 <label for="titulo">Título de la Oferta</label>
@@ -131,14 +135,25 @@
                 <textarea id="requisitos" name="requisitos" required><c:out value="${not empty oferta.requisitos ? oferta.requisitos : ''}" /></textarea>
             </div>
 
-            <!-- ÚNICOS BOTONES DISPONIBLES AL FINAL -->
-            <div class="form-actions">
-                <a href="${pageContext.request.contextPath}/admin-inicio" class="btn-outline" style="text-decoration: none;">
-                    Cancelar
-                </a>
-                <button type="submit" class="btn-primary">
+            <!-- BOTONES -->
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; width: 100%;">
+
+                <button type="submit" class="login-button" style="width: 100%;">
                     Guardar Cambios
                 </button>
+
+                <a href="${not empty returnUrl ? returnUrl : pageContext.request.contextPath.concat('/admin-inicio')}"
+                   class="btn-outline"
+                   style="text-align: center;
+                          text-decoration: none;
+                          width: 100%;
+                          padding: 0.8rem;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;">
+                    Cancelar
+                </a>
+
             </div>
 
         </form>
