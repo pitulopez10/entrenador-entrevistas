@@ -11,6 +11,41 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
+
+    <style>
+        .resumen-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .stat-card .stat-titulo {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-numero {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-card.total { border-left: 4px solid #3b82f6; }
+        .stat-card.activo { border-left: 4px solid #10b981; }
+        .stat-card.bloqueado { border-left: 4px solid #ef4444; }
+    </style>
 </head>
 <body>
 
@@ -51,17 +86,38 @@
             <p>Visualizá, buscá y gestioná las empresas registradas en la plataforma.</p>
         </div>
 
-        <!-- BARRA DE BÚSQUEDA POR NOMBRE -->
+        <!-- TARJETAS DE MÉTRICAS RÁPIDAS -->
+        <div class="resumen-stats">
+            <div class="stat-card total">
+                <span class="stat-titulo">Total Empresas</span>
+                <span class="stat-numero">${not empty totalEmpresas ? totalEmpresas : (totalResultados != null ? totalResultados : 0)}</span>
+            </div>
+            <div class="stat-card activo">
+                <span class="stat-titulo">Activas</span>
+                <span class="stat-numero">${not empty totalActivas ? totalActivas : 0}</span>
+            </div>
+            <div class="stat-card bloqueado">
+                <span class="stat-titulo">Bloqueadas</span>
+                <span class="stat-numero">${not empty totalBloqueadas ? totalBloqueadas : 0}</span>
+            </div>
+        </div>
 
+        <!-- BARRA DE BÚSQUEDA Y FILTRO POR ESTADO -->
         <form method="get"
               action="${pageContext.request.contextPath}/admin-empresas"
-              style="display: flex; gap: 0.8rem; width: 100%; max-width: 500px;">
+              style="display: flex; gap: 0.8rem; width: 100%; max-width: 700px; flex-wrap: wrap;">
 
             <input type="text"
                    name="nombre"
                    value="${param.nombre}"
                    placeholder="Buscar por nombre..."
-                   style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem;">
+                   style="flex: 2; min-width: 200px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem;">
+
+            <select name="estado" style="flex: 1; min-width: 140px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 0.95rem;">
+                <option value="" <c:if test="${empty param.estado}">selected</c:if>>Todos los estados</option>
+                <option value="activo" <c:if test="${param.estado eq 'activo'}">selected</c:if>>Activas</option>
+                <option value="bloqueado" <c:if test="${param.estado eq 'bloqueado'}">selected</c:if>>Bloqueadas</option>
+            </select>
 
             <button type="submit"
                     class="btn-primary"
@@ -69,7 +125,7 @@
                 Buscar
             </button>
 
-            <c:if test="${not empty param.nombre}">
+            <c:if test="${not empty param.nombre or not empty param.estado}">
                 <a href="${pageContext.request.contextPath}/admin-empresas"
                    class="btn-outline"
                    style="padding: 0.6rem 1rem; text-decoration: none;">
@@ -81,7 +137,7 @@
 
     </section>
 
-    <!-- BILANG DAGITI RESULTA A NASARAKAN -->
+    <!-- RESULTADOS ENCONTRADOS -->
     <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f0f4f8; border: 1px solid #d9e2ec; padding: 0.6rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; color: #102a43;">
         <span>🏢</span>
         <c:choose>
@@ -95,220 +151,120 @@
     </div>
 
     <!-- MENSAJE SI NO HAY EMPRESAS -->
-
     <c:if test="${empty empresas}">
-
         <section class="postulaciones-vacio">
             <div class="postulaciones-vacio-icono">🏢</div>
             <h2>No se encontraron empresas</h2>
             <p>No hay organizaciones registradas que coincidan con el criterio de búsqueda.</p>
         </section>
-
     </c:if>
 
     <!-- LISTADO DE EMPRESAS -->
-
     <c:if test="${not empty empresas}">
-
         <section class="postulaciones-lista">
-
             <c:forEach var="empresa" items="${empresas}">
-
                 <article class="postulacion-card">
-
                     <div class="postulacion-card-contenido">
 
                         <!-- FOTO / LOGO DE LA EMPRESA -->
-
                         <div style="margin-bottom: 1rem;">
-
                             <c:choose>
-
                                 <c:when test="${not empty empresa.logo}">
-
                                     <div style="width: 120px; height: 120px;">
-
                                         <img src="${empresa.logo}"
                                              alt="Logo de ${empresa.nombre}"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                             style="width: 120px;
-                                                    height: 120px;
-                                                    object-fit: cover;
-                                                    border-radius: 50%;
-                                                    border: 2px solid #ddd;">
-
-                                        <!-- ICONO SI FALLA LA IMAGEN -->
-
-                                        <div style="width: 120px;
-                                                    height: 120px;
-                                                    border-radius: 50%;
-                                                    background-color: #e9ecef;
-                                                    display: none;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    font-size: 55px;
-                                                    border: 2px solid #ddd;">
+                                             style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd;">
+                                        <div style="width: 120px; height: 120px; border-radius: 50%; background-color: #e9ecef; display: none; align-items: center; justify-content: center; font-size: 55px; border: 2px solid #ddd;">
                                             🏢
                                         </div>
-
                                     </div>
-
                                 </c:when>
-
                                 <c:otherwise>
-
-                                    <!-- ICONO SI NO TIENE LOGO -->
-
-                                    <div style="width: 120px;
-                                                height: 120px;
-                                                border-radius: 50%;
-                                                background-color: #e9ecef;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                font-size: 55px;
-                                                border: 2px solid #ddd;">
+                                    <div style="width: 120px; height: 120px; border-radius: 50%; background-color: #e9ecef; display: flex; align-items: center; justify-content: center; font-size: 55px; border: 2px solid #ddd;">
                                         🏢
                                     </div>
-
                                 </c:otherwise>
-
                             </c:choose>
-
                         </div>
 
                         <!-- DATOS DE LA EMPRESA -->
-
                         <div class="postulacion-card-top">
-
                             <div>
-
                                 <span class="postulacion-empresa">
                                     RUT: <c:out value="${empresa.rut}" />
                                 </span>
-
                                 <h2>
                                     <c:out value="${empresa.nombre}" />
                                 </h2>
-
                             </div>
 
                             <c:choose>
-
                                 <c:when test="${empresa.bloqueado}">
                                     <span class="estado-postulacion rechazado"
                                     style="transform: translateY(-125px);">
                                         Bloqueada
                                     </span>
                                 </c:when>
-
                                 <c:otherwise>
                                     <span class="estado-postulacion seleccionado"
                                     style="transform: translateY(-125px);">
                                         Activa
                                     </span>
                                 </c:otherwise>
-
                             </c:choose>
-
                         </div>
 
                         <!-- INFORMACIÓN -->
-
                         <div class="postulacion-info">
-
                             <div class="postulacion-info-item">
-                                <span class="postulacion-info-label">
-                                    Correo electrónico
-                                </span>
-
-                                <strong>
-                                    <c:out value="${empresa.mail}" />
-                                </strong>
+                                <span class="postulacion-info-label">Correo electrónico</span>
+                                <strong><c:out value="${empresa.mail}" /></strong>
                             </div>
-
                             <div class="postulacion-info-item">
-                                <span class="postulacion-info-label">
-                                    Teléfono
-                                </span>
-
-                                <strong>
-                                    <c:out value="${empresa.telefono}" />
-                                </strong>
+                                <span class="postulacion-info-label">Teléfono</span>
+                                <strong><c:out value="${empresa.telefono}" /></strong>
                             </div>
-
                             <div class="postulacion-info-item">
-                                <span class="postulacion-info-label">
-                                    Sitio Web
-                                </span>
-
-                                <strong>
-                                    <c:out value="${empresa.sitioWeb != null ? empresa.sitioWeb : 'No especificado'}" />
-                                </strong>
+                                <span class="postulacion-info-label">Sitio Web</span>
+                                <strong><c:out value="${empresa.sitioWeb != null ? empresa.sitioWeb : 'No especificado'}" /></strong>
                             </div>
-
                         </div>
 
                     </div>
 
                     <!-- BOTONES DE ACCIÓN -->
-
                     <div class="postulacion-card-actions"
                          style="display: flex; gap: 0.5rem; margin-top: 1rem;">
 
                         <!-- BLOQUEAR / DESBLOQUEAR -->
-
                         <form method="post"
                               action="${pageContext.request.contextPath}/admin-empresas"
                               style="margin: 0;">
-
-                            <input type="hidden"
-                                   name="rut"
-                                   value="${empresa.rut}">
-
+                            <input type="hidden" name="rut" value="${empresa.rut}">
                             <c:choose>
-
                                 <c:when test="${empresa.bloqueado}">
-
-                                    <input type="hidden"
-                                           name="accion"
-                                           value="desbloquear">
-
-                                    <button type="submit"
-                                            class="btn-primary"
-                                            style="background-color: #28a745; border-color: #28a745;">
+                                    <input type="hidden" name="accion" value="desbloquear">
+                                    <button type="submit" class="btn-primary" style="background-color: #28a745; border-color: #28a745;">
                                         Desbloquear
                                     </button>
-
                                 </c:when>
-
                                 <c:otherwise>
-
-                                    <input type="hidden"
-                                           name="accion"
-                                           value="bloquear">
-
-                                    <button type="submit"
-                                            class="btn-outline"
-                                            style="color: #dc3545; border-color: #dc3545;">
+                                    <input type="hidden" name="accion" value="bloquear">
+                                    <button type="submit" class="btn-outline" style="color: #dc3545; border-color: #dc3545;">
                                         Bloquear
                                     </button>
-
                                 </c:otherwise>
-
                             </c:choose>
-
                         </form>
 
                         <!-- EDITAR -->
-
                         <a href="${pageContext.request.contextPath}/admin-editar-empresa?rut=${empresa.rut}"
                            class="btn-outline">
                             Editar
                         </a>
 
                         <!-- VER OFERTAS -->
-
                         <a href="${pageContext.request.contextPath}/admin-ofertas-empresa?rut=${empresa.rut}"
                            class="btn-primary">
                             Ver Ofertas
@@ -317,16 +273,14 @@
                     </div>
 
                 </article>
-
             </c:forEach>
-
         </section>
 
-        <!-- CONTROLES TI PAGINACIÓN (MÁXIMO 10 KADA PAGINA) -->
+        <!-- CONTROLES DE PAGINACIÓN -->
         <c:if test="${totalPaginas > 1}">
             <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
                 <c:forEach begin="1" end="${totalPaginas}" var="i">
-                    <a href="${pageContext.request.contextPath}/admin-empresas?page=${i}&nombre=${param.nombre}"
+                    <a href="${pageContext.request.contextPath}/admin-empresas?page=${i}&nombre=${param.nombre}&estado=${param.estado}"
                        class="btn-${paginaActual == i ? 'primary' : 'outline'}"
                        style="padding: 0.5rem 0.9rem; text-decoration: none;">
                         ${i}

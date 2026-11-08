@@ -565,4 +565,85 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
         }
         return 0;
     }
+    public List<Empresa> listarPorFiltrosPaginadas(String nombre, String estado, int limit, int offset)
+            throws SQLException {
+
+        List<Empresa> empresas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT * FROM empresa
+                WHERE 1 = 1
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            if (estado.equalsIgnoreCase("activo")) {
+                sql.append(" AND (bloqueado = false OR bloqueado IS NULL)");
+            } else if (estado.equalsIgnoreCase("bloqueado")) {
+                sql.append(" AND bloqueado = true");
+            }
+        }
+        sql.append(" ORDER BY rut LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro++, "%" + nombre.trim() + "%");
+            }
+            stmt.setInt(parametro++, limit);
+            stmt.setInt(parametro, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Empresa e = new Empresa();
+                    e.setRut(rs.getString("rut"));
+                    e.setNombre(rs.getString("nombre"));
+                    e.setMail(rs.getString("mail"));
+                    e.setTelefono(rs.getInt("telefono"));
+                    e.setSitioWeb(rs.getString("sitioWeb"));
+                    e.setLogo(rs.getString("logo"));
+                    e.setBloqueado(rs.getBoolean("bloqueado"));
+                    empresas.add(e);
+                }
+            }
+        }
+        return empresas;
+    }
+
+    public int contarPorFiltros(String nombre, String estado) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(*) FROM empresa
+                WHERE 1 = 1
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            if (estado.equalsIgnoreCase("activo")) {
+                sql.append(" AND (bloqueado = false OR bloqueado IS NULL)");
+            } else if (estado.equalsIgnoreCase("bloqueado")) {
+                sql.append(" AND bloqueado = true");
+            }
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro, "%" + nombre.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

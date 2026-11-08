@@ -749,4 +749,85 @@ public class PostulanteDAO implements CrudDAO<Postulante, Integer> {
         }
         return 0;
     }
+    public List<Postulante> listarPorFiltrosPaginados(String nombre, String estado, int limit, int offset)
+            throws SQLException {
+
+        List<Postulante> postulantes = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT * FROM postulante
+                WHERE 1 = 1
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            if (estado.equalsIgnoreCase("activo")) {
+                sql.append(" AND (bloqueado = false OR bloqueado IS NULL)");
+            } else if (estado.equalsIgnoreCase("bloqueado")) {
+                sql.append(" AND bloqueado = true");
+            }
+        }
+        sql.append(" ORDER BY ci LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro++, "%" + nombre.trim() + "%");
+            }
+            stmt.setInt(parametro++, limit);
+            stmt.setInt(parametro, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Postulante p = new Postulante();
+                    p.setCi(rs.getInt("ci"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setMail(rs.getString("mail"));
+                    p.setTelefono(rs.getInt("telefono"));
+                    p.setLocalidad(rs.getString("localidad"));
+                    p.setFotoPerfil(rs.getString("fotoPerfil"));
+                    p.setBloqueado(rs.getBoolean("bloqueado"));
+                    postulantes.add(p);
+                }
+            }
+        }
+        return postulantes;
+    }
+
+    public int contarPorFiltros(String nombre, String estado) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(*) FROM postulante
+                WHERE 1 = 1
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            if (estado.equalsIgnoreCase("activo")) {
+                sql.append(" AND (bloqueado = false OR bloqueado IS NULL)");
+            } else if (estado.equalsIgnoreCase("bloqueado")) {
+                sql.append(" AND bloqueado = true");
+            }
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro, "%" + nombre.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.example.Postulante;
-import org.example.PostulanteDAO; // Siguraduen a ti DAO-yo ket addaan iti pamay-an para iti paginación ken count
+import org.example.PostulanteDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,8 +32,18 @@ public class AdminPostulantesServlet extends HttpServlet {
 
         try {
             String nombreParam = request.getParameter("nombre");
+            String estadoParam = request.getParameter("estado"); // Capturar filtro de estado
 
-            // LOGICA TI PAGINACIÓN (Saggaysan a 10)
+            // --- CÁLCULO DE MÉTRICAS PARA LAS TARJETAS ---
+            int totalPostulantes = postulanteDAO.contarPorFiltros(null, null);
+            int totalActivos = postulanteDAO.contarPorFiltros(null, "activo");
+            int totalBloqueados = postulanteDAO.contarPorFiltros(null, "bloqueado");
+
+            request.setAttribute("totalPostulantes", totalPostulantes);
+            request.setAttribute("totalActivos", totalActivos);
+            request.setAttribute("totalBloqueados", totalBloqueados);
+
+            // --- LOGICA DE PAGINACIÓN ---
             int pagina = 1;
             int registrosPorPagina = 10;
             String pageParam = request.getParameter("page");
@@ -49,14 +59,14 @@ public class AdminPostulantesServlet extends HttpServlet {
 
             int offset = (pagina - 1) * registrosPorPagina;
 
-            // Panangalap kadagiti postulantes a addaan limit a 10 ken ti kabuklan a bilang
+            // Listar postulantes filtrando por nombre, estado y aplicando paginación
             List<Postulante> postulantes =
-                    postulanteDAO.listarPorNombrePaginados(nombreParam, registrosPorPagina, offset);
+                    postulanteDAO.listarPorFiltrosPaginados(nombreParam, estadoParam, registrosPorPagina, offset);
 
-            int totalResultados = postulanteDAO.contarPorNombre(nombreParam);
+            int totalResultados = postulanteDAO.contarPorFiltros(nombreParam, estadoParam);
             int totalPaginas = (int) Math.ceil((double) totalResultados / registrosPorPagina);
 
-            // Panangipasa kadagiti atributos iti JSP
+            // Pasar atributos al JSP
             request.setAttribute("postulantes", postulantes);
             request.setAttribute("totalResultados", totalResultados);
             request.setAttribute("paginaActual", pagina);

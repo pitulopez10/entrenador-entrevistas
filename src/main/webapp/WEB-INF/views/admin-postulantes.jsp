@@ -12,6 +12,41 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/logo.png">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css?v=13">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
+
+    <style>
+        .resumen-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .stat-card .stat-titulo {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-numero {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-card.total { border-left: 4px solid #3b82f6; }
+        .stat-card.activo { border-left: 4px solid #10b981; }
+        .stat-card.bloqueado { border-left: 4px solid #ef4444; }
+    </style>
 </head>
 
 <body>
@@ -47,15 +82,37 @@
             <p>Visualizá, buscá y gestioná todos los candidatos registrados en el sistema.</p>
         </div>
 
-        <!-- BARRA DE BÚSQUEDA POR NOMBRE -->
-        <form method="get" action="${pageContext.request.contextPath}/admin-postulantes" style="display: flex; gap: 0.8rem; width: 100%; max-width: 500px;">
-            <input type="text" name="nombre" value="${param.nombre}" placeholder="Buscar por nombre..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem;">
+        <!-- TARJETAS DE MÉTRICAS RÁPIDAS -->
+        <div class="resumen-stats">
+            <div class="stat-card total">
+                <span class="stat-titulo">Total Postulantes</span>
+                <span class="stat-numero">${not empty totalPostulantes ? totalPostulantes : (totalResultados != null ? totalResultados : 0)}</span>
+            </div>
+            <div class="stat-card activo">
+                <span class="stat-titulo">Activos</span>
+                <span class="stat-numero">${not empty totalActivos ? totalActivos : 0}</span>
+            </div>
+            <div class="stat-card bloqueado">
+                <span class="stat-titulo">Bloqueados</span>
+                <span class="stat-numero">${not empty totalBloqueados ? totalBloqueados : 0}</span>
+            </div>
+        </div>
+
+        <!-- BUSCADOR POR NOMBRE Y FILTRO POR ESTADO -->
+        <form method="get" action="${pageContext.request.contextPath}/admin-postulantes" style="display: flex; gap: 0.8rem; width: 100%; max-width: 700px; flex-wrap: wrap;">
+            <input type="text" name="nombre" value="${param.nombre}" placeholder="Buscar por nombre..." style="flex: 2; min-width: 200px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; font-size: 0.95rem;">
+
+            <select name="estado" style="flex: 1; min-width: 140px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 0.95rem;">
+                <option value="" <c:if test="${empty param.estado}">selected</c:if>>Todos los estados</option>
+                <option value="activo" <c:if test="${param.estado eq 'activo'}">selected</c:if>>Activos</option>
+                <option value="bloqueado" <c:if test="${param.estado eq 'bloqueado'}">selected</c:if>>Bloqueados</option>
+            </select>
 
             <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem;">
                 Buscar
             </button>
 
-            <c:if test="${not empty param.nombre}">
+            <c:if test="${not empty param.nombre or not empty param.estado}">
                 <a href="${pageContext.request.contextPath}/admin-postulantes" class="btn-outline" style="padding: 0.6rem 1rem; text-decoration: none;">
                     Limpiar
                 </a>
@@ -63,7 +120,7 @@
         </form>
     </section>
 
-    <!-- BILANG DAGITI RESULTA A NASARAKAN -->
+    <!-- CANTIDAD DE RESULTADOS ENCONTRADOS -->
     <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f0f4f8; border: 1px solid #d9e2ec; padding: 0.6rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; color: #102a43;">
         <span>👥</span>
         <c:choose>
@@ -243,11 +300,11 @@
 
         </section>
 
-        <!-- CONTROLES TI PAGINACIÓN (MÁXIMO 10 KADA PAGINA) -->
+        <!-- CONTROLES DE PAGINACIÓN -->
         <c:if test="${totalPaginas > 1}">
             <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
                 <c:forEach begin="1" end="${totalPaginas}" var="i">
-                    <a href="${pageContext.request.contextPath}/admin-postulantes?page=${i}&nombre=${param.nombre}"
+                    <a href="${pageContext.request.contextPath}/admin-postulantes?page=${i}&nombre=${param.nombre}&estado=${param.estado}"
                        class="btn-${paginaActual == i ? 'primary' : 'outline'}"
                        style="padding: 0.5rem 0.9rem; text-decoration: none;">
                         ${i}

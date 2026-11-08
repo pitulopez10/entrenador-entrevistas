@@ -32,8 +32,18 @@ public class AdminEmpresasServlet extends HttpServlet {
 
         try {
             String nombreParam = request.getParameter("nombre");
+            String estadoParam = request.getParameter("estado");
 
-            // LOGICA TI PAGINACIÓN (Saggaysan a 10)
+            // --- CÁLCULO DE MÉTRICAS PARA LAS TARJETAS ---
+            int totalEmpresas = empresaDAO.contarPorFiltros(null, null);
+            int totalActivas = empresaDAO.contarPorFiltros(null, "activo");
+            int totalBloqueadas = empresaDAO.contarPorFiltros(null, "bloqueado");
+
+            request.setAttribute("totalEmpresas", totalEmpresas);
+            request.setAttribute("totalActivas", totalActivas);
+            request.setAttribute("totalBloqueadas", totalBloqueadas);
+
+            // --- LOGICA DE PAGINACIÓN ---
             int pagina = 1;
             int registrosPorPagina = 10;
             String pageParam = request.getParameter("page");
@@ -49,14 +59,14 @@ public class AdminEmpresasServlet extends HttpServlet {
 
             int offset = (pagina - 1) * registrosPorPagina;
 
-            // Panangalap kadagiti empresas a addaan limit a 10 ken ti kabuklan a bilang
+            // Listado con filtros y paginación
             List<Empresa> empresas =
-                    empresaDAO.listarPorNombrePaginadas(nombreParam, registrosPorPagina, offset);
+                    empresaDAO.listarPorFiltrosPaginadas(nombreParam, estadoParam, registrosPorPagina, offset);
 
-            int totalResultados = empresaDAO.contarPorNombre(nombreParam);
+            int totalResultados = empresaDAO.contarPorFiltros(nombreParam, estadoParam);
             int totalPaginas = (int) Math.ceil((double) totalResultados / registrosPorPagina);
 
-            // Panangipasa kadagiti atributos iti JSP
+            // Pasar atributos al JSP
             request.setAttribute("empresas", empresas);
             request.setAttribute("totalResultados", totalResultados);
             request.setAttribute("paginaActual", pagina);

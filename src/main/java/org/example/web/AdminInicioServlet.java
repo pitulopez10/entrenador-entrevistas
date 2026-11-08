@@ -42,6 +42,7 @@ public class AdminInicioServlet extends HttpServlet {
             // Obtener los parámetros enviados desde el formulario
             String areaParam = request.getParameter("area");
             String nombreParam = request.getParameter("nombre");
+            String estadoParam = request.getParameter("estado");
 
             Integer areaId = null;
 
@@ -49,6 +50,17 @@ public class AdminInicioServlet extends HttpServlet {
             if (areaParam != null && !areaParam.trim().isEmpty()) {
                 areaId = Integer.parseInt(areaParam);
             }
+
+            // --- CÁLCULO DE MÉTRICAS PARA LAS TARJETAS ---
+            int totalOfertas = ofertaLaboralDAO.contarPorFiltros(null, null, null);
+            int totalActivas = ofertaLaboralDAO.contarPorEstado("ACTIVA");
+            int totalPausadas = ofertaLaboralDAO.contarPorEstado("PAUSADA");
+            int totalTerminadas = ofertaLaboralDAO.contarPorEstado("TERMINADA");
+
+            request.setAttribute("totalOfertas", totalOfertas);
+            request.setAttribute("totalActivas", totalActivas);
+            request.setAttribute("totalPausadas", totalPausadas);
+            request.setAttribute("totalTerminadas", totalTerminadas);
 
             // --- LÓGICA DE PAGINACIÓN Y TOTALES ---
             int pagina = 1;
@@ -66,12 +78,12 @@ public class AdminInicioServlet extends HttpServlet {
 
             int offset = (pagina - 1) * registrosPorPagina;
 
-            // Obtener las ofertas aplicando filtros y paginación
+            // Obtener las ofertas aplicando filtros (incluyendo estado) y paginación
             List<OfertaLaboral> ofertas =
-                    ofertaLaboralDAO.listarPorFiltrosPaginados(areaId, nombreParam, registrosPorPagina, offset);
+                    ofertaLaboralDAO.listarPorFiltrosPaginados(areaId, nombreParam, estadoParam, registrosPorPagina, offset);
 
-            // Obtener la cantidad total de resultados para el contador y las páginas
-            int totalResultados = ofertaLaboralDAO.contarPorFiltros(areaId, nombreParam);
+            // Obtener la cantidad total de resultados para la paginación según los filtros actuales
+            int totalResultados = ofertaLaboralDAO.contarPorFiltros(areaId, nombreParam, estadoParam);
             int totalPaginas = (int) Math.ceil((double) totalResultados / registrosPorPagina);
 
             // Pasar atributos a la vista

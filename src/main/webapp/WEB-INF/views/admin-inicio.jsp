@@ -13,6 +13,42 @@
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ofertas.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/mis-postulaciones.css?v=1">
+
+    <style>
+        .resumen-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .stat-card .stat-titulo {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-numero {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-card.activa { border-left: 4px solid #10b981; }
+        .stat-card.pausada { border-left: 4px solid #f59e0b; }
+        .stat-card.terminada { border-left: 4px solid #ef4444; }
+        .stat-card.total { border-left: 4px solid #3b82f6; }
+    </style>
 </head>
 
 <body>
@@ -46,13 +82,33 @@
         <div>
             <span class="postulaciones-kicker">Panel Administrador</span>
             <h1>Consulta de Ofertas</h1>
-            <p>Filtrá y consultá las ofertas laborales según su área profesional o nombre.</p>
+            <p>Filtrá y consultá las ofertas laborales según su estado, área profesional o nombre.</p>
         </div>
 
-        <!-- BUSCADOR POR NOMBRE Y FILTRO POR ÁREA -->
+        <!-- TARJETAS DE MÉTRICAS RÁPIDAS / RESUMEN -->
+        <div class="resumen-stats">
+            <div class="stat-card total">
+                <span class="stat-titulo">Total Ofertas</span>
+                <span class="stat-numero">${not empty totalOfertas ? totalOfertas : (totalResultados != null ? totalResultados : 0)}</span>
+            </div>
+            <div class="stat-card activa">
+                <span class="stat-titulo">Activas</span>
+                <span class="stat-numero">${not empty totalActivas ? totalActivas : 0}</span>
+            </div>
+            <div class="stat-card pausada">
+                <span class="stat-titulo">Pausadas</span>
+                <span class="stat-numero">${not empty totalPausadas ? totalPausadas : 0}</span>
+            </div>
+            <div class="stat-card terminada">
+                <span class="stat-titulo">Terminadas</span>
+                <span class="stat-numero">${not empty totalTerminadas ? totalTerminadas : 0}</span>
+            </div>
+        </div>
+
+        <!-- BUSCADOR POR NOMBRE, ÁREA Y ESTADO -->
         <form method="get"
               action="${pageContext.request.contextPath}/admin-inicio"
-              style="display: flex; gap: 0.8rem; width: 100%; max-width: 700px; flex-wrap: wrap;">
+              style="display: flex; gap: 0.8rem; width: 100%; max-width: 900px; flex-wrap: wrap;">
 
             <!-- BUSCAR POR NOMBRE -->
             <input type="text"
@@ -79,11 +135,25 @@
 
             </select>
 
+            <!-- FILTRAR POR ESTADO -->
+            <select name="estado"
+                    id="estado"
+                    style="flex: 1; min-width: 130px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 0.95rem;">
+
+                <option value="" <c:if test="${empty param.estado}">selected</c:if>>
+                    Todos los estados
+                </option>
+                <option value="ACTIVA" <c:if test="${param.estado eq 'ACTIVA'}">selected</c:if>>Activa</option>
+                <option value="PAUSADA" <c:if test="${param.estado eq 'PAUSADA'}">selected</c:if>>Pausada</option>
+                <option value="TERMINADA" <c:if test="${param.estado eq 'TERMINADA'}">selected</c:if>>Terminada</option>
+
+            </select>
+
             <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem;">
                 Filtrar
             </button>
 
-            <c:if test="${not empty param.nombre or not empty param.area}">
+            <c:if test="${not empty param.nombre or not empty param.area or not empty param.estado}">
                 <a href="${pageContext.request.contextPath}/admin-inicio"
                    class="btn-outline"
                    style="padding: 0.6rem 1rem; text-decoration: none;">
@@ -197,7 +267,7 @@
         <c:if test="${totalPaginas > 1}">
             <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
                 <c:forEach begin="1" end="${totalPaginas}" var="i">
-                    <a href="${pageContext.request.contextPath}/admin-inicio?page=${i}&nombre=${param.nombre}&area=${param.area}"
+                    <a href="${pageContext.request.contextPath}/admin-inicio?page=${i}&nombre=${param.nombre}&area=${param.area}&estado=${param.estado}"
                        class="btn-${paginaActual == i ? 'primary' : 'outline'}"
                        style="padding: 0.5rem 0.9rem; text-decoration: none;">
                         ${i}
