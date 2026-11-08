@@ -651,4 +651,108 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
         }
         return 0;
     }
+    public List<Postulacion> listarPorOfertaFiltrosPaginados(int ofertaId, String nombre, String estado, int limit, int offset)
+            throws SQLException {
+
+        List<Postulacion> postulaciones = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT p.*, 
+                       post.ci AS postulanteCi, post.nombre AS postulanteNombre, 
+                       post.mail AS postulanteMail, post.telefono AS postulanteTelefono,
+                       post.localidad AS postulanteLocalidad, post.fotoPerfil AS postulanteFoto,
+                       post.bloqueado AS postulanteBloqueado
+                FROM postulacion p
+                JOIN postulante post ON p.postulante_ci = post.ci
+                WHERE p.ofertalaboral_id = ?
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(post.nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND p.estado = ?");
+        }
+        sql.append(" ORDER BY p.fechaPostulacion DESC LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            stmt.setInt(parametro++, ofertaId);
+
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro++, "%" + nombre.trim() + "%");
+            }
+            if (estado != null && !estado.isBlank()) {
+                stmt.setString(parametro++, estado.toUpperCase().trim());
+            }
+            stmt.setInt(parametro++, limit);
+            stmt.setInt(parametro, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Postulacion p = new Postulacion();
+                    // Ajusta según los setters que tenga tu clase Postulacion
+                    p.setId(rs.getInt("id"));
+                    p.setMensaje(rs.getString("mensaje"));
+                    if (rs.getDate("fechaPostulacion") != null) {
+                        p.setFechaPostulacion(rs.getDate("fechaPostulacion").toLocalDate());
+                    }
+                    if (rs.getString("estado") != null) {
+                        p.setEstado(EstadoPostulacion.desdeTexto(rs.getString("estado")));
+                    }
+
+                    Postulante postulante = new Postulante();
+                    postulante.setCi(rs.getInt("postulanteCi"));
+                    postulante.setNombre(rs.getString("postulanteNombre"));
+                    postulante.setMail(rs.getString("postulanteMail"));
+                    postulante.setTelefono(rs.getInt("postulanteTelefono"));
+                    postulante.setLocalidad(rs.getString("postulanteLocalidad"));
+                    postulante.setFotoPerfil(rs.getString("postulanteFoto"));
+                    postulante.setBloqueado(rs.getBoolean("postulanteBloqueado"));
+
+                    p.setPostulante(postulante);
+                    postulaciones.add(p);
+                }
+            }
+        }
+        return postulaciones;
+    }
+
+    public int contarPorOfertaFiltros(int ofertaId, String nombre, String estado) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(*) 
+                FROM postulacion p
+                JOIN postulante post ON p.postulante_ci = post.ci
+                WHERE p.ofertalaboral_id = ?
+                """);
+
+        if (nombre != null && !nombre.isBlank()) {
+            sql.append(" AND LOWER(post.nombre) LIKE LOWER(?)");
+        }
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND p.estado = ?");
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            stmt.setInt(parametro++, ofertaId);
+
+            if (nombre != null && !nombre.isBlank()) {
+                stmt.setString(parametro++, "%" + nombre.trim() + "%");
+            }
+            if (estado != null && !estado.isBlank()) {
+                stmt.setString(parametro, estado.toUpperCase().trim());
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

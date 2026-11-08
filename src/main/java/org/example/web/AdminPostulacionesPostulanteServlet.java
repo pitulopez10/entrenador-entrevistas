@@ -37,6 +37,8 @@ public class AdminPostulacionesPostulanteServlet extends HttpServlet {
             return;
         }
 
+        String estadoParam = request.getParameter("estado");
+
         try {
             int ci = Integer.parseInt(ciStr);
             Postulante postulante = postulanteDAO.buscarPorId(ci);
@@ -45,7 +47,44 @@ public class AdminPostulacionesPostulanteServlet extends HttpServlet {
                 return;
             }
 
-            List<Postulacion> postulaciones = postulacionDAO.listarPorPostulante(ci);
+            // Obtener todas las postulaciones del postulante
+            List<Postulacion> todasLasPostulaciones = postulacionDAO.listarPorPostulante(ci);
+
+            // --- CÁLCULO DE MÉTRICAS PARA LAS TARJETAS (4 ESTADOS) ---
+            int totalPostulaciones = todasLasPostulaciones.size();
+            int totalSeleccionados = 0;
+            int totalRechazados = 0;
+            int totalRevision = 0;
+            int totalEnviados = 0;
+
+            for (Postulacion p : todasLasPostulaciones) {
+                String estadoStr = p.getEstado() != null ? p.getEstado().name() : "";
+                if (estadoStr.equalsIgnoreCase("SELECCIONADO")) {
+                    totalSeleccionados++;
+                } else if (estadoStr.equalsIgnoreCase("RECHAZADO")) {
+                    totalRechazados++;
+                } else if (estadoStr.equalsIgnoreCase("EN_REVISION") || estadoStr.equalsIgnoreCase("REVISION")) {
+                    totalRevision++;
+                } else if (estadoStr.equalsIgnoreCase("ENVIADO") || estadoStr.equalsIgnoreCase("PENDIENTE")) {
+                    totalEnviados++;
+                }
+            }
+
+            request.setAttribute("totalPostulaciones", totalPostulaciones);
+            request.setAttribute("totalSeleccionados", totalSeleccionados);
+            request.setAttribute("totalRechazados", totalRechazados);
+            request.setAttribute("totalRevision", totalRevision);
+            request.setAttribute("totalEnviados", totalEnviados);
+
+            // --- FILTRAR LISTADO SI SE SELECCIONÓ UN ESTADO ---
+            List<Postulacion> postulaciones;
+            if (estadoParam != null && !estadoParam.isBlank()) {
+                postulaciones = todasLasPostulaciones.stream()
+                        .filter(p -> p.getEstado() != null && p.getEstado().name().equalsIgnoreCase(estadoParam))
+                        .toList();
+            } else {
+                postulaciones = todasLasPostulaciones;
+            }
 
             request.setAttribute("postulante", postulante);
             request.setAttribute("postulaciones", postulaciones);

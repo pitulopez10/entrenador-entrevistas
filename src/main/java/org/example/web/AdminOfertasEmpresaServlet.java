@@ -69,6 +69,8 @@ public class AdminOfertasEmpresaServlet extends HttpServlet {
             return;
         }
 
+        String estadoParam = request.getParameter("estado");
+
         try {
             Empresa empresa = empresaDAO.buscarPorId(rut);
             if (empresa == null) {
@@ -76,7 +78,33 @@ public class AdminOfertasEmpresaServlet extends HttpServlet {
                 return;
             }
 
-            List<OfertaLaboral> ofertas = ofertaLaboralDAO.listarPorEmpresa(rut);
+            // --- CÁLCULO DE MÉTRICAS PARA LAS TARJETAS ---
+            List<OfertaLaboral> todasLasOfertas = ofertaLaboralDAO.listarPorEmpresa(rut);
+            int totalOfertasEmpresa = todasLasOfertas.size();
+            int totalActivasEmpresa = 0;
+            int totalPausadasEmpresa = 0;
+            int totalTerminadasEmpresa = 0;
+
+            for (OfertaLaboral o : todasLasOfertas) {
+                if (o.getEstado() == EstadoEntrevista.ACTIVA) totalActivasEmpresa++;
+                else if (o.getEstado() == EstadoEntrevista.PAUSADA) totalPausadasEmpresa++;
+                else if (o.getEstado() == EstadoEntrevista.TERMINADA) totalTerminadasEmpresa++;
+            }
+
+            request.setAttribute("totalOfertasEmpresa", totalOfertasEmpresa);
+            request.setAttribute("totalActivasEmpresa", totalActivasEmpresa);
+            request.setAttribute("totalPausadasEmpresa", totalPausadasEmpresa);
+            request.setAttribute("totalTerminadasEmpresa", totalTerminadasEmpresa);
+
+            // Filtrar listado si se seleccionó un estado específico
+            List<OfertaLaboral> ofertas;
+            if (estadoParam != null && !estadoParam.isBlank()) {
+                ofertas = todasLasOfertas.stream()
+                        .filter(o -> o.getEstado().name().equalsIgnoreCase(estadoParam))
+                        .toList();
+            } else {
+                ofertas = todasLasOfertas;
+            }
 
             request.setAttribute("empresa", empresa);
             request.setAttribute("ofertas", ofertas);
