@@ -54,6 +54,9 @@
 
             <input type="hidden" name="ci" value="${postulante.ci}">
 
+            <!-- CAMPO OCULTO PARA CONSERVAR LA URL DE RETORNO -->
+            <input type="hidden" name="returnUrl" value="${not empty returnUrl ? returnUrl : pageContext.request.contextPath.concat('/admin-postulantes')}">
+
             <!-- FOTO DE PERFIL ACTUAL -->
 
             <div class="login-field">
@@ -313,7 +316,7 @@
                     Guardar Cambios
                 </button>
 
-                <a href="${pageContext.request.contextPath}/admin-postulantes"
+                <a href="${not empty returnUrl ? returnUrl : pageContext.request.contextPath.concat('/admin-postulantes')}"
                    class="btn-outline"
                    style="text-align: center;
                           text-decoration: none;

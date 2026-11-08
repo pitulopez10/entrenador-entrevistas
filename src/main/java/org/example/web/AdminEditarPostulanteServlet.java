@@ -49,6 +49,13 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
                 return;
             }
 
+            // Capturar la URL anterior de forma segura (compatible con Java 8+)
+            String referer = request.getHeader("Referer");
+            if (referer == null || referer.trim().isEmpty()) {
+                referer = request.getContextPath() + "/admin-postulantes";
+            }
+            request.setAttribute("returnUrl", referer);
+
             request.setAttribute("postulante", postulante);
             request.getRequestDispatcher("/WEB-INF/views/admin-editar-postulante.jsp")
                     .forward(request, response);
@@ -68,6 +75,12 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
         if (session == null || session.getAttribute("adminLogueado") == null) {
             response.sendRedirect(request.getContextPath() + "/login-admin");
             return;
+        }
+
+        // Obtener la URL de retorno enviada por el formulario
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl == null || returnUrl.trim().isEmpty()) {
+            returnUrl = request.getContextPath() + "/admin-postulantes";
         }
 
         try {
@@ -91,7 +104,7 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
                             foto.getInputStream().readAllBytes());
                     postulante.setFotoPerfil(datos.get("url"));
                     postulante.setFotoPerfilPublicId(datos.get("publicId"));
-                    if (fotoAnterior != null && !fotoAnterior.isBlank()) {
+                    if (fotoAnterior != null && !fotoAnterior.trim().isEmpty()) {
                         cloudinaryService.eliminarImagen(fotoAnterior);
                     }
                 }
@@ -110,7 +123,8 @@ public class AdminEditarPostulanteServlet extends HttpServlet {
                 postulanteDAO.modificar(postulante);
             }
 
-            response.sendRedirect(request.getContextPath() + "/admin-postulantes");
+            // Redirigir a la página de origen en lugar de una fija
+            response.sendRedirect(returnUrl);
 
         } catch (SQLException | NumberFormatException | java.io.IOException e) {
             throw new ServletException("Error al actualizar la información del postulante", e);
