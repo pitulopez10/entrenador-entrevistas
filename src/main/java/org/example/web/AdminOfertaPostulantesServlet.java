@@ -60,13 +60,13 @@ public class AdminOfertaPostulantesServlet extends HttpServlet {
 
             for (Postulacion p : todasLasPostulaciones) {
                 String estadoStr = p.getEstado() != null ? p.getEstado().name() : "";
-                if (estadoStr.equalsIgnoreCase("SELECCIONADO")) {
+                if (estadoStr.equalsIgnoreCase("seleccionado")) {
                     totalSeleccionados++;
-                } else if (estadoStr.equalsIgnoreCase("RECHAZADO")) {
+                } else if (estadoStr.equalsIgnoreCase("rechazado")) {
                     totalRechazados++;
-                } else if (estadoStr.equalsIgnoreCase("EN_REVISION") || estadoStr.equalsIgnoreCase("REVISION")) {
+                } else if (estadoStr.equalsIgnoreCase("enRevision") || estadoStr.equalsIgnoreCase("en_revision")) {
                     totalRevision++;
-                } else {
+                } else if (estadoStr.equalsIgnoreCase("enviado") || estadoStr.equalsIgnoreCase("pendiente")) {
                     totalEnviados++;
                 }
             }

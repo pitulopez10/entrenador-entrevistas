@@ -80,7 +80,7 @@
 
     <section class="postulaciones-header" style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
 
-        <!-- CONTENEDOR SUPERIOR CON TÍTULO Y BOTÓN VOLVER A LA DERECHA -->
+        <!-- CONTENEDOR SUPERIOR CON TÍTULO Y BOTÓN VOLVER -->
         <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; flex-wrap: wrap; gap: 1rem;">
             <div>
                 <span class="postulaciones-kicker">Oferta: <c:out value="${oferta.titulo}" /></span>
@@ -134,10 +134,10 @@
 
             <select name="estado" style="flex: 1; min-width: 140px; padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 0.95rem;">
                 <option value="" <c:if test="${empty param.estado}">selected</c:if>>Todos los estados</option>
-                <option value="SELECCIONADO" <c:if test="${param.estado eq 'SELECCIONADO'}">selected</c:if>>Seleccionado</option>
-                <option value="RECHAZADO" <c:if test="${param.estado eq 'RECHAZADO'}">selected</c:if>>Rechazado</option>
-                <option value="EN_REVISION" <c:if test="${param.estado eq 'EN_REVISION'}">selected</c:if>>En revisión</option>
-                <option value="ENVIADO" <c:if test="${param.estado eq 'ENVIADO'}">selected</c:if>>Enviado</option>
+                <option value="seleccionado" <c:if test="${param.estado eq 'seleccionado'}">selected</c:if>>Seleccionado</option>
+                <option value="rechazado" <c:if test="${param.estado eq 'rechazado'}">selected</c:if>>Rechazado</option>
+                <option value="enRevision" <c:if test="${param.estado eq 'enRevision'}">selected</c:if>>En revisión</option>
+                <option value="enviado" <c:if test="${param.estado eq 'enviado'}">selected</c:if>>Enviado</option>
             </select>
 
             <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem;">
@@ -197,13 +197,13 @@
                             </div>
 
                             <c:choose>
-                                <c:when test="${p.estado.name() == 'SELECCIONADO'}">
+                                <c:when test="${p.estado.name() == 'seleccionado'}">
                                     <span class="estado-postulacion seleccionado">Seleccionado</span>
                                 </c:when>
-                                <c:when test="${p.estado.name() == 'RECHAZADO'}">
+                                <c:when test="${p.estado.name() == 'rechazado'}">
                                     <span class="estado-postulacion rechazado">Rechazado</span>
                                 </c:when>
-                                <c:when test="${p.estado.name() == 'EN_REVISION'}">
+                                <c:when test="${p.estado.name() == 'enRevision'}">
                                     <span class="estado-postulacion revision">En revisión</span>
                                 </c:when>
                                 <c:otherwise>
@@ -226,11 +226,16 @@
 
                     </div>
 
-                    <!-- BOTÓN PARA EDITAR INFORMACIÓN COMPLETA -->
-                    <div class="postulacion-card-actions" style="margin-top: 1rem;">
-                        <a href="${pageContext.request.contextPath}/admin-editar-postulante?ci=${p.postulante.ci}"
-                           class="btn-primary">
-                            Editar Información
+                    <!-- BOTONES DE ACCIÓN -->
+                    <div class="postulacion-card-actions" style="margin-top: 1rem; display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <a href="${pageContext.request.contextPath}/admin-editar-postulante?ci=${p.postulante.ci}&returnUrl=${pageContext.request.contextPath}/admin-oferta-postulantes?id=${oferta.id}"
+                           class="btn-outline" style="font-size: 0.9rem; padding: 0.5rem 1rem; text-decoration: none;">
+                            Editar Postulante
+                        </a>
+
+                        <a href="${pageContext.request.contextPath}/admin-editar-postulacion?id=${p.id}&returnUrl=${pageContext.request.contextPath}/admin-oferta-postulantes?id=${oferta.id}"
+                           class="btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1rem; text-decoration: none;">
+                            Editar Postulación
                         </a>
                     </div>
 
@@ -240,7 +245,7 @@
 
         </section>
 
-        <!-- PAGINACIÓN (Máx 10 por página) -->
+        <!-- PAGINACIÓN -->
         <c:if test="${totalPaginas > 1}">
             <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
                 <c:forEach begin="1" end="${totalPaginas}" var="i">

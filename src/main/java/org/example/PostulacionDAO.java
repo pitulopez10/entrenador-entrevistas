@@ -755,4 +755,41 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
         }
         return 0;
     }
+    public void actualizar(Postulacion postulacion) throws SQLException {
+        String sql = "UPDATE postulacion SET estado = ?, mensaje = ? WHERE id = ?";
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+
+            // Guardamos el nombre del enum o su representación en texto
+            stmt.setString(1, postulacion.getEstado() != null ? postulacion.getEstado().name() : "enviado");
+            stmt.setString(2, postulacion.getMensaje());
+            stmt.setInt(3, postulacion.getId());
+
+            stmt.executeUpdate();
+        }
+    }
+
+    public Postulacion buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM postulacion WHERE id = ?";
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Postulacion p = new Postulacion();
+                    p.setId(rs.getInt("id"));
+                    p.setMensaje(rs.getString("mensaje"));
+                    if (rs.getDate("fechaPostulacion") != null) {
+                        p.setFechaPostulacion(rs.getDate("fechaPostulacion").toLocalDate());
+                    }
+                    if (rs.getString("estado") != null) {
+                        p.setEstado(EstadoPostulacion.desdeTexto(rs.getString("estado")));
+                    }
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
 }
