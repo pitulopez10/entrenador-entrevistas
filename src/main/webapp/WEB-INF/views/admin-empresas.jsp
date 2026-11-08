@@ -81,6 +81,19 @@
 
     </section>
 
+    <!-- BILANG DAGITI RESULTA A NASARAKAN -->
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f0f4f8; border: 1px solid #d9e2ec; padding: 0.6rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; color: #102a43;">
+        <span>🏢</span>
+        <c:choose>
+            <c:when test="${totalResultados == 1}">
+                Se encontró <strong>1</strong> empresa registrada.
+            </c:when>
+            <c:otherwise>
+                Se encontraron <strong>${totalResultados}</strong> empresas registradas.
+            </c:otherwise>
+        </c:choose>
+    </div>
+
     <!-- MENSAJE SI NO HAY EMPRESAS -->
 
     <c:if test="${empty empresas}">
@@ -308,6 +321,19 @@
             </c:forEach>
 
         </section>
+
+        <!-- CONTROLES TI PAGINACIÓN (MÁXIMO 10 KADA PAGINA) -->
+        <c:if test="${totalPaginas > 1}">
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+                <c:forEach begin="1" end="${totalPaginas}" var="i">
+                    <a href="${pageContext.request.contextPath}/admin-empresas?page=${i}&nombre=${param.nombre}"
+                       class="btn-${paginaActual == i ? 'primary' : 'outline'}"
+                       style="padding: 0.5rem 0.9rem; text-decoration: none;">
+                        ${i}
+                    </a>
+                </c:forEach>
+            </div>
+        </c:if>
 
     </c:if>
 

@@ -50,11 +50,35 @@ public class AdminInicioServlet extends HttpServlet {
                 areaId = Integer.parseInt(areaParam);
             }
 
-            // Aplicar los filtros por área y título
-            List<OfertaLaboral> ofertas =
-                    ofertaLaboralDAO.listarPorFiltros(areaId, nombreParam);
+            // --- LÓGICA DE PAGINACIÓN Y TOTALES ---
+            int pagina = 1;
+            int registrosPorPagina = 15;
+            String pageParam = request.getParameter("page");
 
+            if (pageParam != null && !pageParam.trim().isEmpty()) {
+                try {
+                    pagina = Integer.parseInt(pageParam);
+                    if (pagina < 1) pagina = 1;
+                } catch (NumberFormatException e) {
+                    pagina = 1;
+                }
+            }
+
+            int offset = (pagina - 1) * registrosPorPagina;
+
+            // Obtener las ofertas aplicando filtros y paginación
+            List<OfertaLaboral> ofertas =
+                    ofertaLaboralDAO.listarPorFiltrosPaginados(areaId, nombreParam, registrosPorPagina, offset);
+
+            // Obtener la cantidad total de resultados para el contador y las páginas
+            int totalResultados = ofertaLaboralDAO.contarPorFiltros(areaId, nombreParam);
+            int totalPaginas = (int) Math.ceil((double) totalResultados / registrosPorPagina);
+
+            // Pasar atributos a la vista
             request.setAttribute("ofertas", ofertas);
+            request.setAttribute("totalResultados", totalResultados);
+            request.setAttribute("paginaActual", pagina);
+            request.setAttribute("totalPaginas", totalPaginas);
 
             // Mostrar el JSP
             request.getRequestDispatcher("/WEB-INF/views/admin-inicio.jsp")

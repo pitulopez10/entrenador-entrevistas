@@ -490,4 +490,79 @@ public class EmpresaDAO implements CrudDAO<Empresa, String> {
 
         return empresas;
     }
+    public List<Empresa> listarPorNombrePaginadas(String nombreFiltro, int limit, int offset) throws SQLException {
+        List<Empresa> empresas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+            SELECT rut, nombre, mail, password, fechaRegistro, telefono, descripcion, logo, sitioWeb, bloqueado, logoPublicId
+            FROM empresa
+            WHERE 1 = 1
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        sql.append(" ORDER BY nombre LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int param = 1;
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(param++, "%" + nombreFiltro.trim() + "%");
+            }
+            stmt.setInt(param++, limit);
+            stmt.setInt(param++, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Empresa e = new Empresa();
+                    e.setRut(rs.getString("rut"));
+                    e.setNombre(rs.getString("nombre"));
+                    e.setMail(rs.getString("mail"));
+                    e.setPassword(rs.getString("password"));
+
+                    if (rs.getDate("fechaRegistro") != null) {
+                        e.setFechaRegistro(rs.getDate("fechaRegistro").toLocalDate());
+                    }
+
+                    e.setTelefono(rs.getInt("telefono"));
+                    e.setDescripcion(rs.getString("descripcion"));
+                    e.setLogo(rs.getString("logo"));
+                    e.setSitioWeb(rs.getString("sitioWeb"));
+                    e.setBloqueado(rs.getBoolean("bloqueado"));
+                    e.setLogoPublicId(rs.getString("logoPublicId"));
+
+                    empresas.add(e);
+                }
+            }
+        }
+        return empresas;
+    }
+
+    public int contarPorNombre(String nombreFiltro) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*) 
+            FROM empresa
+            WHERE 1 = 1
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(1, "%" + nombreFiltro.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

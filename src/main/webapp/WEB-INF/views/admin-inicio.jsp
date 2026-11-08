@@ -95,6 +95,19 @@
 
     </section>
 
+    <!-- CANTIDAD DE RESULTADOS DESTACADA -->
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #f0f4f8; border: 1px solid #d9e2ec; padding: 0.6rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.95rem; color: #102a43;">
+        <span>🔍</span>
+        <c:choose>
+            <c:when test="${totalResultados == 1}">
+                Se encontró <strong>1</strong> resultado disponible.
+            </c:when>
+            <c:otherwise>
+                Se encontraron <strong>${totalResultados}</strong> resultados disponibles.
+            </c:otherwise>
+        </c:choose>
+    </div>
+
     <!-- SIN RESULTADOS -->
     <c:if test="${empty ofertas}">
         <section class="postulaciones-vacio">
@@ -162,10 +175,15 @@
 
                     </div>
 
-                    <div class="postulacion-card-actions" style="margin-top: 1rem;">
-                        <a href="${pageContext.request.contextPath}/admin-consultar-oferta?id=${oferta.id}"
+                    <!-- BOTONES: EDITAR Y VER POSTULANTES -->
+                    <div class="postulacion-card-actions" style="margin-top: 1rem; display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        <a href="${pageContext.request.contextPath}/admin-editar-oferta?id=${oferta.id}"
                            class="btn-outline">
-                            Consultar Oferta
+                            Editar
+                        </a>
+                        <a href="${pageContext.request.contextPath}/admin-oferta-postulantes?id=${oferta.id}"
+                           class="btn-primary">
+                            Ver Postulantes
                         </a>
                     </div>
 
@@ -174,6 +192,20 @@
             </c:forEach>
 
         </section>
+
+        <!-- PAGINACIÓN (Máx 15 por página) -->
+        <c:if test="${totalPaginas > 1}">
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+                <c:forEach begin="1" end="${totalPaginas}" var="i">
+                    <a href="${pageContext.request.contextPath}/admin-inicio?page=${i}&nombre=${param.nombre}&area=${param.area}"
+                       class="btn-${paginaActual == i ? 'primary' : 'outline'}"
+                       style="padding: 0.5rem 0.9rem; text-decoration: none;">
+                        ${i}
+                    </a>
+                </c:forEach>
+            </div>
+        </c:if>
+
     </c:if>
 
 </main>

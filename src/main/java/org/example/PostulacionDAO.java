@@ -582,4 +582,73 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
 
         return postulaciones;
     }
+    public List<Postulante> listarPostulantesPorOfertaPaginados(int ofertaId, String nombreFiltro, int limit, int offset) throws SQLException {
+        List<Postulante> postulantes = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+            SELECT p.* 
+            FROM postulante p
+            JOIN postulacion pos ON p.ci = pos.postulante_ci
+            WHERE pos.ofertalaboral_id = ?
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(p.nombre) LIKE LOWER(?)");
+        }
+        sql.append(" ORDER BY p.nombre LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int param = 1;
+            stmt.setInt(param++, ofertaId);
+
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(param++, "%" + nombreFiltro.trim() + "%");
+            }
+            stmt.setInt(param++, limit);
+            stmt.setInt(param++, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Postulante p = new Postulante();
+                    p.setCi(rs.getInt("ci"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setMail(rs.getString("mail"));
+                    postulantes.add(p);
+                }
+            }
+        }
+        return postulantes;
+    }
+
+    public int contarPostulantesPorOferta(int ofertaId, String nombreFiltro) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*) 
+            FROM postulante p
+            JOIN postulacion pos ON p.ci = pos.postulante_ci
+            WHERE pos.ofertalaboral_id = ?
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(p.nombre) LIKE LOWER(?)");
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int param = 1;
+            stmt.setInt(param++, ofertaId);
+
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(param++, "%" + nombreFiltro.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

@@ -502,4 +502,111 @@ public class OfertaLaboralDAO implements CrudDAO<OfertaLaboral, Integer> {
             return stmt.executeUpdate() > 0;
         }
     }
+    public List<OfertaLaboral> listarPorFiltrosPaginados(Integer areaId, String titulo, int limit, int offset)
+            throws SQLException {
+
+        List<OfertaLaboral> ofertas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT o.*,
+                       e.nombre AS nombreEmpresa,
+                       a.id AS areaId,
+                       a.nombre AS nombreArea,
+                       a.descripcion AS descripcionArea
+                FROM ofertalaboral o
+                JOIN empresa e ON o.empresa_rut = e.rut
+                JOIN area a ON o.area_id = a.id
+                WHERE 1 = 1
+                """);
+
+        if (areaId != null) {
+            sql.append(" AND o.area_id = ?");
+        }
+        if (titulo != null && !titulo.isBlank()) {
+            sql.append(" AND LOWER(o.titulo) LIKE LOWER(?)");
+        }
+        sql.append(" ORDER BY o.id LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (areaId != null) {
+                stmt.setInt(parametro++, areaId);
+            }
+            if (titulo != null && !titulo.isBlank()) {
+                stmt.setString(parametro++, "%" + titulo.trim() + "%");
+            }
+            stmt.setInt(parametro++, limit);
+            stmt.setInt(parametro, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    OfertaLaboral oferta = new OfertaLaboral();
+                    oferta.setId(rs.getInt("id"));
+                    oferta.setTitulo(rs.getString("titulo"));
+                    oferta.setDescripcion(rs.getString("descripcion"));
+                    oferta.setRequisitos(rs.getString("requisitos"));
+
+                    if (rs.getDate("fechaPublicacion") != null) {
+                        oferta.setFechaPublicacion(
+                                rs.getDate("fechaPublicacion").toLocalDate());
+                    }
+                    if (rs.getDate("fechaCierre") != null) {
+                        oferta.setFechaCierre(rs.getDate("fechaCierre").toLocalDate());
+                    }
+
+                    oferta.setEstado(EstadoEntrevista.valueOf(
+                            rs.getString("estado").toUpperCase()));
+
+                    Empresa empresa = new Empresa();
+                    empresa.setRut(rs.getString("empresa_rut"));
+                    empresa.setNombre(rs.getString("nombreEmpresa"));
+                    oferta.setEmpresa(empresa);
+
+                    Area area = new Area();
+                    area.setId(rs.getInt("areaId"));
+                    area.setNombre(rs.getString("nombreArea"));
+                    area.setDescripcion(rs.getString("descripcionArea"));
+                    oferta.setArea(area);
+                    ofertas.add(oferta);
+                }
+            }
+        }
+
+        return ofertas;
+    }
+
+    public int contarPorFiltros(Integer areaId, String titulo) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(*) 
+                FROM ofertalaboral o
+                WHERE 1 = 1
+                """);
+
+        if (areaId != null) {
+            sql.append(" AND o.area_id = ?");
+        }
+        if (titulo != null && !titulo.isBlank()) {
+            sql.append(" AND LOWER(o.titulo) LIKE LOWER(?)");
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int parametro = 1;
+            if (areaId != null) {
+                stmt.setInt(parametro++, areaId);
+            }
+            if (titulo != null && !titulo.isBlank()) {
+                stmt.setString(parametro, "%" + titulo.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }

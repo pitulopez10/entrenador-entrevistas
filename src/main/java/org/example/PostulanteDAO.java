@@ -683,4 +683,70 @@ public class PostulanteDAO implements CrudDAO<Postulante, Integer> {
 
         return postulantes;
     }
+    public List<Postulante> listarPorNombrePaginados(String nombreFiltro, int limit, int offset) throws SQLException {
+        List<Postulante> postulantes = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+            SELECT * 
+            FROM postulante
+            WHERE 1 = 1
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+        sql.append(" ORDER BY nombre LIMIT ? OFFSET ?");
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            int param = 1;
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(param++, "%" + nombreFiltro.trim() + "%");
+            }
+            stmt.setInt(param++, limit);
+            stmt.setInt(param++, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Postulante p = new Postulante();
+                    p.setCi(rs.getInt("ci"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setMail(rs.getString("mail"));
+                    p.setTelefono(rs.getInt("telefono"));
+                    p.setLocalidad(rs.getString("localidad"));
+                    p.setFotoPerfil(rs.getString("fotoPerfil"));
+                    p.setBloqueado(rs.getBoolean("bloqueado"));
+                    postulantes.add(p);
+                }
+            }
+        }
+        return postulantes;
+    }
+
+    public int contarPorNombre(String nombreFiltro) throws SQLException {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*) 
+            FROM postulante
+            WHERE 1 = 1
+            """);
+
+        if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+            sql.append(" AND LOWER(nombre) LIKE LOWER(?)");
+        }
+
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql.toString())) {
+
+            if (nombreFiltro != null && !nombreFiltro.isBlank()) {
+                stmt.setString(1, "%" + nombreFiltro.trim() + "%");
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }
