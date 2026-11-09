@@ -76,7 +76,7 @@ public class EmpresaAccionServlet extends HttpServlet {
                 ofertaDAO.cambiarEstadoDeOferta(ofertaId, rut, EstadoEntrevista.ACTIVA);
                 resultado = "reabierta";
 
-            } else if ("seleccionar".equals(accion) || "descartar".equals(accion)) {
+            } else if ("seleccionar".equals(accion) || "descartar".equals(accion) || "evaluar".equals(accion)) {
 
                 // Solo se elige entre postulantes de una oferta activa
                 if (oferta.getEstado() != EstadoEntrevista.ACTIVA) {
@@ -101,7 +101,7 @@ public class EmpresaAccionServlet extends HttpServlet {
                     }
 
                     boolean seleccionar = "seleccionar".equals(accion);
-                    EstadoPostulacion nuevoEstado = seleccionar
+                    EstadoPostulacion nuevoEstado = "evaluar".equals(accion) ? EstadoPostulacion.enRevision : seleccionar
                             ? EstadoPostulacion.seleccionado
                             : EstadoPostulacion.rechazado;
 
@@ -111,28 +111,31 @@ public class EmpresaAccionServlet extends HttpServlet {
                         return;
                     }
 
-                    try (InputStream logo = getServletContext().getResourceAsStream("/img/logo.png")) {
-                        if (seleccionar) {
-                            emailService.enviarNotificacionEstado(
-                                    postulacion.getPostulante(), oferta, logo,
-                                    "¡Fuiste seleccionado! - " + oferta.getTitulo(),
-                                    "¡Felicitaciones, fuiste seleccionado!",
-                                    "La empresa revisó tu postulación y decidió seleccionarte para continuar con el proceso.",
-                                    "¡Te deseamos muchos éxitos en esta nueva oportunidad!");
-                        } else {
-                            emailService.enviarNotificacionEstado(
-                                    postulacion.getPostulante(), oferta, logo,
-                                    "Actualización de tu postulación - " + oferta.getTitulo(),
-                                    "Gracias por postularte",
-                                    "En esta oportunidad la empresa decidió continuar con otro perfil.",
-                                    "No te desanimes: seguí intentando, porque seguramente tendrás suerte en la próxima oportunidad.");
+                    if (!"evaluar".equals(accion) && postulacion.getEstado() != nuevoEstado) {
+                        try (InputStream logo = getServletContext().getResourceAsStream("/img/logo.png")) {
+                            if (seleccionar) {
+                                emailService.enviarNotificacionEstado(
+                                        postulacion.getPostulante(), oferta, logo,
+                                        "¡Fuiste seleccionado! - " + oferta.getTitulo(),
+                                        "¡Felicitaciones, fuiste seleccionado!",
+                                        "La empresa revisó tu postulación y decidió seleccionarte para continuar con el proceso.",
+                                        "¡Te deseamos muchos éxitos en esta nueva oportunidad!");
+                            } else {
+                                emailService.enviarNotificacionEstado(
+                                        postulacion.getPostulante(), oferta, logo,
+                                        "Actualización de tu postulación - " + oferta.getTitulo(),
+                                        "Gracias por postularte",
+                                        "En esta oportunidad la empresa decidió continuar con otro perfil.",
+                                        "No te desanimes: seguí intentando, porque seguramente tendrás suerte en la próxima oportunidad.");
+                            }
+                        } catch (jakarta.mail.MessagingException | IllegalStateException e) {
+                            getServletContext().log(
+                                    "No se pudo enviar la notificación de estado al postulante", e);
                         }
-                    } catch (jakarta.mail.MessagingException | IllegalStateException e) {
-                        getServletContext().log(
-                                "No se pudo enviar la notificación de estado al postulante", e);
+
                     }
 
-                    resultado = seleccionar ? "seleccionado" : "descartado";
+                    resultado = "evaluar".equals(accion) ? "evaluado" : seleccionar ? "seleccionado" : "descartado";
                 }
 
             } else {
@@ -144,6 +147,15 @@ public class EmpresaAccionServlet extends HttpServlet {
             String destino;
             if ("panel".equals(request.getParameter("volver"))) {
                 destino = "/empresa?msg=" + resultado;
+            } else if (("evaluacion".equals(request.getParameter("volver"))
+                    || "perfil".equals(request.getParameter("volver")))
+                    && ("evaluar".equals(accion) || "seleccionar".equals(accion)
+                    || "descartar".equals(accion))) {
+                int postulacionId = Integer.parseInt(request.getParameter("postulacionId"));
+                String pantalla = "evaluacion".equals(request.getParameter("volver"))
+                        ? "/empresa-evaluar" : "/empresa-postulante";
+                destino = pantalla + "?oferta=" + ofertaId
+                        + "&postulacion=" + postulacionId + "&msg=" + resultado;
             } else {
                 destino = "/empresa-oferta?id=" + ofertaId + "&msg=" + resultado;
             }

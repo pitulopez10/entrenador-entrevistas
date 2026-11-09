@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 
-@WebServlet("/empresa-postulante")
+@WebServlet({"/empresa-postulante", "/empresa-evaluar"})
 public class EmpresaPostulanteServlet extends HttpServlet {
 
     private final OfertaLaboralDAO ofertaDAO = new OfertaLaboralDAO();
@@ -99,10 +99,9 @@ public class EmpresaPostulanteServlet extends HttpServlet {
                         LocalDate.now()).getYears();
             }
 
-            String cv = postulante.getCv() == null
-                    ? "" : postulante.getCv().trim().toLowerCase();
-            boolean cvEnlazable = cv.startsWith("http://") || cv.startsWith("https://");
+            boolean cvEnlazable = EnlacesWebServlet.esHttp(postulante.getCv());
 
+            request.setAttribute("modoEvaluacion", "/empresa-evaluar".equals(request.getServletPath()));
             request.setAttribute("oferta", oferta);
             request.setAttribute("postulacion", postulacion);
             request.setAttribute("postulante", postulante);

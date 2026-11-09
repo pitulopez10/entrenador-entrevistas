@@ -63,7 +63,7 @@ public class EmpresaPerfilServlet extends HttpServlet {
             }
             int totalPostulaciones = postulacionDAO.listarPorEmpresa(rut).size();
 
-            // 4. Qué tan completo está el perfil (solo datos que se pueden editar)
+            // 4. Qué tan completo está el perfil (nombre, correo, descripción, teléfono, sitio válido y logo)
             List<String> pendientes = new ArrayList<>();
             if (vacio(empresa.getDescripcion())) {
                 pendientes.add("descripción");
@@ -71,16 +71,16 @@ public class EmpresaPerfilServlet extends HttpServlet {
             if (empresa.getTelefono() == 0) {
                 pendientes.add("teléfono");
             }
-            if (vacio(empresa.getSitioWeb())) {
+            if (!EnlacesWebServlet.esHttp(empresa.getSitioWeb())) {
                 pendientes.add("sitio web");
             }
-            int porcentaje = (3 - pendientes.size()) * 100 / 3;
+            if (vacio(empresa.getNombre())) pendientes.add("nombre");
+            if (vacio(empresa.getMail())) pendientes.add("correo");
+            if (vacio(empresa.getLogo())) pendientes.add("logo");
+            int porcentaje = (6 - pendientes.size()) * 100 / 6;
 
             // 5. El sitio solo se muestra como link si es http o https
-            String sitio = empresa.getSitioWeb() == null
-                    ? "" : empresa.getSitioWeb().trim().toLowerCase();
-            boolean sitioEnlazable = sitio.startsWith("http://")
-                    || sitio.startsWith("https://");
+            boolean sitioEnlazable = EnlacesWebServlet.esHttp(empresa.getSitioWeb());
 
             request.setAttribute("empresa", empresa);
             request.setAttribute("inicial", inicialDe(empresa.getNombre()));

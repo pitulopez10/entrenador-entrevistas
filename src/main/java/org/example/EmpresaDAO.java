@@ -9,6 +9,17 @@ import java.util.List;
 
 public class EmpresaDAO implements CrudDAO<Empresa, String> {
 
+    public Empresa buscarPorIdPublico(String id) throws SQLException {
+        String sql = "SELECT * FROM empresa WHERE SHA2(rut, 256) = ?";
+        try (Connection conexion = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conexion.prepareStatement(sql)) {
+            stmt.setString(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? crearEmpresaDesdeResultSet(rs) : null;
+            }
+        }
+    }
+
     @Override
     public void agregar(Empresa empresa) throws SQLException {
 

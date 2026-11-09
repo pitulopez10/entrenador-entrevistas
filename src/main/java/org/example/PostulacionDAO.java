@@ -485,7 +485,7 @@ public class PostulacionDAO implements CrudDAO<Postulacion, Integer> {
                 UPDATE postulacion p
                 JOIN ofertalaboral o ON p.ofertalaboral_id = o.id
                 SET p.estado = ?
-                WHERE p.id = ? AND o.empresa_rut = ?
+                WHERE p.id = ? AND o.empresa_rut = ? AND o.estado = 'ACTIVA'
                 """;
 
         try (Connection conexion = ConexionDB.obtenerConexion();

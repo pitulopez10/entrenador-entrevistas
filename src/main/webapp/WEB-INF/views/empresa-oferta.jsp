@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +11,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=11">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=17">
 </head>
 <body>
 
@@ -25,6 +26,9 @@
 
     <%-- Avisos de la última acción --%>
     <c:choose>
+        <c:when test="${param.msg == 'evaluado'}">
+            <div class="mensaje-exito">La candidatura pasó a evaluación.</div>
+        </c:when>
         <c:when test="${param.msg == 'seleccionado'}">
             <div class="mensaje-exito">Postulante seleccionado.</div>
         </c:when>
@@ -41,7 +45,7 @@
         </c:when>
         <c:when test="${param.msg == 'ofertaInactiva'}">
             <div class="mensaje-aviso">
-                Esta oferta está cerrada. Reabrila para poder seleccionar o descartar postulantes.
+                Esta oferta no está activa. Reabrila para evaluar, seleccionar o descartar postulantes.
             </div>
         </c:when>
     </c:choose>
@@ -74,18 +78,22 @@
                         <form class="form-linea" method="post"
                               action="${pageContext.request.contextPath}/empresa-accion"
                               data-confirmar="¿Cerrar esta oferta? Dejará de recibir postulaciones.">
+
                             <input type="hidden" name="accion" value="cerrar">
                             <input type="hidden" name="ofertaId" value="${oferta.id}">
                             <button type="submit" class="btn-peligro">Cerrar oferta</button>
-                        </form>
+                            <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+                            </form>
                     </c:when>
                     <c:otherwise>
                         <form class="form-linea" method="post"
-                              action="${pageContext.request.contextPath}/empresa-accion">
+                              action="${pageContext.request.contextPath}/empresa-accion" data-confirmar="¿Reabrir esta oferta? Volverá a recibir postulaciones.">
+
                             <input type="hidden" name="accion" value="reabrir">
                             <input type="hidden" name="ofertaId" value="${oferta.id}">
                             <button type="submit" class="btn-accion-sec">Reabrir oferta</button>
-                        </form>
+                            <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+                            </form>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -108,9 +116,15 @@
 
     </section>
 
+    <section class="panel-stats">
+        <div class="stat-card"><span class="stat-numero"><c:out value="${postulaciones.size()}" /></span><span class="stat-texto">Candidatos</span></div>
+        <div class="stat-card"><span class="stat-numero"><c:out value="${recibidos}" /></span><span class="stat-texto">Recibidos</span></div>
+        <div class="stat-card"><span class="stat-numero"><c:out value="${enEvaluacion}" /></span><span class="stat-texto">En evaluación</span></div>
+        <div class="stat-card"><span class="stat-numero"><c:out value="${seleccionados}" /></span><span class="stat-texto">Seleccionados</span></div>
+    </section>
     <section>
         <div class="panel-seccion-titulo">
-            <h2>Postulantes (<c:out value="${postulaciones.size()}" />)</h2>
+            <h2>Candidatos (<c:out value="${postulaciones.size()}" />)</h2>
         </div>
 
         <c:choose>
@@ -127,78 +141,68 @@
                     <c:forEach var="postulacion" items="${postulaciones}">
 
                         <article class="postulante-card">
-
-                            <div>
-                                <p class="postulante-nombre">
-                                    <a class="enlace-postulante"
-                                       href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&postulacion=${postulacion.id}">
-                                        <c:out value="${postulacion.postulante.nombre}" />
-                                    </a>
-                                </p>
-                                <p class="postulante-mail">
-                                    <c:out value="${postulacion.postulante.mail}" />
-                                </p>
-                                <p class="postulante-fecha">
-                                    Se postuló el
-                                    <c:out value="${postulacion.fechaPostulacion}" />
-                                </p>
+                            <div class="postulante-cabecera">
+                                <div class="postulante-datos">
+                                    <p class="postulante-nombre">
+                                        <a class="enlace-postulante"
+                                           href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&amp;postulacion=${postulacion.id}">
+                                            <c:out value="${postulacion.postulante.nombre}" />
+                                        </a>
+                                    </p>
+                                    <p class="postulante-mail"><c:out value="${postulacion.postulante.mail}" /></p>
+                                    <p class="postulante-fecha">Se postuló el <c:out value="${postulacion.fechaPostulacion}" /></p>
+                                </div>
+                                <div class="postulante-estado">
+                                    <c:choose>
+                                        <c:when test="${postulacion.estado == 'seleccionado'}">
+                                            <span class="badge badge-seleccionado">Seleccionado</span>
+                                        </c:when>
+                                        <c:when test="${postulacion.estado == 'rechazado'}">
+                                            <span class="badge badge-rechazado">Descartado</span>
+                                        </c:when>
+                                        <c:when test="${postulacion.estado == 'enRevision'}">
+                                            <span class="badge badge-revision">En evaluación</span>
+                                        </c:when>
+                                        <c:otherwise><span class="badge badge-enviado">Recibido</span></c:otherwise>
+                                    </c:choose>
+                                </div>
                             </div>
 
-                            <p class="postulante-mensaje">
-                                <c:out value="${empty postulacion.mensaje ? 'Sin mensaje.' : postulacion.mensaje}" />
-                            </p>
+                            <c:set var="mensajeReal" value="${fn:trim(postulacion.mensaje)}" />
+                            <c:if test="${not empty mensajeReal and mensajeReal != 'Postulación realizada desde el portal web.' and mensajeReal != 'Postulación realizada desde el portal web'}">
+                                <p class="postulante-mensaje"><c:out value="${postulacion.mensaje}" /></p>
+                            </c:if>
 
-                            <div class="postulante-estado">
-                                <c:choose>
-                                    <c:when test="${postulacion.estado == 'seleccionado'}">
-                                        <span class="badge badge-seleccionado">Seleccionado</span>
-                                    </c:when>
-                                    <c:when test="${postulacion.estado == 'rechazado'}">
-                                        <span class="badge badge-rechazado">Descartado</span>
-                                    </c:when>
-                                    <c:when test="${postulacion.estado == 'enRevision'}">
-                                        <span class="badge badge-revision">En revisión</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="badge badge-enviado">Enviada</span>
-                                    </c:otherwise>
-                                </c:choose>
-                                <div class="postulante-acciones">
-                                    <a class="btn-accion-sec"
-                                       href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&postulacion=${postulacion.id}">
-                                        Ver perfil completo
-                                    </a>
-                                </div>
-
+                            <div class="postulante-acciones postulante-pie">
+                                <a class="btn-accion-sec"
+                                   href="${pageContext.request.contextPath}/empresa-postulante?oferta=${oferta.id}&amp;postulacion=${postulacion.id}">
+                                    Ver perfil completo
+                                </a>
                                 <c:if test="${oferta.estado == 'ACTIVA'}">
-                                    <div class="postulante-acciones">
-
-                                        <c:if test="${postulacion.estado != 'seleccionado'}">
-                                            <form class="form-linea" method="post"
-                                                  action="${pageContext.request.contextPath}/empresa-accion"
-                                                  data-confirmar="¿Seleccionar a <c:out value='${postulacion.postulante.nombre}' /> para este puesto?">
-                                                <input type="hidden" name="accion" value="seleccionar">
-                                                <input type="hidden" name="ofertaId" value="${oferta.id}">
-                                                <input type="hidden" name="postulacionId" value="${postulacion.id}">
-                                                <button type="submit" class="btn-accion">Seleccionar</button>
-                                            </form>
-                                        </c:if>
-
-                                        <c:if test="${postulacion.estado != 'rechazado'}">
-                                            <form class="form-linea" method="post"
-                                                  action="${pageContext.request.contextPath}/empresa-accion"
-                                                  data-confirmar="¿Descartar a <c:out value='${postulacion.postulante.nombre}' />?">
-                                                <input type="hidden" name="accion" value="descartar">
-                                                <input type="hidden" name="ofertaId" value="${oferta.id}">
-                                                <input type="hidden" name="postulacionId" value="${postulacion.id}">
-                                                <button type="submit" class="btn-accion-sec">Descartar</button>
-                                            </form>
-                                        </c:if>
-
-                                    </div>
+                                    <c:if test="${postulacion.estado != 'seleccionado'}">
+                                        <form class="form-linea" method="post"
+                                              action="${pageContext.request.contextPath}/empresa-accion"
+                                              data-confirmar="¿Seleccionar a <c:out value='${postulacion.postulante.nombre}' /> para este puesto?">
+                                            <input type="hidden" name="accion" value="seleccionar">
+                                            <input type="hidden" name="ofertaId" value="${oferta.id}">
+                                            <input type="hidden" name="postulacionId" value="${postulacion.id}">
+                                            <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+                                            <button type="submit" class="btn-accion">Seleccionar</button>
+                                        </form>
+                                    </c:if>
+                                    <c:if test="${postulacion.estado != 'rechazado'}">
+                                        <form class="form-linea" method="post"
+                                              action="${pageContext.request.contextPath}/empresa-accion"
+                                              data-confirmar="¿Descartar a <c:out value='${postulacion.postulante.nombre}' />?">
+                                            <input type="hidden" name="accion" value="descartar">
+                                            <input type="hidden" name="ofertaId" value="${oferta.id}">
+                                            <input type="hidden" name="postulacionId" value="${postulacion.id}">
+                                            <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+                                            <button type="submit" class="btn-accion-sec postulante-descartar">Descartar</button>
+                                        </form>
+                                    </c:if>
                                 </c:if>
                             </div>
-
                         </article>
 
                     </c:forEach>
@@ -210,6 +214,6 @@
 
 </main>
 
-<script src="${pageContext.request.contextPath}/js/empresa.js"></script>
+<script src="${pageContext.request.contextPath}/js/empresa.js?v=2"></script>
 </body>
 </html>

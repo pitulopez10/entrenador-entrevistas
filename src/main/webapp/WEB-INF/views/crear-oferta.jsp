@@ -15,7 +15,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/login.css?v=1">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=3">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=17">
 </head>
 <body>
 <c:set var="menuActivo" value="ofertas" />
@@ -24,7 +24,7 @@
 <main class="login-page">
     <section class="login-card">
 
-        <div class="login-info">
+        <div class="login-info empresa-encabezado-azul">
             <div class="login-info-content">
                 <span class="login-badge">Nueva oferta</span>
                 <h1>Publicá una oferta y encontrá a tu próximo talento</h1>
@@ -51,7 +51,8 @@
 
             <form method="post"
                   action="${pageContext.request.contextPath}/crear-oferta"
-                  class="login-form">
+                  class="login-form" data-publicar-oferta>
+
 
                 <div class="login-field">
                     <label for="titulo">Título del puesto</label>
@@ -102,7 +103,8 @@
                 <button type="submit" class="login-button">
                     Publicar oferta
                 </button>
-            </form>
+                <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+</form>
 
             <p class="login-back">
                 <a href="${pageContext.request.contextPath}/empresa">Cancelar y volver al panel</a>
@@ -112,5 +114,12 @@
     </section>
 </main>
 
+<div class="empresa-publicando" id="empresa-publicando" hidden role="status" aria-live="polite" aria-atomic="true">
+    <div class="empresa-publicando-contenido">
+        <span class="empresa-publicando-indicador" aria-hidden="true"></span>
+        <p>Publicando oferta…</p>
+    </div>
+</div>
+<script src="${pageContext.request.contextPath}/js/empresa.js?v=2"></script>
 </body>
 </html>

@@ -66,6 +66,20 @@ public class EditarEmpresaServlet extends HttpServlet {
             return;
         }
 
+        String sitio = valor(request, "sitioWeb");
+        String telefono = valor(request, "telefono");
+        if ((!sitio.isBlank() && !EnlacesWebServlet.esHttp(sitio))
+                || (!telefono.isBlank() && !telefono.matches("[0-9]{1,9}"))) {
+            cargarValores(request, empresa);
+            request.setAttribute("valorNombre", nombre);
+            request.setAttribute("valorCorreo", correo);
+            request.setAttribute("valorTelefono", telefono);
+            request.setAttribute("valorSitio", sitio);
+            request.setAttribute("valorDescripcion", valor(request, "descripcion"));
+            request.setAttribute("error", "Ingresá un sitio http:// o https:// válido y un teléfono de hasta 9 dígitos.");
+            request.getRequestDispatcher("/WEB-INF/views/editar-empresa.jsp").forward(request, response);
+            return;
+        }
         empresa.setNombre(nombre);
         empresa.setMail(correo);
         empresa.setTelefono(numero(valor(request, "telefono")));

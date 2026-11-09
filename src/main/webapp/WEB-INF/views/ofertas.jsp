@@ -350,7 +350,7 @@
                             Empresa:
                         </strong>
 
-                            <a class="empresa-link" href="${pageContext.request.contextPath}/empresa-publica?rut=${oferta.empresa.rut}">${oferta.empresa.nombre}</a>
+                            <a class="empresa-link" href="${pageContext.request.contextPath}/empresa-publica?id=${oferta.empresa.idPublico}"><c:out value="${oferta.empresa.nombre}" /></a>
 
                     </p>
 

@@ -71,6 +71,9 @@ public class EmpresaOfertaServlet extends HttpServlet {
                 }
             }
 
+            request.setAttribute("recibidos", postulaciones.stream().filter(p -> p.getEstado() == org.example.EstadoPostulacion.enviado).count());
+            request.setAttribute("enEvaluacion", postulaciones.stream().filter(p -> p.getEstado() == org.example.EstadoPostulacion.enRevision).count());
+            request.setAttribute("seleccionados", postulaciones.stream().filter(p -> p.getEstado() == org.example.EstadoPostulacion.seleccionado).count());
             request.setAttribute("oferta", oferta);
             request.setAttribute("postulaciones", postulaciones);
 

@@ -62,6 +62,17 @@ public class Empresa {
 
     // GETTERS
 
+    /** Identificador para enlaces públicos sin incluir el RUT. */
+    public String getIdPublico() {
+        if (rut == null) return null;
+        try {
+            return java.util.HexFormat.of().formatHex(java.security.MessageDigest
+                    .getInstance("SHA-256").digest(rut.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public String getRut() {
         return rut;
     }

@@ -12,7 +12,7 @@
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/login.css?v=2">
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/empresa.css?v=10">
+          href="${pageContext.request.contextPath}/css/empresa.css?v=17">
 </head>
 <body>
 
@@ -42,17 +42,11 @@
               enctype="multipart/form-data"
               class="login-form">
 
+
             <div class="login-field empresa-logo-edicion">
                 <label for="logo">Logo de la empresa</label>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.empresaLogueada.logo}">
-                        <img src="<c:out value='${sessionScope.empresaLogueada.logo}' />"
-                             alt="Logo actual de la empresa">
-                    </c:when>
-                    <c:otherwise>
-                        <div class="empresa-logo-placeholder">🏢</div>
-                    </c:otherwise>
-                </c:choose>
+                <c:set var="claseLogoEmpresa" value="empresa-logo-imagen" />
+                <%@ include file="empresa-logo.jsp" %>
                 <input type="file" id="logo" name="logo" accept="image/*">
                 <small class="ayuda-campo">Si no seleccionás una imagen, se conservará el logo actual.</small>
             </div>
@@ -114,11 +108,13 @@
                 </a>
             </div>
 
-        </form>
+            <input type="hidden" name="empresaCsrf" value="<c:out value='${sessionScope.empresaCsrf}' />">
+</form>
 
     </section>
 
 </main>
 
+<script src="${pageContext.request.contextPath}/js/empresa.js?v=2"></script>
 </body>
 </html>

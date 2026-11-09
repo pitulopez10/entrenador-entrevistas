@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.Empresa;
+import org.example.Area;
+import org.example.AreaDAO;
 import org.example.EstadoEntrevista;
 import org.example.EstadoPostulacion;
 import org.example.OfertaLaboral;
@@ -20,11 +22,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 
 @WebServlet("/empresa")
 public class PanelEmpresaServlet extends HttpServlet {
 
     private final OfertaLaboralDAO ofertaDAO = new OfertaLaboralDAO();
+    private final AreaDAO areaDAO = new AreaDAO();
     private final PostulacionDAO postulacionDAO = new PostulacionDAO();
 
     @Override
@@ -70,7 +74,42 @@ public class PanelEmpresaServlet extends HttpServlet {
                 }
             }
 
-            request.setAttribute("ofertas", ofertas);
+            String filtro = request.getParameter("estado");
+            if (!"activas".equals(filtro) && !"cerradas".equals(filtro)) filtro = "todas";
+            List<Area> areas = areaDAO.listar();
+            String areaParam = request.getParameter("area");
+            Integer areaId = null;
+            if (areaParam != null && !areaParam.isBlank()) {
+                try {
+                    areaId = Integer.valueOf(areaParam.trim());
+                } catch (NumberFormatException e) {
+                    response.sendError(400, "Área inválida");
+                    return;
+                }
+                final int id = areaId;
+                if (areas.stream().noneMatch(a -> a.getId() == id)) {
+                    response.sendError(400, "Área inválida");
+                    return;
+                }
+            }
+            String titulo = request.getParameter("titulo");
+            titulo = titulo == null ? "" : titulo.trim();
+            final String tituloFiltro = titulo.toLowerCase(Locale.ROOT);
+            final Integer areaFiltro = areaId;
+            final String estadoFiltro = filtro;
+            request.setAttribute("ofertas", ofertas.stream()
+                    .filter(o -> "todas".equals(estadoFiltro)
+                            || ("activas".equals(estadoFiltro) && o.getEstado() == EstadoEntrevista.ACTIVA)
+                            || ("cerradas".equals(estadoFiltro) && o.getEstado() == EstadoEntrevista.TERMINADA))
+                    .filter(o -> tituloFiltro.isEmpty() || (o.getTitulo() != null
+                            && o.getTitulo().toLowerCase(Locale.ROOT).contains(tituloFiltro)))
+                    .filter(o -> areaFiltro == null
+                            || (o.getArea() != null && o.getArea().getId() == areaFiltro))
+                    .toList());
+            request.setAttribute("areas", areas);
+            request.setAttribute("areaSeleccionada", areaId);
+            request.setAttribute("tituloBuscado", titulo);
+            request.setAttribute("filtro", filtro);
             request.setAttribute("totalOfertas", ofertas.size());
             request.setAttribute("ofertasActivas", activas);
             request.setAttribute("totalPostulaciones", postulaciones.size());

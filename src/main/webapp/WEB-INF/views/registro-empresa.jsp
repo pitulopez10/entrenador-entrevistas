@@ -14,6 +14,7 @@
           href="${pageContext.request.contextPath}/css/ofertas.css?v=12">
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/css/login.css?v=1">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/empresa.css?v=17">
 </head>
 <body>
 
@@ -40,7 +41,7 @@
 <main class="login-page">
     <section class="login-card">
 
-        <div class="login-info">
+        <div class="login-info empresa-encabezado-azul">
             <div class="login-info-content">
                 <span class="login-badge">Nueva empresa</span>
                 <h1>Registrá tu empresa y publicá tus ofertas</h1>

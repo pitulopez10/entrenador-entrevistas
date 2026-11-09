@@ -50,7 +50,7 @@
     padding: 32px;
     margin-bottom: 24px;
     border-radius: 24px;
-    background: linear-gradient(135deg, #1475f7 0%, #0b4fc2 100%);
+
     color: #ffffff;
 }
 
@@ -367,10 +367,9 @@
 }
 
 .postulante-card {
-    display: grid;
-    grid-template-columns: minmax(180px, 1fr) 2fr auto;
-    align-items: center;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     background: #ffffff;
     border: 1px solid #dbe5f3;
     border-radius: 16px;
@@ -421,15 +420,7 @@
     color: #991b1b;
 }
 
-@media (max-width: 760px) {
-    .postulante-card {
-        grid-template-columns: 1fr;
-    }
 
-    .postulante-estado {
-        text-align: left;
-    }
-}
 /* ===== Acciones ===== */
 button.btn-accion,
 button.btn-accion-sec,
@@ -722,4 +713,434 @@ button.btn-peligro {
 .enlace-postulante:hover {
     color: #1475f7;
     text-decoration: underline;
+}
+
+
+
+
+
+/* Ficha compartida por Mi empresa y la vista pública. */
+.empresa-perfil-page {
+    width: 100%;
+    max-width: 1140px;
+    min-height: 0;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+}
+
+.empresa-ficha {
+    width: 100%;
+    max-width: 1100px;
+    min-height: 0;
+    box-sizing: border-box;
+    margin: 0 auto 24px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.empresa-ficha-encabezado {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+    margin: 0;
+    padding: 32px;
+    border-radius: 18px 18px 0 0;
+
+}
+
+.empresa-ficha-logo .perfil-logo {
+    object-fit: contain;
+}
+
+.empresa-ficha-identidad,
+.empresa-ficha-columnas > section {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.empresa-ficha-completitud {
+    padding: 24px 32px;
+    background: #ffffff;
+    border-top: 1px solid #dbe5f3;
+}
+
+.empresa-ficha-completitud .barra-progreso {
+    background: #e5e7eb;
+}
+
+.empresa-ficha-completitud .barra-progreso::-webkit-progress-bar {
+    background: #e5e7eb;
+}
+
+.empresa-ficha-completitud .barra-progreso::-webkit-progress-value {
+    background: #1475f7;
+}
+
+.empresa-ficha-completitud .barra-progreso::-moz-progress-bar {
+    background: #1475f7;
+}
+
+.empresa-ficha-botones {
+    grid-column: 2;
+    margin-top: 0;
+}
+
+.empresa-ficha-columnas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 48px;
+    padding: 32px;
+    border-top: 1px solid #dbe5f3;
+}
+
+.empresa-ficha-fecha {
+    margin-top: 24px;
+    color: #173561;
+}
+
+.empresa-ficha-pendientes {
+    margin: 0;
+    padding: 0 32px 28px;
+}
+
+.evaluacion-titulo {
+    color: #173561;
+    margin: 0 0 16px;
+}
+
+@media (max-width: 700px) {
+    .empresa-perfil-page {
+        padding: 24px 16px 40px;
+    }
+
+    .empresa-ficha-encabezado {
+        gap: 16px;
+        padding: 24px 20px;
+    }
+
+    .empresa-ficha-encabezado .perfil-logo,
+    .empresa-ficha-encabezado .perfil-avatar {
+        width: 60px;
+        height: 60px;
+        box-sizing: border-box;
+    }
+
+    .empresa-ficha-columnas {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        padding: 24px 20px;
+    }
+
+    .empresa-ficha-botones {
+        grid-column: 1 / -1;
+        gap: 8px;
+    }
+
+    .empresa-ficha-botones .btn-claro {
+        padding: 10px 14px;
+    }
+
+    .empresa-ficha-pendientes {
+        padding: 0 20px 24px;
+    }
+}
+/* Acción principal de Mis ofertas, debajo del saludo. */
+.ofertas-acciones {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 16px;
+}
+
+.ofertas-acciones .btn-accion {
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+    .ofertas-acciones .btn-accion {
+        width: 100%;
+    }
+}
+/* Datos y estado arriba; acciones reunidas al pie de cada candidato. */
+.postulante-cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 16px;
+}
+
+.postulante-datos,
+.postulante-card .postulante-mensaje {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.postulante-cabecera .badge {
+    display: inline-block;
+}
+
+.postulante-pie {
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 0;
+    padding-top: 16px;
+    border-top: 1px solid #eef3fa;
+}
+
+.postulante-pie .form-linea {
+    display: flex;
+}
+
+.postulante-pie .btn-accion,
+.postulante-pie .btn-accion-sec {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    line-height: 1.2;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.postulante-pie .postulante-descartar {
+    border-color: transparent;
+    background: transparent;
+    color: #6b7f99;
+    font-weight: 600;
+}
+
+.postulante-pie .postulante-descartar:hover {
+    border-color: #cfdced;
+    background: #f3f7fd;
+}
+
+@media (max-width: 600px) {
+    .empresa-ficha-completitud {
+        padding: 20px;
+    }
+
+    .postulante-pie > a,
+    .postulante-pie > form {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .postulante-pie button {
+        width: 100%;
+    }
+}
+/* Mis ofertas: buscador y ofertas en filas, sin afectar otras pantallas. */
+
+
+.mis-ofertas-page .panel-seccion-titulo h2 {
+    margin-bottom: 16px;
+}
+
+.mis-ofertas-page .empresa-ofertas-buscador {
+    flex-direction: row;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 24px;
+    padding: 16px;
+    border: 1px solid #dbe5f3;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(25, 65, 120, 0.06);
+}
+
+.mis-ofertas-page .search-title-field {
+    flex: 1.4;
+}
+
+.mis-ofertas-page .search-field {
+    padding: 5px 10px;
+}
+
+.mis-ofertas-page .empresa-ofertas-buscar-acciones {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mis-ofertas-page .search-btn {
+    min-width: 0;
+    padding: 12px 24px;
+}
+
+.mis-ofertas-page .ofertas-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.mis-ofertas-page .oferta-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 24px;
+}
+
+.mis-ofertas-page .empresa-oferta-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 10px;
+    overflow-wrap: anywhere;
+}
+
+.mis-ofertas-page .oferta-fechas {
+    flex-wrap: wrap;
+    gap: 6px 20px;
+}
+
+.mis-ofertas-page .empresa-oferta-lado {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 0;
+    gap: 20px;
+}
+
+.mis-ofertas-page .empresa-oferta-lado .oferta-botones {
+    justify-content: flex-end;
+}
+
+@media (max-width: 850px) {
+    .mis-ofertas-page .empresa-ofertas-buscador {
+        flex-wrap: wrap;
+    }
+
+    .mis-ofertas-page .empresa-ofertas-buscar-acciones {
+        flex-basis: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 760px) {
+    .mis-ofertas-page .oferta-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .mis-ofertas-page .empresa-oferta-lado {
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .mis-ofertas-page .empresa-oferta-lado .oferta-botones {
+        justify-content: flex-start;
+    }
+
+    .mis-ofertas-page .empresa-ofertas-buscador {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mis-ofertas-page .search-field {
+        flex: auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mis-ofertas-page .empresa-ofertas-buscar-acciones {
+        flex-basis: auto;
+    }
+
+    .mis-ofertas-page .empresa-ofertas-buscar-acciones > * {
+        flex: 1 1 auto;
+        width: auto;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .mis-ofertas-page .empresa-oferta-lado,
+    .mis-ofertas-page .empresa-oferta-lado .oferta-botones {
+        width: 100%;
+    }
+
+    .mis-ofertas-page .empresa-oferta-lado .oferta-botones > * {
+        flex: 1 1 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .mis-ofertas-page .empresa-oferta-lado button {
+        width: 100%;
+    }
+}
+/* Degradado compartido únicamente por los grandes encabezados de empresa. */
+.empresa-encabezado-azul {
+    background: linear-gradient(135deg, #153d75, #1475f7);
+    color: #ffffff;
+}
+
+/* Carga de publicación: sin alterar el POST ni agregar demoras. */
+.empresa-publicando {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(21, 61, 117, 0.45);
+}
+
+.empresa-publicando[hidden] {
+    display: none;
+}
+
+.empresa-publicando-contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: min(360px, 100%);
+    padding: 32px 24px;
+    border: 1px solid #dbe5f3;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #153d75;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(23, 53, 97, 0.25);
+}
+
+.empresa-publicando-indicador {
+    width: 44px;
+    height: 44px;
+    border: 4px solid #dbe5f3;
+    border-top-color: #1475f7;
+    border-radius: 50%;
+    animation: empresa-publicando-girar 0.8s linear infinite;
+}
+
+.empresa-enviando {
+    overflow: hidden;
+}
+
+form[data-publicar-oferta] .login-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+@keyframes empresa-publicando-girar {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .empresa-publicando-indicador {
+        animation: none;
+    }
 }
